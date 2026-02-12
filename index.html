@@ -20,7 +20,7 @@
 
         .container {
             width: 100%;
-            max-width: 800px;
+            max-width: 850px;
         }
 
         header {
@@ -61,7 +61,7 @@
             margin-bottom: 16px;
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start; /* 改為頂部對齊，避免多標籤時跑位 */
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
             transition: transform 0.2s, box-shadow 0.2s;
         }
@@ -75,6 +75,7 @@
             display: flex;
             flex-direction: column;
             gap: 8px;
+            flex: 1; /* 讓內容佔據左側空間 */
         }
 
         .program-title {
@@ -90,17 +91,25 @@
             font-weight: 500;
         }
 
-        /* 張數顯示樣式 */
-        .quantity-box {
+        /* 多張數標籤容器 */
+        .quantity-container {
+            display: flex;
+            flex-wrap: wrap; /* 超過寬度自動換行 */
+            justify-content: flex-end;
+            gap: 8px;
+            max-width: 250px; /* 限制寬度，避免擠壓標題 */
+        }
+
+        /* 單個張數/價位標籤樣式 */
+        .quantity-badge {
             background-color: #f1f5f9;
             border: 1px solid #cbd5e1;
             color: #334155;
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-weight: 900;
-            font-size: 1.1rem;
-            min-width: 70px;
-            text-align: center;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-weight: 800;
+            font-size: 0.95rem;
+            white-space: nowrap; /* 禁止標籤內換行 */
         }
 
         footer {
@@ -163,21 +172,32 @@
             statusText.innerText = `目前總計成功奪取 ${validData.length} 場次`;
 
             // 生成列表 HTML
-            const html = validData.map(ticket => `
-                <div class="ticket-item">
-                    <div class="content-main">
-                        <div class="program-title">
-                            ${ticket['節目名稱']}
+            const html = validData.map(ticket => {
+                // 將「張數」欄位內容依照空格分割
+                const countsRaw = ticket['張數'] || '';
+                const countItems = countsRaw.split(/\s+/).filter(item => item.trim() !== '');
+
+                // 生成標籤 HTML
+                const badgesHtml = countItems.map(item => `
+                    <div class="quantity-badge">${item}</div>
+                `).join('');
+
+                return `
+                    <div class="ticket-item">
+                        <div class="content-main">
+                            <div class="program-title">
+                                ${ticket['節目名稱']}
+                            </div>
+                            <div class="date-info">
+                                作戰日期：${ticket['售票日期']}
+                            </div>
                         </div>
-                        <div class="date-info">
-                            作戰日期：${ticket['售票日期']}
+                        <div class="quantity-container">
+                            ${badgesHtml}
                         </div>
                     </div>
-                    <div class="quantity-box">
-                        ${ticket['張數']}
-                    </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
 
             listContainer.innerHTML = html;
         }
