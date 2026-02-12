@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Muiii 搶票戰績追蹤器</title>
-    <!-- 引入 PapaParse 用於讀取 CSV -->
+    <!-- 引入 PapaParse 用於讀取 Google 試算表 CSV -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <style>
-        /* --- 第一版：簡約暗色風格 --- */
+        /* --- 經典第一版：淺色簡約風格 --- */
         body {
-            font-family: 'Segoe UI', 'Noto Sans TC', sans-serif;
-            background-color: #121212; /* 深色背景 */
-            color: #e0e0e0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans TC", Arial, sans-serif;
+            background-color: #f8fafc; /* 淺灰藍背景 */
+            color: #1e293b;
             margin: 0;
             padding: 20px;
             display: flex;
@@ -20,96 +20,95 @@
 
         .container {
             width: 100%;
-            max-width: 700px;
+            max-width: 800px;
         }
 
         header {
             text-align: center;
             margin-bottom: 40px;
-            border-bottom: 1px solid #333;
             padding-bottom: 20px;
+            border-bottom: 2px solid #e2e8f0;
         }
 
         h1 {
             margin: 0;
-            font-size: 2.2rem;
-            color: #4caf50; /* 科技綠 */
-            letter-spacing: 1px;
+            font-size: 2.5rem;
+            color: #2563eb; /* 專業藍色標題 */
+            font-weight: 900;
         }
 
         .subtitle {
-            font-size: 1rem;
-            color: #888;
-            margin-top: 8px;
+            font-size: 1.1rem;
+            color: #64748b;
+            margin-top: 10px;
+            font-weight: 500;
         }
 
-        /* 載入中狀態 */
         #loading {
             text-align: center;
-            color: #666;
-            margin-top: 30px;
+            padding: 50px;
+            color: #94a3b8;
             font-style: italic;
+            font-size: 1.1rem;
         }
 
-        /* 戰績列表樣式 (第一版單欄清單) */
-        .ticket-card {
-            background-color: #1e1e1e;
-            border: 1px solid #333;
-            border-radius: 8px;
-            padding: 18px 25px;
-            margin-bottom: 12px;
+        /* 戰績卡片樣式 */
+        .ticket-item {
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            transition: all 0.2s;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
         }
 
-        .ticket-card:hover {
-            border-color: #4caf50;
-            background-color: #252525;
+        .ticket-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
         }
 
-        .info {
-            flex: 1;
-            padding-right: 20px;
+        .content-main {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
 
-        .program-name {
-            font-size: 1.15rem;
-            font-weight: bold;
-            color: #ffffff;
-            margin-bottom: 6px;
+        .program-title {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #0f172a;
             line-height: 1.4;
         }
 
-        .date {
-            font-size: 0.85rem;
-            color: #999;
-        }
-
-        /* 張數標籤 */
-        .count-badge {
+        .date-info {
             font-size: 0.95rem;
-            padding: 6px 15px;
-            border-radius: 6px;
-            font-weight: bold;
-            background-color: rgba(76, 175, 80, 0.15);
-            color: #4caf50;
-            border: 1px solid rgba(76, 175, 80, 0.3);
-            white-space: nowrap;
+            color: #64748b;
+            font-weight: 500;
         }
 
-        .empty-message {
+        /* 張數顯示樣式 */
+        .quantity-box {
+            background-color: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            color: #334155;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 900;
+            font-size: 1.1rem;
+            min-width: 70px;
             text-align: center;
-            color: #555;
-            margin-top: 50px;
         }
 
         footer {
+            margin-top: 80px;
             text-align: center;
-            margin-top: 50px;
-            color: #444;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
+            color: #94a3b8;
+            letter-spacing: 1px;
         }
     </style>
 </head>
@@ -117,39 +116,39 @@
 
     <div class="container">
         <header>
-            <h1>Muiii 搶票戰績追蹤器</h1>
-            <div id="status-bar" class="subtitle">同步雲端資料中...</div>
+            <h1>Muiii 搶票戰績</h1>
+            <div id="status-text" class="subtitle">即時同步雲端作戰紀錄...</div>
         </header>
 
-        <div id="loading">正在擷取最新戰報...</div>
+        <div id="loading">正在擷取歷史戰果...</div>
         <div id="ticket-list"></div>
 
         <footer>
-            &copy; 2026 Muiii Project &bull; 數據即時同步
+            &copy; 2026 Muiii Project &bull; 數據即時同步系統
         </footer>
     </div>
 
     <script>
-        // Google 試算表 CSV 連結
+        // Google 試算表發布的 CSV 網址
         const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vThZZurHBpfes9J-dLaoi51jpb0MnQ4oABmBux77r-OO5LOvuoex6lesE4GvZb-UQ5zgiqWEfiHxNQy/pub?gid=0&single=true&output=csv';
-        
+
         function loadData() {
             Papa.parse(CSV_URL, {
                 download: true,
                 header: true,
                 complete: function(results) {
-                    renderList(results.data);
+                    renderRecords(results.data);
                 },
-                error: function(err) {
-                    document.getElementById('loading').innerText = '資料載入失敗，請確認網路連線。';
+                error: function() {
+                    document.getElementById('loading').innerText = '連線失敗：無法獲取紀錄。';
                 }
             });
         }
 
-        function renderList(data) {
+        function renderRecords(data) {
             const listContainer = document.getElementById('ticket-list');
             const loading = document.getElementById('loading');
-            const statusBar = document.getElementById('status-bar');
+            const statusText = document.getElementById('status-text');
             
             loading.style.display = 'none';
 
@@ -157,30 +156,33 @@
             const validData = data.filter(item => item['節目名稱'] && item['節目名稱'].trim() !== '');
 
             if (validData.length === 0) {
-                listContainer.innerHTML = '<div class="empty-message">目前尚無戰績紀錄。</div>';
-                statusBar.innerText = '等待首場勝利中';
+                listContainer.innerHTML = '<p style="text-align:center; color:#94a3b8; padding: 50px;">目前尚未發現作戰紀錄。</p>';
                 return;
             }
 
-            statusBar.innerText = `目前已成功奪取 ${validData.length} 個場次`;
+            statusText.innerText = `目前總計成功奪取 ${validData.length} 場次`;
 
-            // 生成 HTML 列表
-            const htmlContent = validData.map(ticket => `
-                <div class="ticket-card">
-                    <div class="info">
-                        <div class="program-name">${ticket['節目名稱']}</div>
-                        <div class="date">作戰日期：${ticket['售票日期']}</div>
+            // 生成列表 HTML
+            const html = validData.map(ticket => `
+                <div class="ticket-item">
+                    <div class="content-main">
+                        <div class="program-title">
+                            ${ticket['節目名稱']}
+                        </div>
+                        <div class="date-info">
+                            作戰日期：${ticket['售票日期']}
+                        </div>
                     </div>
-                    <div class="count-badge">
+                    <div class="quantity-box">
                         ${ticket['張數']}
                     </div>
                 </div>
             `).join('');
-            
-            listContainer.innerHTML = htmlContent;
+
+            listContainer.innerHTML = html;
         }
 
-        // 啟動程式
+        // 啟動載入程序
         loadData();
     </script>
 </body>
