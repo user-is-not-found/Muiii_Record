@@ -1,24 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Muiii Ticket Tracker</title>
+    <title>Muiii 搶票戰績追蹤器</title>
     
-    <!-- SEO & Social Sharing Tags -->
-    <meta name="description" content="Live battle records of ticket acquisition. Track every mission in real-time.">
-    <meta property="og:title" content="Muiii Ticket Tracker">
-    <meta property="og:description" content="Check out my latest ticket grabbing achievements! Updated live.">
+    <!-- SEO & 社群分享標籤 -->
+    <meta name="description" content="即時搶票戰績紀錄，精準追蹤每一次作戰成果。">
+    <meta property="og:title" content="Muiii 搶票戰績追蹤器">
+    <meta property="og:description" content="來看看我最新的搶票成就！資料即時更新。">
     <meta property="og:type" content="website">
 
-    <!-- Libraries -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <!-- 外部資源庫 -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <script src="https://cdn.tailwindcss.com/3.4.1"></script>
     
     <style>
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
             background-color: #0f172a;
             color: #f8fafc;
         }
@@ -47,13 +47,13 @@
             box-shadow: 0 4px 14px 0 rgba(34, 197, 94, 0.39);
         }
 
-        /* AI Analysis Box */
+        /* AI 分析框樣式 */
         .ai-box {
             background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.9) 100%);
             border: 1px solid rgba(96, 165, 250, 0.3);
         }
 
-        /* Loading Spinner */
+        /* 載入動畫 */
         .spinner {
             width: 24px;
             height: 24px;
@@ -74,17 +74,17 @@
 <body class="min-h-screen p-6 md:p-12">
 
     <div class="max-w-6xl mx-auto">
-        <!-- Header Section -->
+        <!-- 頁首區塊 -->
         <header class="text-center mb-12 space-y-4">
             <h1 class="text-5xl md:text-6xl font-extrabold tracking-tight">
-                Muiii <span class="gradient-text">Ticket Tracker</span>
+                Muiii <span class="gradient-text">搶票戰績追蹤器</span>
             </h1>
             <p class="text-slate-400 text-lg max-w-2xl mx-auto">
-                Real-time mission records with <span class="text-blue-400">AI Battle Analysis</span>.
+                即時戰報紀錄與 <span class="text-blue-400 font-bold">AI 戰場分析系統</span>。
             </p>
         </header>
 
-        <!-- AI Assistant Section -->
+        <!-- AI 分析助手區塊 -->
         <section id="ai-section" class="mb-12 glass-card ai-box p-6 rounded-3xl animate-fade-in">
             <div class="flex flex-col md:flex-row items-center justify-between gap-6">
                 <div class="flex items-center space-x-4">
@@ -94,40 +94,40 @@
                         </svg>
                     </div>
                     <div>
-                        <h2 class="text-xl font-bold text-white">Muiii AI Analyst</h2>
-                        <p class="text-slate-400 text-sm">Get insights from your ticket grabbing history.</p>
+                        <h2 class="text-xl font-bold text-white">Muiii AI 分析官</h2>
+                        <p class="text-slate-400 text-sm">深度解析您的搶票歷史，獲取戰場見解。</p>
                     </div>
                 </div>
-                <button id="analyze-btn" onclick="analyzeRecords()" class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg flex items-center space-x-2">
-                    <span id="btn-text">Analyze Battle Stats</span>
+                <button id="analyze-btn" onclick="analyzeRecords()" class="bg-blue-600 hover:bg-blue-500 text-white px-8 py-3 rounded-xl font-bold transition-all shadow-lg flex items-center space-x-2">
+                    <span id="btn-text">啟動戰績分析</span>
                     <div id="btn-spinner" class="spinner hidden"></div>
                 </button>
             </div>
             <div id="ai-response" class="mt-6 text-slate-300 leading-relaxed hidden border-t border-slate-700 pt-6 italic">
-                <!-- AI Result here -->
+                <!-- AI 分析結果將顯示於此 -->
             </div>
         </section>
 
-        <!-- Stats Counter -->
+        <!-- 戰績統計狀態 -->
         <div class="flex justify-center mb-8">
             <div class="inline-flex items-center space-x-2 bg-slate-800/50 px-4 py-2 rounded-full border border-slate-700 text-sm font-semibold text-emerald-400">
                 <span class="relative flex h-3 w-3">
                     <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                     <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
                 </span>
-                <span id="record-count">Syncing database...</span>
+                <span id="record-count">同步資料庫中...</span>
             </div>
         </div>
 
-        <!-- Grid Container -->
+        <!-- 戰績卡片容器 -->
         <div id="ticket-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Cards -->
+            <!-- 由 JavaScript 動態生成卡片 -->
         </div>
 
-        <div id="loading" class="text-center py-20 text-slate-500 italic">Connecting to source...</div>
+        <div id="loading" class="text-center py-20 text-slate-500 italic">正在連接至雲端情報源...</div>
 
         <footer class="mt-20 text-center text-slate-600 text-sm">
-            &copy; 2026 Muiii Project &bull; Powered by Gemini AI
+            &copy; 2026 Muiii Project &bull; 由 Gemini AI 支援運算
         </footer>
     </div>
 
@@ -144,7 +144,7 @@
                     renderCards(ticketHistory);
                 },
                 error: (err) => {
-                    document.getElementById('loading').innerHTML = `<p class="text-red-400">Sync Failed.</p>`;
+                    document.getElementById('loading').innerHTML = `<p class="text-red-400">同步失敗，請確認資料源狀態。</p>`;
                 }
             });
         }
@@ -155,20 +155,20 @@
             const countLabel = document.getElementById('record-count');
             
             loading.style.display = 'none';
-            countLabel.innerText = `${data.length} Successful Missions`;
+            countLabel.innerText = `${data.length} 場次奪取成功`;
 
             grid.innerHTML = data.map((ticket, index) => `
                 <div class="glass-card p-6 rounded-2xl flex flex-col justify-between space-y-4 animate-fade-in" style="animation-delay: ${index * 0.03}s">
                     <div class="space-y-2">
                         <div class="flex justify-between items-start">
-                            <span class="text-[10px] font-black uppercase tracking-widest text-emerald-400">Captured</span>
-                            <span class="text-xs text-slate-500 font-mono">#${data.length - index}</span>
+                            <span class="text-[10px] font-black uppercase tracking-widest text-emerald-400">成功奪取</span>
+                            <span class="text-xs text-slate-500 font-mono">編號 #${data.length - index}</span>
                         </div>
                         <h3 class="text-lg font-extrabold leading-tight text-white">${ticket['節目名稱']}</h3>
                     </div>
                     <div class="flex items-center justify-between pt-4 border-t border-slate-700/50">
                         <div class="flex flex-col">
-                            <span class="text-[9px] uppercase font-bold text-slate-500">Operation Date</span>
+                            <span class="text-[9px] uppercase font-bold text-slate-500">作戰日期</span>
                             <span class="text-xs font-semibold text-slate-300">${ticket['售票日期']}</span>
                         </div>
                         <div class="status-badge px-3 py-1 rounded-lg text-[10px] font-black text-white">
@@ -179,23 +179,23 @@
             `).join('');
         }
 
-        // --- GEMINI AI INTEGRATION ---
+        // --- GEMINI AI 戰績分析整合 ---
         async function analyzeRecords() {
             const btnText = document.getElementById('btn-text');
             const btnSpinner = document.getElementById('btn-spinner');
             const aiResponse = document.getElementById('ai-response');
-            const apiKey = ""; // Runtime provided key
+            const apiKey = ""; // 由環境自動提供
 
             if (ticketHistory.length === 0) return;
 
-            // UI State
-            btnText.innerText = "Analyzing...";
+            // 切換 UI 狀態
+            btnText.innerText = "分析中...";
             btnSpinner.classList.remove('hidden');
             aiResponse.classList.add('hidden');
 
             const dataSummary = ticketHistory.map(t => `${t['售票日期']}: ${t['節目名稱']}`).join('\n');
-            const userQuery = `以下是我的搶票紀錄：\n${dataSummary}\n請分析我的搶票戰績，並用繁體中文給我一段既熱血又專業的「戰場評論」，最後給我一個稱號。不要超過 200 字。`;
-            const systemPrompt = "你是一個專業的搶票分析 AI 助手。你說話風格很像電競賽評，熱血、專業、帶點未來感。";
+            const userQuery = `以下是我的搶票紀錄：\n${dataSummary}\n請分析我的搶票戰績，並用繁體中文給我一段既熱血又專業的「戰場評論」，最後給我一個霸氣的稱號。內容請保持簡練，約 150 字以內。`;
+            const systemPrompt = "你是一位頂尖的電子競技賽評，說話熱血、專業且富有未來感。你的任務是分析使用者的搶票紀錄，將其視為一場場關鍵戰役，並給予最高評價。";
 
             const payload = {
                 contents: [{ parts: [{ text: userQuery }] }],
@@ -216,7 +216,7 @@
                     const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
                     
                     if (text) {
-                        aiResponse.innerHTML = `<div class="text-blue-400 font-bold mb-2">✦ Mission Intelligence Report:</div>` + text.replace(/\n/g, '<br>');
+                        aiResponse.innerHTML = `<div class="text-blue-400 font-bold mb-2">✦ 戰情官分析報告：</div>` + text.replace(/\n/g, '<br>');
                         aiResponse.classList.remove('hidden');
                         aiResponse.classList.add('animate-fade-in');
                     }
@@ -225,11 +225,11 @@
                         const delay = Math.pow(2, retryCount) * 1000;
                         setTimeout(() => callAI(retryCount + 1), delay);
                     } else {
-                        aiResponse.innerText = "Analysis Interrupted. Tactical link failed.";
+                        aiResponse.innerText = "分析中斷。通訊鏈路異常，請檢查網路狀態。";
                         aiResponse.classList.remove('hidden');
                     }
                 } finally {
-                    btnText.innerText = "Re-analyze Stats";
+                    btnText.innerText = "重新分析戰績";
                     btnSpinner.classList.add('hidden');
                 }
             };
