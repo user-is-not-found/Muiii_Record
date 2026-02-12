@@ -4,11 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Muiii Ticket Tracker</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <style>
         /* --- CSS Styles --- */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #121212; /* Dark background */
+            background-color: #121212;
             color: #e0e0e0;
             margin: 0;
             padding: 20px;
@@ -31,7 +32,7 @@
         h1 {
             margin: 0;
             font-size: 2rem;
-            color: #4caf50; /* Tech Green */
+            color: #4caf50;
             letter-spacing: 1px;
         }
 
@@ -41,7 +42,14 @@
             margin-top: 5px;
         }
 
-        /* Ticket Card Style */
+        /* Loading State */
+        #loading {
+            text-align: center;
+            color: #888;
+            margin-top: 20px;
+            font-style: italic;
+        }
+
         .ticket-card {
             background-color: #1e1e1e;
             border: 1px solid #333;
@@ -52,6 +60,12 @@
             justify-content: space-between;
             align-items: center;
             transition: transform 0.2s;
+            opacity: 0; /* For animation */
+            animation: fadeIn 0.5s forwards;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
         }
 
         .ticket-card:hover {
@@ -59,9 +73,17 @@
             border-color: #4caf50;
         }
 
-        .location {
-            font-size: 1.2rem;
+        .info {
+            flex: 1;
+            padding-right: 15px;
+        }
+
+        .program-name {
+            font-size: 1.1rem;
             font-weight: bold;
+            margin-bottom: 5px;
+            line-height: 1.4;
+            color: #fff;
         }
 
         .date {
@@ -69,21 +91,15 @@
             color: #aaa;
         }
 
-        .status {
+        .count-badge {
             font-size: 0.9rem;
-            padding: 5px 10px;
-            border-radius: 4px;
+            padding: 5px 12px;
+            border-radius: 20px;
             font-weight: bold;
-        }
-
-        .status.success {
-            background-color: rgba(76, 175, 80, 0.2);
+            white-space: nowrap;
+            background-color: rgba(76, 175, 80, 0.1);
             color: #4caf50;
-        }
-
-        .status.pending {
-            background-color: rgba(255, 152, 0, 0.2);
-            color: #ff9800;
+            border: 1px solid rgba(76, 175, 80, 0.3);
         }
 
         .empty-message {
@@ -98,55 +114,80 @@
     <div class="container">
         <header>
             <h1>Muiii Ticket Tracker</h1>
-            <div class="subtitle">Latest Acquisition Records</div>
+            <div class="subtitle">Live Data from Google Sheets</div>
         </header>
 
-        <div id="ticket-list">
-            </div>
+        <div id="loading">Syncing data...</div>
+        <div id="ticket-list"></div>
     </div>
 
     <script>
-        // --- JavaScript Logic ---
+        // ============================================================
+        // CONFIGURATION: YOUR GOOGLE SHEET CSV LINK
+        // ============================================================
+        const GOOGLE_SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vThZZurHBpfes9J-dLaoi51jpb0MnQ4oABmBux77r-OO5LOvuoex6lesE4GvZb-UQ5zgiqWEfiHxNQy/pub?gid=0&single=true&output=csv';
+        
+        // Main Function
+        function init() {
+            Papa.parse(GOOGLE_SHEET_CSV_URL, {
+                download: true,
+                header: true, // Uses the first row as keys (售票日期, 節目名稱...)
+                complete: function(results) {
+                    // Log data to console for debugging
+                    console.log('Data fetched:', results.data);
+                    renderData(results.data);
+                },
+                error: function(err) {
+                    console.error('Error fetching data:', err);
+                    document.getElementById('loading').innerText = 'Failed to load data. Please check console.';
+                }
+            });
+        }
 
-        // 1. Mock Data (Ideally this comes from your backend/API)
-        // Note: Includes Taipei and Kaohsiung to demonstrate filtering.
-        const rawData = [
-            { id: 1, location: 'Taipei', date: '2024-02-14', status: 'Success' },
-            { id: 2, location: 'Taichung', date: '2024-02-15', status: 'Success' },
-            { id: 3, location: 'Kaohsiung', date: '2024-02-16', status: 'Pending' },
-            { id: 4, location: 'Tainan', date: '2024-02-18', status: 'Success' },
-            { id: 5, location: 'Hsinchu', date: '2024-02-20', status: 'Success' },
-            { id: 6, location: 'Taipei', date: '2024-02-22', status: 'Failed' }
-        ];
+        function renderData(data) {
+            const listContainer = document.getElementById('ticket-list');
+            const loading = document.getElementById('loading');
+            
+            // Clear loading text
+            loading.style.display = 'none';
 
-        // 2. The Filter Logic
-        // Requirement: Exclude Taipei and Kaohsiung
-        const filteredData = rawData.filter(ticket => {
-            const city = ticket.location.toLowerCase();
-            // Only keep if city is NOT taipei AND NOT kaohsiung
-            return city !== 'taipei' && city !== 'kaohsiung';
-        });
+            // Check if data is empty
+            if (!data || data.length === 0) {
+                listContainer.innerHTML = '<div class="empty-message">No records found.</div>';
+                return;
+            }
 
-        // 3. Render Function
-        const listContainer = document.getElementById('ticket-list');
+            // Generate HTML
+            const htmlContent = data.map((ticket, index) => {
+                // Ensure the row has data (skip empty rows)
+                // Note: Using exact Chinese headers from your Sheet
+                const program = ticket['節目名稱'];
+                const date = ticket['售票日期'];
+                const count = ticket['張數'];
 
-        if (filteredData.length === 0) {
-            listContainer.innerHTML = '<div class="empty-message">No records found.</div>';
-        } else {
-            const htmlContent = filteredData.map(ticket => `
-                <div class="ticket-card">
+                if (!program) return '';
+
+                // Animation delay
+                const delay = index * 0.1; 
+
+                return `
+                <div class="ticket-card" style="animation-delay: ${delay}s">
                     <div class="info">
-                        <div class="location">${ticket.location}</div>
-                        <div class="date">${ticket.date}</div>
+                        <div class="program-name">${program}</div>
+                        <div class="date">Date: ${date}</div>
                     </div>
-                    <div class="status ${ticket.status.toLowerCase()}">
-                        ${ticket.status}
+                    <div class="count-badge">
+                        ${count}
                     </div>
                 </div>
-            `).join('');
+                `;
+            }).join('');
             
             listContainer.innerHTML = htmlContent;
         }
+
+        // Run the script
+        init();
     </script>
 </body>
 </html>
