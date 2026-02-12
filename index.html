@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>搶票戰績儀表板</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap');
+        body { font-family: 'Noto Sans TC', sans-serif; }
+        .ticket-card:hover { transform: translateY(-2px); }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen text-slate-800">
+
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <div class="bg-indigo-600 text-white p-2 rounded-lg">
+                    <i class="fas fa-ticket-alt"></i>
+                </div>
+                <h1 class="text-xl font-bold text-slate-800">搶票戰績紀錄</h1>
+            </div>
+            <div class="text-xs text-slate-500 bg-slate-100 px-3 py-1 rounded-full">
+                <i class="fas fa-circle text-green-500 text-[8px] mr-1 animate-pulse"></i> 資料即時同步中
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-5xl mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                <div class="text-slate-500 text-sm mb-1">累計搶票場次</div>
+                <div class="text-3xl font-bold text-indigo-600" id="totalCount">...</div>
+            </div>
+            <div class="bg-gradient-to-r from-indigo-500 to-purple-600 p-6 rounded-xl shadow-md text-white col-span-2 flex flex-col justify-center">
+                <h2 class="text-lg font-bold mb-2">搜尋戰績</h2>
+                <div class="relative">
+                    <i class="fas fa-search absolute left-3 top-3 text-indigo-200"></i>
+                    <input type="text" id="searchInput" placeholder="輸入歌手、日期或地點..." 
+                           class="w-full bg-white/20 border border-white/30 rounded-lg py-2 pl-10 pr-4 text-white placeholder-indigo-200 focus:outline-none focus:bg-white/30 transition">
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50 text-slate-600 text-sm border-b border-slate-200">
+                            <th class="py-4 px-6 font-semibold w-40"><i class="far fa-calendar-alt mr-2"></i>售票日期</th>
+                            <th class="py-4 px-6 font-semibold"><i class="fas fa-microphone-alt mr-2"></i>節目名稱</th>
+                            <th class="py-4 px-6 font-semibold w-48"><i class="fas fa-receipt mr-2"></i>戰績 (張數/價格)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ticketList" class="divide-y divide-slate-100 text-sm">
+                        <tr><td colspan="3" class="text-center py-8 text-slate-400">正在讀取 Google 試算表資料...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <footer class="text-center text-slate-400 text-xs py-8 mt-4">
+            Built with GitHub Pages & Google Sheets
+        </footer>
+    </div>
+
+    <script>
+        // ✅ 這裡已經填入你提供的專屬連結
+        const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vThZZurHBpfes9J-dLaoi51jpb0MnQ4oABmBux77r-OO5LOvuoex6lesE4GvZb-UQ5zgiqWEfiHxNQy/pub?gid=0&single=true&output=csv';
+
+        let allData = [];
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            loadData();
+            
+            // 搜尋監聽
+            document.getElementById('searchInput').addEventListener('input', (e) => {
+                const keyword = e.target.value.toLowerCase();
+                const filtered = allData.filter(row => {
+                    const date = row['售票日期'] ? row['售票日期'].toString().toLowerCase() : '';
+                    const name = row['節目名稱'] ? row['節目名稱'].toString().toLowerCase() : '';
+                    const ticket = row['張數'] ? row['張數'].toString().toLowerCase() : '';
+                    return date.includes(keyword) || name.includes(keyword) || ticket.includes(keyword);
+                });
+                renderTable(filtered);
+            });
+        });
+
+        function loadData() {
+            Papa.parse(csvUrl, {
+                download: true,
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    console.log("資料讀取成功:", results.data);
+                    
+                    // 過濾無效資料 (確保有節目名稱)
+                    allData = results.data.filter(row => row['節目名稱'] && row['節目名稱'].trim() !== '');
+                    
+                    // 更新總數
+                    document.getElementById('totalCount').innerText = allData.length;
+                    
+                    // 顯示資料
+                    renderTable(allData);
+                },
+                error: function(err) {
+                    console.error("讀取失敗:", err);
+                    document.getElementById('ticketList').innerHTML = 
+                        `<tr><td colspan="3" class="text-center py-8 text-red-500">
+                            <i class="fas fa-exclamation-triangle mb-2 text-2xl"></i><br>
+                            讀取失敗，請確認網路連線
+                        </td></tr>`;
+                }
+            });
+        }
+
+        function renderTable(data) {
+            const tbody = document.getElementById('ticketList');
+            tbody.innerHTML = '';
+
+            if (data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3" class="text-center py-8 text-slate-400">找不到相關戰績</td></tr>';
+                return;
+            }
+
+            data.forEach((row, index) => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-indigo-50/50 transition-colors duration-200 group";
+                
+                // 嘗試修復日期格式 (如果有 0206.xx 的情況)
+                let displayDate = row['售票日期'] || '-';
+                if (displayDate.startsWith('0206')) displayDate = displayDate.replace('0206', '2026');
+
+                // 判斷是否有「高雄」或「台北」來加一點顏色標籤
+                let locationTag = '';
+                if (row['節目名稱'].includes('高雄')) locationTag = '<span class="ml-2 px-1.5 py-0.5 bg-orange-100 text-orange-600 text-xs rounded">高雄</span>';
+                if (row['節目名稱'].includes('台北') || row['節目名稱'].includes('臺北')) locationTag = '<span class="ml-2 px-1.5 py-0.5 bg-blue-100 text-blue-600 text-xs rounded">台北</span>';
+
+                tr.innerHTML = `
+                    <td class="py-4 px-6 font-mono text-slate-500 group-hover:text-indigo-600 whitespace-nowrap">
+                        ${displayDate}
+                    </td>
+                    <td class="py-4 px-6 font-medium text-slate-700">
+                        ${row['節目名稱']} ${locationTag}
+                    </td>
+                    <td class="py-4 px-6">
+                        <span class="inline-block bg-slate-100 text-slate-600 text-xs px-2 py-1 rounded border border-slate-200 group-hover:border-indigo-200 group-hover:bg-indigo-50 group-hover:text-indigo-700 transition">
+                            ${row['張數'] || '-'}
+                        </span>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+    </script>
+</body>
+</html>
