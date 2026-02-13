@@ -265,6 +265,7 @@
         .btn-text {
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 6px;
             background-color: var(--card-bg);
             border: 1px solid var(--tag-border);
@@ -275,6 +276,7 @@
             color: var(--text-main);
             cursor: pointer;
             transition: all 0.2s;
+            white-space: nowrap; /* 確保文字不換行 */
         }
         
         .btn-text:hover {
@@ -494,8 +496,25 @@
             h1 { font-size: 1.5rem; padding: 0 90px 0 40px; text-align: left; }
 
             .controls-bar { flex-direction: column; align-items: stretch; gap: 12px; }
-            .filter-group { justify-content: space-between; width: 100%; }
-            .filter-group select, .filter-group button { flex: 1; }
+            
+            /* 修改手機版篩選群組佈局：2x2 排列 */
+            .filter-group { 
+                justify-content: space-between; 
+                width: 100%;
+                flex-wrap: wrap; /* 允許換行 */
+                gap: 10px; /* 增加間距 */
+            }
+
+            /* 每個元素佔一半寬度 */
+            #year-filter, #month-filter {
+                flex: 1 1 45%; 
+                min-width: 0;
+            }
+
+            #sort-btn, #reset-btn {
+                flex: 1 1 45%;
+                min-width: 0;
+            }
 
             .header-row { display: none; }
 
