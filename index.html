@@ -12,25 +12,27 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* --- 視覺質感與核心結構 --- */
+        /* --- 視覺藝術與核心結構 --- */
         *, *::before, *::after { box-sizing: border-box; }
         
         :root {
-            --bg-color: #f6f9fc;
+            --bg-color: #f1f4f9;
             --card-bg: #ffffff;
             --text-main: #64748b;
             --text-title: #0f172a;
             --primary: #2563eb;
             --primary-dark: #1e40af;
             --primary-light: rgba(37, 99, 235, 0.08);
-            --header-bg: #ffffff;
+            --header-bg: rgba(255, 255, 255, 0.95);
             --tag-bg: #f1f5f9;
             --tag-border: #e2e8f0;
-            --shadow-soft: 0 2px 10px rgba(0, 0, 0, 0.02);
-            --shadow-panel: 0 10px 30px -10px rgba(0, 0, 0, 0.04), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.02);
+            --shadow-md: 0 10px 30px -5px rgba(0, 0, 0, 0.04);
+            --shadow-lg: 0 20px 50px -12px rgba(0, 0, 0, 0.08);
             --radius-lg: 24px;
             --radius-md: 16px;
-            --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            --radius-sm: 10px;
+            --transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
         }
 
         [data-theme="dark"] {
@@ -40,10 +42,10 @@
             --text-title: #f8fafc;
             --primary: #3b82f6;
             --primary-light: rgba(59, 130, 246, 0.1);
-            --header-bg: #0f172a;
+            --header-bg: rgba(15, 23, 42, 0.95);
             --tag-bg: #0f172a;
             --tag-border: #334155;
-            --shadow-panel: 0 20px 40px -15px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 25px 60px -15px rgba(0, 0, 0, 0.5);
         }
 
         html, body {
@@ -64,48 +66,52 @@
             .mobile-only { display: flex !important; }
         }
 
-        /* --- 頂部儀表板：消除空洞與擠壓 --- */
+        /* --- 頂部面板：懸浮島嶼設計 --- */
         .header-panel {
             flex-shrink: 0; background-color: var(--header-bg);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
             border-bottom: 1px solid var(--tag-border); z-index: 1000;
-            box-shadow: var(--shadow-panel); padding: 14px 0;
+            box-shadow: var(--shadow-sm); padding: 14px 0;
         }
-        .container { max-width: 1150px; margin: 0 auto; padding: 0 24px; width: 100%; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; width: 100%; }
 
-        /* --- 電腦版樣式校正 --- */
+        /* --- 電腦版精確排版 --- */
         .desktop-header { flex-direction: column; gap: 14px; }
+        
         .top-row { display: flex; justify-content: space-between; align-items: center; }
         .brand { 
-            font-size: 1.7rem; font-weight: 900; color: var(--primary); 
+            font-size: 1.65rem; font-weight: 900; color: var(--primary); 
             letter-spacing: -1.5px; text-transform: uppercase;
+            background: linear-gradient(to bottom right, var(--primary), var(--primary-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
         
-        /* 右上按鈕：強制水平排列 */
+        /* 系統按鈕：水平排列 */
         .system-actions { display: flex !important; flex-direction: row !important; gap: 10px; align-items: center; }
 
-        /* 緊湊控制列 (解決空洞) */
+        /* 第二列：緊湊型控制列 (消除空白) */
         .control-row { 
-            display: flex; align-items: center; gap: 24px; width: 100%;
+            display: flex; align-items: center; gap: 20px; width: 100%;
         }
 
-        .stats-group { display: flex; gap: 12px; flex-shrink: 0; }
+        .stats-group { display: flex; gap: 10px; flex-shrink: 0; }
         .stat-card {
             background: var(--primary-light); border: 1px solid var(--tag-border);
             padding: 10px 20px; border-radius: var(--radius-md); text-align: center;
-            min-width: 110px; transition: var(--transition);
+            min-width: 105px; transition: var(--transition);
         }
-        .stat-card:hover { border-color: var(--primary); transform: translateY(-2px); }
+        .stat-card:hover { transform: translateY(-2px); border-color: var(--primary); }
 
         .tools-group { 
             display: flex; gap: 12px; flex-grow: 1; align-items: center; justify-content: flex-end;
         }
-        .search-area { flex-grow: 1; position: relative; max-width: 420px; } 
+        .search-area { flex-grow: 1; position: relative; max-width: 400px; } 
         .filters { display: flex; gap: 8px; flex-shrink: 0; }
 
-        /* --- 手機版佈局優化 --- */
+        /* --- 手機版佈局精修 --- */
         .mobile-header { flex-direction: column; gap: 12px; width: 100%; }
         .mobile-nav { display: flex; justify-content: space-between; align-items: center; min-height: 48px; }
-        .mobile-brand { font-size: 1.4rem; font-weight: 900; color: var(--primary); letter-spacing: -1px; }
         .mobile-stats { display: flex; gap: 10px; }
         .mobile-stats .stat-card { flex: 1; padding: 12px; border-radius: var(--radius-md); }
         .mobile-tools { display: flex; flex-direction: column; gap: 12px; }
@@ -120,7 +126,7 @@
             white-space: nowrap; outline: none;
         }
         .icon-btn:hover { background-color: var(--primary); color: white; border-color: var(--primary); transform: translateY(-3px); box-shadow: 0 8px 20px rgba(37, 99, 235, 0.2); }
-        .icon-btn:active { transform: scale(0.96); }
+        .icon-btn:active { transform: scale(0.95); }
         .icon-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
 
         @media (max-width: 768px) {
@@ -128,7 +134,7 @@
         }
 
         .search-input {
-            width: 100%; height: 42px; padding: 0 15px 0 44px; border-radius: 14px;
+            width: 100%; height: 42px; padding: 0 15px 0 46px; border-radius: 14px;
             border: 1px solid var(--tag-border); background-color: var(--bg-color); color: var(--text-title); outline: none;
             font-size: 1rem; transition: var(--transition);
         }
@@ -146,79 +152,86 @@
         .stat-val { font-size: 1.5rem; font-weight: 900; color: var(--primary); line-height: 1; }
         .stat-lbl { font-size: 0.65rem; font-weight: 800; opacity: 0.5; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
 
-        /* --- 下方捲動區 --- */
+        /* --- 下方展示捲動區 --- */
         .scroll-area {
             flex-grow: 1; overflow-y: auto; padding: 20px 0 80px 0;
             background-color: var(--bg-color); -webkit-overflow-scrolling: touch;
         }
-        .scroll-area::-webkit-scrollbar { width: 5px; }
+        /* 自定義優雅滾動條 */
+        .scroll-area::-webkit-scrollbar { width: 4px; }
         .scroll-area::-webkit-scrollbar-thumb { background: var(--tag-border); border-radius: 10px; }
         .scroll-area::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
         .ticket-list { display: flex; flex-direction: column; gap: 14px; }
 
-        /* --- 🎫 票券卡片質感精進 --- */
+        /* --- 🎫 藝術級票券卡片 --- */
         .ticket-card {
             background-color: var(--card-bg); border-radius: var(--radius-md); display: flex;
-            overflow: hidden; box-shadow: var(--shadow-soft); border: 1px solid var(--tag-border);
+            overflow: hidden; box-shadow: var(--shadow-sm); border: 1px solid var(--tag-border);
             transition: var(--transition); position: relative;
-            animation: slideInUp 0.5s ease-out backwards;
+            animation: slideInUp 0.6s cubic-bezier(0.23, 1, 0.32, 1) backwards;
         }
-        .ticket-card:hover { transform: translateY(-4px) scale(1.01); box-shadow: var(--shadow-panel); }
+        .ticket-card:hover { transform: translateY(-4px) scale(1.01); box-shadow: var(--shadow-lg); }
 
         @keyframes slideInUp {
-            from { opacity: 0; transform: translateY(20px); }
+            from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         .ticket-stub {
             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: white; padding: 16px;
+            color: white; padding: 18px;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            min-width: 95px; text-align: center; border-right: 2px dashed rgba(255,255,255,0.3); position: relative;
+            min-width: 95px; text-align: center; border-right: 2px dashed rgba(255,255,255,0.35); position: relative;
         }
         
-        /* 擬真票券缺口 */
+        /* 🎫 擬真票券缺口工藝 */
         .ticket-stub::before, .ticket-stub::after {
-            content: ''; position: absolute; right: -11px; width: 22px; height: 22px;
-            background-color: var(--bg-color); border-radius: 50%; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+            content: ''; position: absolute; right: -12px; width: 24px; height: 24px;
+            background-color: var(--bg-color); border-radius: 50%; 
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05); /* 內凹陰影 */
         }
-        .ticket-stub::before { top: -11px; }
-        .ticket-stub::after { bottom: -11px; }
+        .ticket-stub::before { top: -12px; }
+        .ticket-stub::after { bottom: -12px; }
 
-        .ticket-body { flex: 1; padding: 16px 28px; display: flex; flex-direction: column; justify-content: center; gap: 8px; }
+        .ticket-body { 
+            flex: 1; padding: 18px 28px; display: flex; flex-direction: column; justify-content: center; gap: 10px;
+            background-image: radial-gradient(var(--tag-border) 0.5px, transparent 0.5px); /* 輕微網格背景 */
+            background-size: 20px 20px;
+        }
         
-        /* 節目名稱精緻化（縮小字級） */
+        /* 下方節目名稱精緻化（小字級、加重字重） */
         .ticket-title { font-size: 1rem; font-weight: 700; color: var(--text-title); margin: 0; line-height: 1.45; letter-spacing: -0.2px; }
         
         @media (max-width: 768px) {
             .ticket-card { flex-direction: column; border-radius: 20px; }
             .ticket-stub { 
-                flex-direction: row; min-width: 100%; padding: 10px 20px; justify-content: flex-start; gap: 14px;
+                flex-direction: row; min-width: 100%; padding: 12px 20px; justify-content: flex-start; gap: 14px;
                 border-right: none; border-bottom: 2px dashed rgba(255,255,255,0.25);
             }
-            .ticket-stub::before, .ticket-stub::after { left: 50%; transform: translateX(-50%); right: auto; top: auto; bottom: -11px; }
-            .ticket-title { font-size: 0.9rem; font-weight: 600; }
-            .ticket-body { padding: 14px 20px; }
+            .ticket-stub::before, .ticket-stub::after { left: 50%; transform: translateX(-50%); right: auto; top: auto; bottom: -12px; }
+            .ticket-title { font-size: 0.92rem; font-weight: 600; } 
+            .ticket-body { padding: 16px 20px; }
         }
 
         .tag-row { display: flex; flex-wrap: wrap; gap: 6px; }
         .tag { 
             font-size: 0.68rem; font-weight: 800; background-color: var(--tag-bg); color: var(--primary); 
-            padding: 3px 10px; border-radius: 8px; border: 1px solid var(--tag-border); 
-            transition: 0.2s;
+            padding: 3px 12px; border-radius: 8px; border: 1px solid var(--tag-border); 
+            transition: 0.3s;
         }
-        .tag:hover { background-color: var(--primary-light); }
+        .tag:hover { background-color: var(--primary); color: white; border-color: var(--primary); transform: scale(1.05); }
 
+        /* --- 浮動功能按鈕 --- */
         #back-to-top {
-            position: fixed; bottom: 24px; right: 24px; width: 48px; height: 48px;
+            position: fixed; bottom: 28px; right: 28px; width: 50px; height: 50px;
             background-color: var(--primary); color: white; border: none; border-radius: 50%;
             display: none; align-items: center; justify-content: center; cursor: pointer;
-            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4); z-index: 2000; transition: var(--transition);
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.35); z-index: 2000; transition: var(--transition);
         }
-        #back-to-top:hover { transform: scale(1.15) rotate(-8deg); background-color: var(--primary-dark); }
+        #back-to-top:hover { transform: scale(1.15) rotate(-5deg); background-color: var(--primary-dark); }
 
-        footer { text-align: center; padding: 50px 0; opacity: 0.4; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.5px; }
+        footer { text-align: center; padding: 60px 0; opacity: 0.4; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.5px; }
     </style>
 </head>
 <body>
@@ -226,21 +239,21 @@
         <header class="header-panel">
             <div class="container">
                 
-                <!-- 1. 電腦版控制台 (精緻平行佈局) -->
+                <!-- 1. 電腦版控制島 -->
                 <div class="desktop-header desktop-only">
                     <div class="top-row">
                         <div class="brand">MUIII 搶票戰績</div>
                         <div class="system-actions">
                             <button class="install-btn icon-btn" style="display:none"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg><span>下載 APP</span></button>
                             <button class="reload-btn icon-btn"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg><span>重整資料</span></button>
-                            <button class="theme-toggle icon-btn"><svg class="theme-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg><span>切換模式</span></button>
+                            <button class="theme-toggle icon-btn"><svg class="theme-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg><span>深色模式</span></button>
                         </div>
                     </div>
                     
                     <div class="control-row">
                         <div class="stats-group">
-                            <div class="stat-card"><div class="total-tickets stat-val">0</div><div class="stat-lbl">🎟️ 搶下張數</div></div>
-                            <div class="stat-card"><div class="total-records stat-val">0</div><div class="stat-lbl">🎤 達成場次</div></div>
+                            <div class="stat-card"><div class="total-tickets stat-val">0</div><div class="stat-lbl">🎟️ 總張數</div></div>
+                            <div class="stat-card"><div class="total-records stat-val">0</div><div class="stat-lbl">🎤 總場次</div></div>
                         </div>
                         <div class="tools-group">
                             <div class="search-area">
@@ -260,7 +273,7 @@
                     </div>
                 </div>
 
-                <!-- 2. 手機版控制台 (精緻垂直對齊) -->
+                <!-- 2. 手機版控制島 -->
                 <div class="mobile-header mobile-only">
                     <div class="mobile-nav">
                         <div class="mobile-brand">MUIII 戰績</div>
@@ -272,12 +285,12 @@
                     </div>
                     <div class="mobile-tools">
                         <div class="mobile-stats">
-                            <div class="stat-card"><div class="total-tickets stat-val">0</div><div class="stat-lbl">搶下張數</div></div>
-                            <div class="stat-card"><div class="total-records stat-val">0</div><div class="stat-lbl">達成場次</div></div>
+                            <div class="stat-card"><div class="total-tickets stat-val">0</div><div class="stat-lbl">🎟️ 張數</div></div>
+                            <div class="stat-card"><div class="total-records stat-val">0</div><div class="stat-lbl">🎤 場次</div></div>
                         </div>
                         <div class="search-area">
                             <svg class="search-icon" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                            <input type="text" class="search-input" placeholder="搜尋戰績票券...">
+                            <input type="text" class="search-input" placeholder="搜尋戰績...">
                         </div>
                         <div class="mobile-filters">
                             <select class="year-filter custom-select"><option value="all">年份</option></select>
@@ -294,7 +307,7 @@
         <main class="scroll-area" id="scroll-main">
             <div class="container">
                 <div id="list-container" class="ticket-list">
-                    <!-- JS 渲染 -->
+                    <!-- 由 JS 渲染 -->
                 </div>
                 <footer>&copy; 2026 Muiii Project &bull; Live Records</footer>
             </div>
@@ -357,7 +370,7 @@
 
             document.querySelectorAll('.reload-btn').forEach(el => el.onclick = loadData);
             document.querySelectorAll('.theme-toggle').forEach(el => el.onclick = () => {
-                const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                const isDark = document.documentElement.getAttribute('data-theme') === 'dark');
                 const newTheme = isDark ? 'light' : 'dark';
                 document.documentElement.setAttribute('data-theme', newTheme);
                 localStorage.setItem('muiii_theme', newTheme);
@@ -415,7 +428,7 @@
 
             const container = document.getElementById('list-container');
             if (!data.length) {
-                container.innerHTML = '<div style="text-align:center;padding:120px 0;opacity:0.3"><h3>找不到相符的戰績</h3></div>';
+                container.innerHTML = '<div style="text-align:center;padding:120px 0;opacity:0.3"><h3>無相符票券</h3></div>';
                 return;
             }
 
