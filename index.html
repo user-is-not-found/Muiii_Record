@@ -133,18 +133,22 @@
         }
 
         .icon-btn {
-            width: 40px;
             height: 40px;
             background-color: var(--toggle-bg);
             border: 1px solid var(--tag-border);
             color: var(--toggle-text);
             cursor: pointer;
-            border-radius: 50%;
+            border-radius: 50px; /* 膠囊形狀 */
             display: flex;
             align-items: center;
             justify-content: center;
             transition: all 0.2s;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            padding: 0 16px; /* 增加內距 */
+            gap: 8px; /* 圖示與文字間距 */
+            font-weight: 700;
+            font-size: 0.9rem;
+            white-space: nowrap;
         }
 
         .icon-btn:hover {
@@ -178,7 +182,7 @@
             color: var(--text-title);
             margin: 0 0 10px 0;
             letter-spacing: -0.5px;
-            padding-right: 120px;
+            padding-right: 180px; /* 預留更多空間給文字按鈕 */
             padding-left: 40px;
         }
 
@@ -491,7 +495,15 @@
             }
 
             .top-actions { right: 15px; top: 15px; }
-            .icon-btn { width: 36px; height: 36px; }
+            
+            /* 手機版按鈕樣式調整：隱藏文字，變回圓形 */
+            .icon-btn { 
+                width: 36px; 
+                height: 36px; 
+                padding: 0; 
+                border-radius: 50%;
+            }
+            .icon-btn span { display: none; }
 
             h1 { font-size: 1.5rem; padding: 0 90px 0 40px; text-align: left; }
 
@@ -578,18 +590,21 @@
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
                     </svg>
+                    <span>安裝</span>
                 </button>
                 <!-- 重新載入按鈕 -->
                 <button id="reload-btn" class="icon-btn" title="重新載入資料">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                     </svg>
+                    <span>重整</span>
                 </button>
                 <!-- 主題切換按鈕 -->
                 <button id="theme-toggle" class="icon-btn" title="切換深色/淺色模式">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
                     </svg>
+                    <span>模式</span>
                 </button>
             </div>
 
