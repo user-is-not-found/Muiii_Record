@@ -16,31 +16,42 @@
         :root {
             --bg-color: #f8fafc; --card-bg: #ffffff; --text-main: #334155; --text-title: #0f172a;
             --primary: #2563eb; --primary-hover: #1d4ed8; --date-bg: #eff6ff; --date-text: #2563eb;
-            --tag-bg: #f1f5f9; --tag-border: #e2e8f0; --frozen-bg: rgba(255, 255, 255, 0.85);
-            --frozen-border: rgba(255, 255, 255, 0.6); --header-row-text: #64748b;
+            --tag-bg: #f1f5f9; --tag-border: #e2e8f0; 
+            --frozen-bg: #ffffff; /* 改為完全不透明，防止內容透出 */
+            --frozen-border: #e2e8f0; --header-row-text: #64748b;
             --toggle-bg: #f1f5f9; --toggle-text: #64748b; --highlight-bg: #fef08a;
         }
         [data-theme="dark"] {
             --bg-color: #0f172a; --card-bg: #1e293b; --text-main: #cbd5e1; --text-title: #f8fafc;
             --primary: #60a5fa; --primary-hover: #3b82f6; --date-bg: #0f172a; --date-text: #60a5fa;
-            --tag-bg: #334155; --tag-border: #475569; --frozen-bg: rgba(30, 41, 59, 0.85);
+            --tag-bg: #334155; --tag-border: #475569; 
+            --frozen-bg: #1e293b; /* 深色模式亦同 */
             --toggle-bg: #334155; --toggle-text: #cbd5e1;
         }
 
         body { font-family: 'Inter', 'Noto Sans TC', sans-serif; background-color: var(--bg-color); color: var(--text-main); margin: 0; padding: 0; line-height: 1.6; overflow-x: hidden; }
         .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 20px 40px 20px; }
 
+        /* 修正後的儀表板區塊 */
         .frozen-section {
-            position: sticky; top: 10px; z-index: 100; background: var(--frozen-bg);
-            backdrop-filter: blur(12px); border: 1px solid var(--frozen-border);
-            border-radius: 24px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
-            padding: 20px; margin-bottom: 25px; width: 100%;
+            position: sticky; top: 0; z-index: 100; 
+            background: var(--frozen-bg);
+            border-bottom: 1px solid var(--tag-border);
+            padding: 20px 0; margin-bottom: 25px; width: 100%;
         }
 
-        .top-actions { position: absolute; right: 20px; top: 20px; display: flex; gap: 8px; z-index: 110; }
+        .header-content {
+            max-width: 1160px; margin: 0 auto; padding: 0 20px;
+        }
+
+        .top-row {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;
+        }
+
+        .top-actions { display: flex; gap: 8px; }
         
         .icon-btn {
-            height: 38px; padding: 0 14px; border-radius: 50px; background: var(--toggle-bg);
+            height: 36px; padding: 0 12px; border-radius: 50px; background: var(--toggle-bg);
             border: 1px solid var(--tag-border); color: var(--toggle-text); cursor: pointer;
             display: flex; align-items: center; justify-content: center; gap: 6px;
             font-size: 0.85rem; font-weight: 700; transition: all 0.2s;
@@ -48,96 +59,119 @@
         .icon-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
         .icon-btn:hover { background: var(--primary); color: white; border-color: var(--primary); }
 
-        header { text-align: center; margin-bottom: 15px; }
-        h1 { font-size: 1.8rem; font-weight: 900; color: var(--text-title); margin: 0 0 15px 0; text-align: left; padding-left: 10px; padding-right: 150px; }
+        h1 { font-size: 1.6rem; font-weight: 900; color: var(--text-title); margin: 0; }
 
-        .search-container { max-width: 500px; margin: 0 auto 15px auto; position: relative; }
-        .search-input { width: 100%; padding: 10px 15px 10px 45px; border-radius: 50px; border: 1px solid var(--tag-border); background: var(--card-bg); color: var(--text-main); outline: none; }
+        .search-container { max-width: 100%; margin-bottom: 15px; position: relative; }
+        .search-input { width: 100%; height: 44px; padding: 10px 15px 10px 45px; border-radius: 12px; border: 1px solid var(--tag-border); background: var(--bg-color); color: var(--text-main); outline: none; transition: border-color 0.2s; }
+        .search-input:focus { border-color: var(--primary); }
         .search-icon { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; color: #94a3b8; }
 
-        .controls-bar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; padding: 0 10px; }
-        .filter-group { display: flex; gap: 8px; align-items: center; }
+        .controls-bar { 
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; 
+        }
         
+        .filter-group { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+        
+        /* 統一高度與外觀 */
         .custom-select, .btn-text {
-            height: 36px; padding: 0 12px; border-radius: 10px; border: 1px solid var(--tag-border);
+            height: 38px; padding: 0 12px; border-radius: 10px; border: 1px solid var(--tag-border);
             background: var(--card-bg); color: var(--text-main); font-size: 0.85rem; font-weight: 600;
-            display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer;
+            transition: all 0.2s;
         }
         .btn-text svg { width: 14px; height: 14px; }
         .btn-text:hover { border-color: var(--primary); color: var(--primary); }
 
-        .stats-display { font-size: 0.85rem; font-weight: 600; color: var(--header-row-text); background: rgba(0,0,0,0.03); padding: 5px 12px; border-radius: 8px; }
-        .stats-highlight { color: var(--primary); font-weight: 800; }
-
-        .ticket-list { display: flex; flex-direction: column; gap: 12px; }
-        .ticket-card {
-            background: var(--card-bg); border-radius: 16px; padding: 16px 24px;
-            display: grid; grid-template-columns: 110px 1fr auto; align-items: center; gap: 20px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.02); transition: all 0.2s; cursor: pointer;
+        .stats-display { 
+            font-size: 0.9rem; font-weight: 600; color: var(--header-row-text); 
+            padding: 5px 0; border-radius: 8px;
         }
-        .ticket-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.05); }
+        .stats-highlight { color: var(--primary); font-weight: 800; font-size: 1.1rem; }
 
-        .date-box { background: var(--date-bg); color: var(--date-text); padding: 6px; border-radius: 10px; text-align: center; font-weight: 700; font-size: 0.9rem; }
-        .program-title { font-size: 1.1rem; font-weight: 700; color: var(--text-title); }
-        .tags-group { display: flex; flex-direction: column; gap: 4px; align-items: flex-end; }
-        .tag { background: var(--tag-bg); border: 1px solid var(--tag-border); color: var(--text-main); padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; white-space: nowrap; }
+        /* 列表樣式 */
+        .ticket-list { display: flex; flex-direction: column; gap: 16px; }
+        .ticket-card {
+            background: var(--card-bg); border-radius: 16px; padding: 20px 24px;
+            display: grid; grid-template-columns: 110px 1fr auto; align-items: center; gap: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02); border: 1px solid var(--tag-border);
+            transition: all 0.2s; cursor: pointer;
+        }
+        .ticket-card:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(0,0,0,0.05); }
 
-        #back-to-top { position: fixed; bottom: 20px; right: 20px; background: var(--primary); color: white; width: 40px; height: 40px; border-radius: 50%; display: none; align-items: center; justify-content: center; cursor: pointer; border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .date-box { background: var(--date-bg); color: var(--date-text); padding: 8px; border-radius: 12px; text-align: center; font-weight: 700; font-size: 0.95rem; }
+        .program-title { font-size: 1.15rem; font-weight: 700; color: var(--text-title); }
+        .tags-group { display: flex; flex-direction: column; gap: 6px; align-items: flex-end; }
+        .tag { background: var(--tag-bg); border: 1px solid var(--tag-border); color: var(--text-main); padding: 5px 12px; border-radius: 8px; font-size: 0.85rem; font-weight: 600; white-space: nowrap; }
+
+        #back-to-top { position: fixed; bottom: 25px; right: 25px; background: var(--primary); color: white; width: 45px; height: 45px; border-radius: 50%; display: none; align-items: center; justify-content: center; cursor: pointer; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 200; }
 
         @media (max-width: 768px) {
-            .frozen-section { border-radius: 0 0 20px 20px; padding: 15px; margin-left: -20px; width: calc(100% + 40px); top: 0; }
+            .frozen-section { padding: 10px 0; }
+            .header-content { padding: 0 15px; }
+            .top-row { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .top-actions { width: 100%; justify-content: flex-end; position: static; }
             .icon-btn span { display: none; }
-            .icon-btn { width: 38px; padding: 0; border-radius: 50%; }
-            h1 { font-size: 1.4rem; padding-right: 130px; margin-top: 5px; }
-            .filter-group { width: 100%; justify-content: space-between; flex-wrap: wrap; }
-            .custom-select, .btn-text { flex: 1 1 45%; }
-            .ticket-card { grid-template-columns: 1fr; gap: 10px; padding: 15px; }
-            .date-box { width: fit-content; border-bottom: 1px solid var(--tag-border); padding-bottom: 10px; background: none; color: var(--header-row-text); }
+            .icon-btn { width: 36px; padding: 0; border-radius: 50%; }
+            h1 { font-size: 1.4rem; }
+            .controls-bar { flex-direction: column; align-items: flex-start; }
+            .filter-group { width: 100%; justify-content: space-between; }
+            .custom-select, .btn-text { flex: 1 1 calc(50% - 5px); }
+            .ticket-card { grid-template-columns: 1fr; gap: 12px; padding: 16px; }
+            .date-box { width: fit-content; border-bottom: 1px solid var(--tag-border); padding: 0 0 10px 0; background: none; color: var(--header-row-text); border-radius: 0; }
             .tags-group { flex-direction: row; flex-wrap: wrap; justify-content: flex-start; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="frozen-section">
-            <div class="top-actions">
-                <button id="install-btn" class="icon-btn">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                    <span>安裝</span>
-                </button>
-                <button id="reload-btn" class="icon-btn">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                    <span>重整</span>
-                </button>
-                <button id="theme-toggle" class="icon-btn">
-                    <svg id="theme-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
-                    <span>模式</span>
-                </button>
-            </div>
-            <header>
+    <div class="frozen-section">
+        <div class="header-content">
+            <div class="top-row">
                 <h1>Muiii 搶票戰績</h1>
-                <div class="search-container">
-                    <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                    <input type="text" id="search-input" class="search-input" placeholder="搜尋節目、日期...">
+                <div class="top-actions">
+                    <button id="install-btn" class="icon-btn">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                        <span>安裝</span>
+                    </button>
+                    <button id="reload-btn" class="icon-btn">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                        <span>重整</span>
+                    </button>
+                    <button id="theme-toggle" class="icon-btn">
+                        <svg id="theme-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                        <span>模式</span>
+                    </button>
                 </div>
-                <div class="controls-bar">
-                    <div class="filter-group">
-                        <select id="year-filter" class="custom-select"><option value="all">所有年份</option></select>
-                        <select id="month-filter" class="custom-select" disabled><option value="all">所有月份</option></select>
-                        <button id="sort-btn" class="btn-text"><span>⬇</span> <span id="sort-text">新到舊</span></button>
-                        <button id="reset-btn" class="btn-text">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                            <span>重置</span>
-                        </button>
-                    </div>
-                    <div class="stats-display">搶下 <span id="total-tickets" class="stats-highlight">0</span> 張票 (共 <span id="total-records">0</span> 場)</div>
+            </div>
+
+            <div class="search-container">
+                <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                <input type="text" id="search-input" class="search-input" placeholder="搜尋節目名稱或日期...">
+            </div>
+
+            <div class="controls-bar">
+                <div class="filter-group">
+                    <select id="year-filter" class="custom-select"><option value="all">所有年份</option></select>
+                    <select id="month-filter" class="custom-select" disabled><option value="all">所有月份</option></select>
+                    <button id="sort-btn" class="btn-text"><span>⬇</span> <span id="sort-text">新到舊</span></button>
+                    <button id="reset-btn" class="btn-text">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                        <span>重置</span>
+                    </button>
                 </div>
-            </header>
+                <div class="stats-display">
+                    搶下 <span id="total-tickets" class="stats-highlight">0</span> 張票 
+                    <span style="font-weight:400; opacity: 0.7; font-size: 0.85em;">(共 <span id="total-records">0</span> 場)</span>
+                </div>
+            </div>
         </div>
-        <div id="list-container" class="ticket-list"></div>
-        <footer style="margin-top:40px; text-align:center; opacity:0.5; font-size:0.8rem;">&copy; 2026 Muiii Project</footer>
     </div>
-    <button id="back-to-top"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg></button>
+
+    <div class="container">
+        <div id="list-container" class="ticket-list"></div>
+        <footer>&copy; 2026 Muiii Project</footer>
+    </div>
+
+    <button id="back-to-top"><svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg></button>
 
     <script>
         const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vThZZurHBpfes9J-dLaoi51jpb0MnQ4oABmBux77r-OO5LOvuoex6lesE4GvZb-UQ5zgiqWEfiHxNQy/pub?gid=0&single=true&output=csv';
@@ -196,15 +230,20 @@
             document.getElementById('month-filter').disabled = currentYear === 'all';
             render();
         };
+        document.getElementById('month-filter').onchange = (e) => { currentMonth = e.target.value; render(); };
         document.getElementById('sort-btn').onclick = () => {
             currentSort = currentSort === 'desc' ? 'asc' : 'desc';
+            document.getElementById('sort-icon').innerText = currentSort === 'desc' ? '⬇' : '⬆';
             document.getElementById('sort-text').innerText = currentSort === 'desc' ? '新到舊' : '舊到新';
             render();
         };
         document.getElementById('reset-btn').onclick = () => {
             document.getElementById('search-input').value = '';
             document.getElementById('year-filter').value = 'all';
-            currentYear = 'all'; render();
+            document.getElementById('month-filter').value = 'all';
+            document.getElementById('month-filter').disabled = true;
+            currentYear = currentMonth = 'all';
+            render();
         };
         document.getElementById('reload-btn').onclick = loadData;
         document.getElementById('theme-toggle').onclick = () => {
