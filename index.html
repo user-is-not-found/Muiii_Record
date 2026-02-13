@@ -210,7 +210,7 @@
         .tag { 
             font-size: 0.75rem; font-weight: 700; background-color: var(--tag-bg); color: var(--primary); 
             padding: 4px 12px; border-radius: 8px; border: 1px solid var(--tag-border); 
-            transition: all 0.2s;
+            transition: all 0.2;
         }
         .tag:hover { background-color: var(--primary-light); transform: translateY(-1px); }
 
@@ -324,7 +324,7 @@
         <main class="scroll-area" id="scroll-main">
             <div class="container">
                 <div id="list-container" class="ticket-list">
-                    <div style="text-align:center;padding:120px 0;opacity:0.3">正在開啟您的戰績資料庫...</div>
+                    <!-- 載入期間保持空白 -->
                 </div>
                 <footer>&copy; 2026 Muiii Project &bull; Live For Live</footer>
             </div>
@@ -403,6 +403,9 @@
         }
 
         function loadData() {
+            const container = document.getElementById('list-container');
+            container.innerHTML = ''; // 移除文字，載入期間保持空白
+            
             const ts = new Date().getTime();
             Papa.parse(`${CSV_URL}&t=${ts}`, {
                 download: true, header: true,
