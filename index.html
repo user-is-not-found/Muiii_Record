@@ -7,16 +7,17 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        /* --- 時間軸版面 (Timeline Layout) --- */
+        /* --- 清新票卡版面 (Clean Ticket Layout) --- */
         :root {
-            --bg-color: #f8fafc;       /* 極淺藍灰背景 */
-            --line-color: #e2e8f0;     /* 時間軸線條色 */
-            --dot-color: #3b82f6;      /* 時間點顏色 */
+            --bg-color: #f1f5f9;       /* 淺灰背景 */
             --card-bg: #ffffff;        /* 白卡片 */
-            --text-main: #1e293b;      /* 深色主字 */
-            --text-sub: #64748b;       /* 次要文字 */
-            --accent-bg: #eff6ff;      /* 標籤淺藍底 */
-            --accent-text: #2563eb;    /* 標籤深藍字 */
+            --text-main: #334155;      /* 深灰主字 */
+            --text-title: #0f172a;     /* 標題黑字 */
+            --primary: #2563eb;        /* 裝飾藍 */
+            --date-bg: #e0f2fe;        /* 日期淺藍底 */
+            --date-text: #0284c7;      /* 日期深藍字 */
+            --tag-bg: #f8fafc;         /* 標籤淺灰底 */
+            --tag-border: #e2e8f0;     /* 標籤邊框 */
         }
 
         body {
@@ -30,159 +31,148 @@
 
         .container {
             width: 100%;
-            max-width: 800px;
+            max-width: 850px;
             margin: 0 auto;
         }
 
         header {
             text-align: center;
-            margin-bottom: 60px;
+            margin-bottom: 50px;
         }
 
         h1 {
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             font-weight: 900;
-            color: #1e293b;
+            color: var(--text-title);
             margin: 0 0 10px 0;
-            letter-spacing: -1px;
+            letter-spacing: -0.5px;
         }
 
-        .stats-bar {
+        .stats-badge {
             display: inline-block;
-            background: white;
+            background: #fff;
             padding: 6px 16px;
-            border-radius: 8px;
-            border: 1px solid #e2e8f0;
+            border-radius: 50px;
             font-size: 0.9rem;
-            color: var(--text-sub);
-            font-weight: 500;
+            color: var(--text-main);
+            font-weight: 600;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
 
         #loading {
             text-align: center;
             padding: 60px;
-            color: var(--text-sub);
+            color: #94a3b8;
         }
 
-        /* --- 時間軸核心樣式 --- */
-        .timeline {
-            position: relative;
-            padding-left: 30px; /* 預留左側空間給線條 */
+        /* --- 票卡列表樣式 --- */
+        .ticket-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
         }
 
-        /* 垂直線 */
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 10px;
-            bottom: 0;
-            width: 2px;
-            background: var(--line-color);
-            border-radius: 2px;
-        }
-
-        /* 時間軸項目容器 */
-        .timeline-item {
-            position: relative;
-            margin-bottom: 40px;
-            padding-left: 20px; /* 卡片與線的距離 */
-        }
-
-        /* 時間點 (圓點) */
-        .timeline-marker {
-            position: absolute;
-            left: -35px; /* 調整圓點位置以對齊線條 */
-            top: 24px; /* 對齊日期高度 */
-            width: 12px;
-            height: 12px;
-            background: var(--dot-color);
-            border: 3px solid #fff;
-            border-radius: 50%;
-            box-shadow: 0 0 0 1px var(--dot-color);
-            z-index: 1;
-        }
-
-        /* 內容卡片 */
-        .timeline-content {
+        .ticket-card {
             background: var(--card-bg);
             border-radius: 12px;
             padding: 24px;
-            box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.05);
-            border: 1px solid rgba(0,0,0,0.03);
-            transition: transform 0.2s ease;
+            display: flex;
+            align-items: flex-start; /* 頂部對齊 */
+            gap: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 1px solid transparent;
         }
 
-        .timeline-content:hover {
-            transform: translateX(5px);
+        .ticket-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.1);
             border-color: #cbd5e1;
         }
 
-        /* 日期顯示 */
-        .date-label {
-            font-family: 'Inter', monospace;
-            font-size: 0.85rem;
+        /* 左側：日期區塊 */
+        .date-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--date-bg);
+            color: var(--date-text);
+            min-width: 80px;
+            padding: 10px;
+            border-radius: 8px;
             font-weight: 700;
-            color: var(--text-sub);
-            margin-bottom: 8px;
-            display: block;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            text-align: center;
+            line-height: 1.2;
         }
 
-        /* 節目名稱 (支援長標題) */
+        .date-year {
+            font-size: 0.75rem;
+            opacity: 0.8;
+        }
+
+        .date-day {
+            font-size: 1.1rem;
+        }
+
+        /* 中間：內容區塊 */
+        .content-box {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
         .program-title {
             font-size: 1.25rem;
             font-weight: 700;
-            color: var(--text-main);
+            color: var(--text-title);
             line-height: 1.5;
-            margin-bottom: 16px;
         }
 
-        /* 標籤區域 */
+        /* 下方：標籤區塊 */
         .tags-group {
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
-            padding-top: 16px;
-            border-top: 1px solid #f1f5f9;
         }
 
         .tag {
-            background-color: var(--accent-bg);
-            color: var(--accent-text);
+            background-color: var(--tag-bg);
+            border: 1px solid var(--tag-border);
+            color: var(--text-main);
             padding: 4px 12px;
             border-radius: 6px;
             font-size: 0.9rem;
             font-weight: 600;
-            font-family: monospace; /* 讓數字看起來整齊 */
+        }
+
+        /* 手機版適應 */
+        @media (max-width: 600px) {
+            .ticket-card {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .date-box {
+                flex-direction: row;
+                width: 100%;
+                justify-content: flex-start;
+                gap: 10px;
+                background: transparent;
+                padding: 0;
+                color: var(--text-main);
+            }
+            .date-year, .date-day {
+                font-size: 0.9rem;
+                color: #64748b;
+            }
         }
 
         footer {
-            margin-top: 80px;
+            margin-top: 60px;
             text-align: center;
             font-size: 0.85rem;
-            color: var(--text-sub);
-            border-top: 1px solid #e2e8f0;
-            padding-top: 30px;
-        }
-
-        /* 手機版微調 */
-        @media (max-width: 600px) {
-            .timeline {
-                padding-left: 20px;
-            }
-            .timeline::before {
-                left: 0;
-            }
-            .timeline-marker {
-                left: -25px;
-                width: 10px;
-                height: 10px;
-            }
-            .timeline-item {
-                padding-left: 15px;
-            }
+            color: #94a3b8;
         }
     </style>
 </head>
@@ -191,19 +181,19 @@
     <div class="container">
         <header>
             <h1>Muiii 搶票戰績</h1>
-            <div class="stats-bar">
-                已同步 <span id="total-count" style="color: #3b82f6;">0</span> 場戰役
+            <div class="stats-badge">
+                已同步 <span id="total-count" style="color: #2563eb;">0</span> 場戰役
             </div>
         </header>
 
         <div id="loading">讀取戰報中...</div>
         
-        <div id="timeline-container" class="timeline">
-            <!-- 這裡會動態生成時間軸項目 -->
+        <div id="list-container" class="ticket-list">
+            <!-- 列表將在此生成 -->
         </div>
 
         <footer>
-            &copy; 2026 Muiii Project &bull; Live Timeline
+            &copy; 2026 Muiii Project &bull; Live Records
         </footer>
     </div>
 
@@ -215,7 +205,7 @@
                 download: true,
                 header: true,
                 complete: function(results) {
-                    renderTimeline(results.data);
+                    renderList(results.data);
                 },
                 error: function() {
                     document.getElementById('loading').innerText = '連線異常，無法讀取資料。';
@@ -223,8 +213,8 @@
             });
         }
 
-        function renderTimeline(data) {
-            const container = document.getElementById('timeline-container');
+        function renderList(data) {
+            const container = document.getElementById('list-container');
             const loading = document.getElementById('loading');
             const totalCount = document.getElementById('total-count');
             
@@ -234,7 +224,7 @@
             const validData = data.filter(item => item['節目名稱'] && item['節目名稱'].trim() !== '');
 
             if (validData.length === 0) {
-                container.innerHTML = '<p style="padding-left:20px; color:#94a3b8;">目前尚無戰績。</p>';
+                container.innerHTML = '<p style="text-align:center; color:#94a3b8;">目前尚無戰績。</p>';
                 return;
             }
 
@@ -249,11 +239,23 @@
                     <span class="tag">${item}</span>
                 `).join('');
 
+                // 拆解日期 (假設格式為 YYYY.MM.DD)
+                const dateStr = ticket['售票日期'] || '';
+                const dateParts = dateStr.split('.');
+                let year = '', dayMonth = dateStr;
+                
+                if (dateParts.length >= 3) {
+                    year = dateParts[0];
+                    dayMonth = `${dateParts[1]}.${dateParts[2]}`;
+                }
+
                 return `
-                    <div class="timeline-item">
-                        <div class="timeline-marker"></div>
-                        <div class="timeline-content">
-                            <span class="date-label">${ticket['售票日期']}</span>
+                    <div class="ticket-card">
+                        <div class="date-box">
+                            <span class="date-day">${dayMonth}</span>
+                            <span class="date-year">${year}</span>
+                        </div>
+                        <div class="content-box">
                             <div class="program-title">
                                 ${ticket['節目名稱']}
                             </div>
