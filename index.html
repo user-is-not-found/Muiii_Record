@@ -3,170 +3,186 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Muiii 搶票戰績儀表板</title>
-    <!-- 引入 PapaParse 用於讀取 Google 試算表 CSV -->
+    <title>Muiii 搶票戰績</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        /* --- 現代化儀表板佈局 --- */
+        /* --- 資訊卡片流版面 (Info-Stream Layout) --- */
         :root {
-            --bg-color: #f1f5f9;
-            --card-bg: #ffffff;
-            --primary-blue: #2563eb;
-            --text-main: #0f172a;
-            --text-sub: #64748b;
-            --accent-green: #10b981;
+            --bg-color: #f3f4f6;       /* 淺灰背景 */
+            --card-bg: #ffffff;        /* 白卡片 */
+            --primary: #2563eb;        /* 連結藍 */
+            --text-dark: #1f2937;      /* 深灰字 */
+            --text-light: #6b7280;     /* 淺灰字 */
+            --accent: #10b981;         /* 成功綠 */
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", sans-serif;
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
             background-color: var(--bg-color);
-            color: var(--text-main);
+            color: var(--text-dark);
             margin: 0;
             padding: 40px 20px;
-            display: flex;
-            justify-content: center;
+            line-height: 1.6;
         }
 
         .container {
             width: 100%;
-            max-width: 900px;
+            max-width: 800px; /* 稍微縮窄，適合閱讀長文 */
+            margin: 0 auto;
         }
 
         header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            margin-bottom: 30px;
-            padding: 0 10px;
+            text-align: center;
+            margin-bottom: 50px;
         }
 
-        .header-left h1 {
-            margin: 0;
-            font-size: 2rem;
-            font-weight: 900;
-            color: var(--text-main);
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 0 0 10px 0;
             letter-spacing: -0.5px;
         }
 
-        .header-left p {
-            margin: 5px 0 0 0;
-            color: var(--text-sub);
+        .subtitle {
+            font-size: 1rem;
+            color: var(--text-light);
             font-weight: 500;
         }
 
-        .stats-badge {
-            background-color: var(--primary-blue);
-            color: white;
-            padding: 8px 16px;
-            border-radius: 99px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+        /* 統計數據條 */
+        .stats-bar {
+            display: inline-block;
+            background: white;
+            padding: 8px 20px;
+            border-radius: 50px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+
+        .stats-highlight {
+            color: var(--primary);
         }
 
         #loading {
             text-align: center;
-            padding: 100px 0;
-            color: var(--text-sub);
-            font-style: italic;
+            padding: 60px;
+            color: var(--text-light);
         }
 
-        /* 列表容器 */
-        .ticket-list-wrapper {
+        /* 卡片列表容器 */
+        .card-list {
             display: flex;
             flex-direction: column;
-            gap: 12px;
-        }
-
-        /* 現代化橫向列表項 */
-        .record-row {
-            background-color: var(--card-bg);
-            border-radius: 16px;
-            padding: 20px 28px;
-            display: grid;
-            grid-template-columns: 120px 1fr auto;
-            align-items: center;
             gap: 20px;
+        }
+
+        /* 新版卡片樣式 */
+        .record-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(0,0,0,0.02);
             transition: transform 0.2s ease, box-shadow 0.2s ease;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            position: relative;
+            overflow: hidden;
         }
 
-        .record-row:hover {
-            transform: scale(1.01);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+        .record-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+            border-color: #bfdbfe;
         }
 
-        /* 左側日期 */
-        .date-col {
-            font-size: 0.9rem;
+        /* 左側裝飾線 */
+        .record-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 5px;
+            background-color: var(--primary);
+            opacity: 0.8;
+        }
+
+        /* 卡片上層：日期 */
+        .card-header {
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+        }
+
+        .date-badge {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-light);
+            background-color: #f3f4f6;
+            padding: 4px 12px;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .date-badge svg {
+            width: 14px;
+            height: 14px;
+            opacity: 0.7;
+        }
+
+        /* 卡片中層：標題 */
+        .program-name {
+            font-size: 1.35rem;
             font-weight: 700;
-            color: var(--primary-blue);
-            font-family: 'Monaco', 'Courier New', monospace;
-        }
-
-        /* 中間標題 */
-        .title-col {
-            font-size: 1.15rem;
-            font-weight: 700;
-            color: var(--text-main);
+            color: #111827;
             line-height: 1.4;
+            margin-bottom: 16px;
         }
 
-        /* 右側標籤容器 */
-        .tags-col {
+        /* 卡片下層：標籤 */
+        .tags-container {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
-            justify-content: flex-end;
-            min-width: 150px;
+            gap: 10px;
+            margin-top: auto;
+            border-top: 1px solid #f3f4f6;
+            padding-top: 16px;
         }
 
-        /* 個別委託者標籤 */
         .price-tag {
-            background-color: #f8fafc;
-            border: 1px solid #e2e8f0;
-            color: #475569;
-            padding: 5px 12px;
+            background-color: #ecfdf5; /* 淺綠底 */
+            color: #059669;           /* 深綠字 */
+            border: 1px solid #d1fae5;
+            padding: 6px 14px;
             border-radius: 8px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            transition: all 0.2s;
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 0.3px;
         }
-
-        .record-row:hover .price-tag {
-            background-color: #eff6ff;
-            border-color: #bfdbfe;
-            color: var(--primary-blue);
-        }
-
-        /* 響應式調整 */
-        @media (max-width: 640px) {
-            .record-row {
-                grid-template-columns: 1fr;
-                gap: 10px;
+        
+        /* 響應式：手機版字體調整 */
+        @media (max-width: 600px) {
+            .program-name {
+                font-size: 1.2rem;
+            }
+            .record-card {
                 padding: 20px;
-            }
-            .date-col {
-                font-size: 0.8rem;
-                border-bottom: 1px solid #f1f5f9;
-                padding-bottom: 5px;
-            }
-            .tags-col {
-                justify-content: flex-start;
-            }
-            header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 15px;
             }
         }
 
         footer {
-            margin-top: 80px;
+            margin-top: 60px;
             text-align: center;
-            font-size: 0.85rem;
-            color: var(--text-sub);
-            padding-bottom: 40px;
+            font-size: 0.9rem;
+            color: var(--text-light);
+            border-top: 1px solid #e5e7eb;
+            padding-top: 30px;
         }
     </style>
 </head>
@@ -174,21 +190,20 @@
 
     <div class="container">
         <header>
-            <div class="header-left">
-                <h1>Muiii Records</h1>
-                <p>搶票作戰戰績實錄</p>
+            <h1>Muiii 搶票戰績</h1>
+            <div class="stats-bar">
+                已同步 <span id="total-count" class="stats-highlight">0</span> 場戰役紀錄
             </div>
-            <div id="stats-count" class="stats-badge">正在讀取...</div>
         </header>
 
-        <div id="loading">正在掃描情報源...</div>
+        <div id="loading">正在讀取雲端戰報...</div>
         
-        <div id="ticket-list" class="ticket-list-wrapper">
-            <!-- 動態生成內容 -->
+        <div id="card-list" class="card-list">
+            <!-- 卡片將在此生成 -->
         </div>
 
         <footer>
-            &copy; 2026 Muiii Project &bull; 數據即時同步系統
+            &copy; 2026 Muiii Project &bull; Live Data Sync
         </footer>
     </div>
 
@@ -200,60 +215,67 @@
                 download: true,
                 header: true,
                 complete: function(results) {
-                    renderRecords(results.data);
+                    renderCards(results.data);
                 },
                 error: function() {
-                    document.getElementById('loading').innerText = '系統連線異常，請確認來源。';
+                    document.getElementById('loading').innerText = '連線錯誤：無法讀取資料。';
                 }
             });
         }
 
-        function renderRecords(data) {
-            const listContainer = document.getElementById('ticket-list');
+        function renderCards(data) {
+            const container = document.getElementById('card-list');
             const loading = document.getElementById('loading');
-            const statsCount = document.getElementById('stats-count');
+            const totalCount = document.getElementById('total-count');
             
             loading.style.display = 'none';
 
+            // 過濾無效資料
             const validData = data.filter(item => item['節目名稱'] && item['節目名稱'].trim() !== '');
 
             if (validData.length === 0) {
-                listContainer.innerHTML = '<p style="text-align:center; color:#94a3b8; padding: 50px;">目前尚無紀錄。</p>';
-                statsCount.innerText = '0 Missions';
+                container.innerHTML = '<p style="text-align:center; color:#9b9b9b;">目前尚無資料。</p>';
                 return;
             }
 
-            statsCount.innerText = `${validData.length} 個奪取目標`;
+            totalCount.innerText = validData.length;
 
             const html = validData.map(ticket => {
-                // 處理空格分割的價位資料
+                // 處理空格分割的價位
                 const countsRaw = ticket['張數'] || '';
                 const countItems = countsRaw.split(/\s+/).filter(item => item.trim() !== '');
 
-                // 生成價位標籤
-                const badgesHtml = countItems.map(item => `
-                    <div class="price-tag">${item}</div>
+                const tagsHtml = countItems.map(item => `
+                    <span class="price-tag">${item}</span>
                 `).join('');
 
+                // 日期圖示 SVG
+                const calendarIcon = `
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                `;
+
                 return `
-                    <div class="record-row">
-                        <div class="date-col">
-                            ${ticket['售票日期']}
+                    <div class="record-card">
+                        <div class="card-header">
+                            <div class="date-badge">
+                                ${calendarIcon} ${ticket['售票日期']}
+                            </div>
                         </div>
-                        <div class="title-col">
+                        <div class="program-name">
                             ${ticket['節目名稱']}
                         </div>
-                        <div class="tags-col">
-                            ${badgesHtml}
+                        <div class="tags-container">
+                            ${tagsHtml}
                         </div>
                     </div>
                 `;
             }).join('');
 
-            listContainer.innerHTML = html;
+            container.innerHTML = html;
         }
 
-        // 初始化
         loadData();
     </script>
 </body>
