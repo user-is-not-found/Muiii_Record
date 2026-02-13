@@ -39,6 +39,17 @@
             --toggle-text: #64748b;
             --highlight-bg: #fef08a;
             --highlight-text: #854d0e;
+            
+            /* 難度標籤顏色 */
+            --diff-hell-bg: #fef2f2;
+            --diff-hell-text: #dc2626;
+            --diff-hard-bg: #fff7ed;
+            --diff-hard-text: #ea580c;
+            --diff-norm-bg: #f0fdf4;
+            --diff-norm-text: #16a34a;
+
+            --skeleton-base: #e2e8f0;
+            --skeleton-highlight: #f1f5f9;
         }
 
         /* 深色主題 (Dark) */
@@ -62,6 +73,16 @@
             --toggle-text: #cbd5e1;
             --highlight-bg: #854d0e;
             --highlight-text: #fef08a;
+            
+            --diff-hell-bg: rgba(153, 27, 27, 0.2);
+            --diff-hell-text: #fca5a5;
+            --diff-hard-bg: rgba(154, 52, 18, 0.2);
+            --diff-hard-text: #fdba74;
+            --diff-norm-bg: rgba(22, 101, 52, 0.2);
+            --diff-norm-text: #86efac;
+
+            --skeleton-base: #334155;
+            --skeleton-highlight: #475569;
         }
 
         body {
@@ -364,6 +385,22 @@
             gap: 8px;
         }
 
+        /* 難度標籤 */
+        .difficulty-badge {
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-weight: 700;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .diff-hell { background: var(--diff-hell-bg); color: var(--diff-hell-text); }
+        .diff-hard { background: var(--diff-hard-bg); color: var(--diff-hard-text); }
+        .diff-normal { background: var(--diff-norm-bg); color: var(--diff-norm-text); }
+
         .tags-group {
             display: flex;
             flex-direction: column;
@@ -523,6 +560,12 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
                     </svg>
                 </button>
+                <!-- 重新載入按鈕 (新增) -->
+                <button id="reload-btn" class="icon-btn" title="重新載入資料">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
+                </button>
                 <!-- 主題切換按鈕 -->
                 <button id="theme-toggle" class="icon-btn" title="切換深色/淺色模式">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -568,7 +611,7 @@
                         </button>
                         
                         <button id="reset-btn" class="btn-text" title="重置">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                            重置
                         </button>
                     </div>
                     
@@ -652,7 +695,30 @@
             });
         });
 
+        // AI 難度判斷邏輯
+        function getDifficulty(title) {
+            const lowerTitle = title.toLowerCase();
+            
+            const hellKeywords = ['五月天', 'mayday', 'blackpink', 'bts', 'taylor swift', 'coldplay', '陳奕迅', 'super junior', '鄧紫棋', '蔡依林', '張惠妹', 'amei', 'jay chou', '周杰倫'];
+            const hardKeywords = ['大港開唱', '伍佰', '動力火車', '告五人', '蘇打綠', 'babymonster', '頑童', '林俊傑', 'jj lin', 'maroon 5', 'bruno mars', 'twice', 'ive', 'aespa'];
+            
+            if (hellKeywords.some(k => lowerTitle.includes(k))) {
+                return { label: '🔥 地獄級', class: 'diff-hell' };
+            }
+            if (hardKeywords.some(k => lowerTitle.includes(k))) {
+                return { label: '😰 困難', class: 'diff-hard' };
+            }
+            return { label: '😐 一般', class: 'diff-normal' };
+        }
+
         function loadData() {
+            // 顯示載入動畫 (重整時也會出現)
+            document.getElementById('list-container').innerHTML = `
+                <div class="skeleton"><div class="skeleton-date shimmer"></div><div class="skeleton-title shimmer"></div><div class="skeleton-tags shimmer"></div></div>
+                <div class="skeleton"><div class="skeleton-date shimmer"></div><div class="skeleton-title shimmer"></div><div class="skeleton-tags shimmer"></div></div>
+                <div class="skeleton"><div class="skeleton-date shimmer"></div><div class="skeleton-title shimmer"></div><div class="skeleton-tags shimmer"></div></div>
+            `;
+
             Papa.parse(CSV_URL, {
                 download: true,
                 header: true,
@@ -671,6 +737,11 @@
             });
         }
 
+        // 重整按鈕邏輯
+        document.getElementById('reload-btn').addEventListener('click', () => {
+            loadData();
+        });
+
         function initYearFilter(data) {
             const yearSet = new Set();
             data.forEach(ticket => {
@@ -682,6 +753,8 @@
 
             const years = Array.from(yearSet).sort().reverse();
             const filterSelect = document.getElementById('year-filter');
+            // 清空並重新加入
+            filterSelect.innerHTML = '<option value="all">所有年份</option>';
             years.forEach(year => {
                 const option = document.createElement('option');
                 option.value = year;
@@ -775,13 +848,10 @@
             });
 
             calculateTotalStats(filteredData);
-            animateStats(filteredData);
             renderList(filteredData, searchTerm);
         }
 
-        function calculateTotalStats(data) { /* animateStats covers UI */ }
-
-        function animateStats(data) {
+        function calculateTotalStats(data) {
             let totalTickets = 0;
             data.forEach(ticket => {
                 const countsRaw = ticket['張數'] || '';
@@ -793,23 +863,9 @@
                     });
                 }
             });
-            
-            const ticketsElem = document.getElementById('total-tickets');
-            const recordsElem = document.getElementById('total-records');
-            animateValue(ticketsElem, parseInt(ticketsElem.innerText)||0, totalTickets, 500);
-            animateValue(recordsElem, parseInt(recordsElem.innerText)||0, data.length, 500);
-        }
 
-        function animateValue(obj, start, end, duration) {
-            let startTimestamp = null;
-            const step = (timestamp) => {
-                if (!startTimestamp) startTimestamp = timestamp;
-                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-                obj.innerText = Math.floor(progress * (end - start) + start);
-                if (progress < 1) window.requestAnimationFrame(step);
-                else obj.innerText = end;
-            };
-            window.requestAnimationFrame(step);
+            document.getElementById('total-tickets').innerText = totalTickets;
+            document.getElementById('total-records').innerText = data.length;
         }
 
         function renderList(data, searchTerm) {
@@ -831,6 +887,9 @@
                 const displayTitle = highlightText(ticket['節目名稱'], searchTerm);
                 const displayDate = highlightText(dateStr, searchTerm);
                 
+                // AI 判斷
+                const diff = getDifficulty(ticket['節目名稱']);
+
                 html += `
                     <div class="ticket-card">
                         <div class="date-box">
@@ -838,6 +897,7 @@
                         </div>
                         <div class="program-title">
                             ${displayTitle}
+                            <span class="difficulty-badge ${diff.class}">${diff.label}</span>
                         </div>
                         <div class="tags-group">
                             ${tagsHtml}
@@ -870,15 +930,15 @@
             updateThemeIcon(!isDarkNow);
         });
 
-        // 頂部進度條 (已移除 HTML 元素但保留邏輯以免報錯)
-        window.addEventListener('scroll', () => {
-            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-            const backBtn = document.getElementById('back-to-top');
-            if (winScroll > 300) backBtn.classList.add('show');
-            else backBtn.classList.remove('show');
-        });
-
-        document.getElementById('back-to-top').addEventListener('click', () => {
+        const backToTopBtn = document.getElementById('back-to-top');
+        window.onscroll = function() {
+            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                backToTopBtn.classList.add('show');
+            } else {
+                backToTopBtn.classList.remove('show');
+            }
+        };
+        backToTopBtn.addEventListener('click', () => {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
 
