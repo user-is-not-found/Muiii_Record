@@ -39,14 +39,6 @@
             --toggle-text: #64748b;
             --highlight-bg: #fef08a;
             --highlight-text: #854d0e;
-            
-            /* 難度標籤顏色 */
-            --diff-hell-bg: #fef2f2;
-            --diff-hell-text: #dc2626;
-            --diff-hard-bg: #fff7ed;
-            --diff-hard-text: #ea580c;
-            --diff-norm-bg: #f0fdf4;
-            --diff-norm-text: #16a34a;
 
             --skeleton-base: #e2e8f0;
             --skeleton-highlight: #f1f5f9;
@@ -73,13 +65,6 @@
             --toggle-text: #cbd5e1;
             --highlight-bg: #854d0e;
             --highlight-text: #fef08a;
-            
-            --diff-hell-bg: rgba(153, 27, 27, 0.2);
-            --diff-hell-text: #fca5a5;
-            --diff-hard-bg: rgba(154, 52, 18, 0.2);
-            --diff-hard-text: #fdba74;
-            --diff-norm-bg: rgba(22, 101, 52, 0.2);
-            --diff-norm-text: #86efac;
 
             --skeleton-base: #334155;
             --skeleton-highlight: #475569;
@@ -133,22 +118,18 @@
         }
 
         .icon-btn {
+            width: 40px;
             height: 40px;
             background-color: var(--toggle-bg);
             border: 1px solid var(--tag-border);
             color: var(--toggle-text);
             cursor: pointer;
-            border-radius: 50px; /* 膠囊形狀 */
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: all 0.2s;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            padding: 0 16px; /* 增加內距 */
-            gap: 8px; /* 圖示與文字間距 */
-            font-weight: 700;
-            font-size: 0.9rem;
-            white-space: nowrap;
         }
 
         .icon-btn:hover {
@@ -182,7 +163,7 @@
             color: var(--text-title);
             margin: 0 0 10px 0;
             letter-spacing: -0.5px;
-            padding-right: 180px; /* 預留更多空間給文字按鈕 */
+            padding-right: 120px;
             padding-left: 40px;
         }
 
@@ -269,7 +250,6 @@
         .btn-text {
             display: flex;
             align-items: center;
-            justify-content: center;
             gap: 6px;
             background-color: var(--card-bg);
             border: 1px solid var(--tag-border);
@@ -280,7 +260,6 @@
             color: var(--text-main);
             cursor: pointer;
             transition: all 0.2s;
-            white-space: nowrap; /* 確保文字不換行 */
         }
         
         .btn-text:hover {
@@ -391,22 +370,6 @@
             gap: 8px;
         }
 
-        /* 難度標籤 */
-        .difficulty-badge {
-            font-size: 0.75rem;
-            padding: 2px 8px;
-            border-radius: 6px;
-            font-weight: 700;
-            white-space: nowrap;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-        }
-        
-        .diff-hell { background: var(--diff-hell-bg); color: var(--diff-hell-text); }
-        .diff-hard { background: var(--diff-hard-bg); color: var(--diff-hard-text); }
-        .diff-normal { background: var(--diff-norm-bg); color: var(--diff-norm-text); }
-
         .tags-group {
             display: flex;
             flex-direction: column;
@@ -495,38 +458,13 @@
             }
 
             .top-actions { right: 15px; top: 15px; }
-            
-            /* 手機版按鈕樣式調整：隱藏文字，變回圓形 */
-            .icon-btn { 
-                width: 36px; 
-                height: 36px; 
-                padding: 0; 
-                border-radius: 50%;
-            }
-            .icon-btn span { display: none; }
+            .icon-btn { width: 36px; height: 36px; }
 
             h1 { font-size: 1.5rem; padding: 0 90px 0 40px; text-align: left; }
 
             .controls-bar { flex-direction: column; align-items: stretch; gap: 12px; }
-            
-            /* 修改手機版篩選群組佈局：2x2 排列 */
-            .filter-group { 
-                justify-content: space-between; 
-                width: 100%;
-                flex-wrap: wrap; /* 允許換行 */
-                gap: 10px; /* 增加間距 */
-            }
-
-            /* 每個元素佔一半寬度 */
-            #year-filter, #month-filter {
-                flex: 1 1 45%; 
-                min-width: 0;
-            }
-
-            #sort-btn, #reset-btn {
-                flex: 1 1 45%;
-                min-width: 0;
-            }
+            .filter-group { justify-content: space-between; width: 100%; }
+            .filter-group select, .filter-group button { flex: 1; }
 
             .header-row { display: none; }
 
@@ -590,21 +528,18 @@
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
                     </svg>
-                    <span>安裝</span>
                 </button>
                 <!-- 重新載入按鈕 -->
                 <button id="reload-btn" class="icon-btn" title="重新載入資料">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                     </svg>
-                    <span>重整</span>
                 </button>
                 <!-- 主題切換按鈕 -->
                 <button id="theme-toggle" class="icon-btn" title="切換深色/淺色模式">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
                     </svg>
-                    <span>模式</span>
                 </button>
             </div>
 
@@ -728,22 +663,6 @@
                 deferredPrompt = null;
             });
         });
-
-        // AI 難度判斷邏輯
-        function getDifficulty(title) {
-            const lowerTitle = title.toLowerCase();
-            
-            const hellKeywords = ['五月天', 'mayday', 'blackpink', 'bts', 'taylor swift', 'coldplay', '陳奕迅', 'super junior', '鄧紫棋', '蔡依林', '張惠妹', 'amei', 'jay chou', '周杰倫'];
-            const hardKeywords = ['大港開唱', '伍佰', '動力火車', '告五人', '蘇打綠', 'babymonster', '頑童', '林俊傑', 'jj lin', 'maroon 5', 'bruno mars', 'twice', 'ive', 'aespa'];
-            
-            if (hellKeywords.some(k => lowerTitle.includes(k))) {
-                return { label: '🔥 地獄級', class: 'diff-hell' };
-            }
-            if (hardKeywords.some(k => lowerTitle.includes(k))) {
-                return { label: '😰 困難', class: 'diff-hard' };
-            }
-            return { label: '😐 一般', class: 'diff-normal' };
-        }
 
         function loadData() {
             // 顯示載入動畫 (重整時也會出現)
@@ -920,9 +839,6 @@
                 
                 const displayTitle = highlightText(ticket['節目名稱'], searchTerm);
                 const displayDate = highlightText(dateStr, searchTerm);
-                
-                // AI 判斷
-                const diff = getDifficulty(ticket['節目名稱']);
 
                 html += `
                     <div class="ticket-card">
@@ -931,7 +847,6 @@
                         </div>
                         <div class="program-title">
                             ${displayTitle}
-                            <span class="difficulty-badge ${diff.class}">${diff.label}</span>
                         </div>
                         <div class="tags-group">
                             ${tagsHtml}
