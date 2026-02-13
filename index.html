@@ -108,7 +108,6 @@
             transition: all 0.3s ease;
         }
 
-        /* 右上角按鈕群組 */
         .top-actions {
             position: absolute;
             right: 20px;
@@ -118,7 +117,7 @@
             z-index: 110;
         }
 
-        /* 膠囊按鈕樣式 (含文字) */
+        /* --- 按鈕樣式 (電腦版預設：膠囊型 + 文字) --- */
         .icon-btn {
             height: 40px;
             background-color: var(--toggle-bg);
@@ -131,11 +130,20 @@
             justify-content: center;
             transition: all 0.2s;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            padding: 0 16px; /* 左右增加內距 */
-            gap: 6px; /* 圖示與文字間距 */
+            padding: 0 16px; /* 左右寬一點 */
             font-size: 0.9rem;
             font-weight: 700;
-            white-space: nowrap;
+        }
+
+        /* 電腦版顯示文字 span */
+        .icon-btn span {
+            display: inline-block;
+            margin-left: 6px;
+        }
+
+        .icon-btn svg {
+            width: 18px;
+            height: 18px;
         }
 
         .icon-btn:hover {
@@ -169,7 +177,7 @@
             color: var(--text-title);
             margin: 0 0 10px 0;
             letter-spacing: -0.5px;
-            padding-right: 180px; /* 避開更寬的按鈕列 */
+            padding-right: 180px; /* 避開寬按鈕 */
             padding-left: 40px;
             text-align: left;
         }
@@ -454,7 +462,7 @@
             color: #94a3b8;
         }
 
-        /* --- 手機版響應式設計 (關鍵修正) --- */
+        /* --- 手機版響應式設計 (關鍵修改) --- */
         @media (max-width: 768px) {
             .container { padding: 0 15px 30px 15px; }
 
@@ -469,29 +477,31 @@
             .top-actions { 
                 right: 15px; 
                 top: 15px; 
-                /* 確保按鈕列在最上方 */
             }
             
-            /* 手機版按鈕：縮小文字與 padding，但強制顯示 */
+            /* 手機版：強制圓形圖示、隱藏文字 */
             .icon-btn { 
-                height: 32px; 
-                padding: 0 10px;
-                font-size: 0.8rem;
-                border-radius: 20px;
+                width: 38px;  /* 寬度 */
+                height: 38px; /* 高度 */
+                padding: 0;   /* 移除左右 padding */
+                border-radius: 50%; /* 正圓形 */
+                justify-content: center;
             }
+            
+            /* 強制隱藏 span 文字 */
+            .icon-btn span { 
+                display: none !important; 
+            }
+            
+            /* 調整 icon 位置置中 */
             .icon-btn svg {
-                width: 14px;
-                height: 14px;
+                margin: 0;
             }
-            /* 強制顯示文字 */
-            .icon-btn span { display: inline-block; }
 
-            /* 標題增加上間距，避免被按鈕擋住 */
             h1 { 
                 font-size: 1.5rem; 
-                padding: 0 20px;
-                margin-top: 40px; /* 讓出空間給按鈕 */
-                text-align: center;
+                padding: 0 80px 0 40px; /* 右側 padding 減少，因為按鈕變小了 */
+                text-align: left;
             }
 
             .controls-bar { flex-direction: column; align-items: stretch; gap: 12px; }
@@ -627,8 +637,7 @@
                         </button>
                         
                         <button id="reset-btn" class="btn-text" title="重置">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                            <span>重置</span>
+                            重置
                         </button>
                     </div>
                     
@@ -659,7 +668,6 @@
         </footer>
     </div>
 
-    <!-- 回到頂部按鈕 -->
     <button id="back-to-top" title="回到頂部">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
@@ -714,7 +722,7 @@
         });
 
         function loadData() {
-            // 顯示載入動畫
+            // 顯示載入動畫 (重整時也會出現)
             document.getElementById('list-container').innerHTML = `
                 <div class="skeleton"><div class="skeleton-date shimmer"></div><div class="skeleton-title shimmer"></div><div class="skeleton-tags shimmer"></div></div>
                 <div class="skeleton"><div class="skeleton-date shimmer"></div><div class="skeleton-title shimmer"></div><div class="skeleton-tags shimmer"></div></div>
