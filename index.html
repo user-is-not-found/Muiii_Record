@@ -7,20 +7,22 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        /* --- 資訊卡片流版面 (Info-Stream Layout) --- */
+        /* --- 時間軸版面 (Timeline Layout) --- */
         :root {
-            --bg-color: #f3f4f6;       /* 淺灰背景 */
+            --bg-color: #f8fafc;       /* 極淺藍灰背景 */
+            --line-color: #e2e8f0;     /* 時間軸線條色 */
+            --dot-color: #3b82f6;      /* 時間點顏色 */
             --card-bg: #ffffff;        /* 白卡片 */
-            --primary: #2563eb;        /* 連結藍 */
-            --text-dark: #1f2937;      /* 深灰字 */
-            --text-light: #6b7280;     /* 淺灰字 */
-            --accent: #10b981;         /* 成功綠 */
+            --text-main: #1e293b;      /* 深色主字 */
+            --text-sub: #64748b;       /* 次要文字 */
+            --accent-bg: #eff6ff;      /* 標籤淺藍底 */
+            --accent-text: #2563eb;    /* 標籤深藍字 */
         }
 
         body {
             font-family: 'Inter', 'Noto Sans TC', sans-serif;
             background-color: var(--bg-color);
-            color: var(--text-dark);
+            color: var(--text-main);
             margin: 0;
             padding: 40px 20px;
             line-height: 1.6;
@@ -28,161 +30,159 @@
 
         .container {
             width: 100%;
-            max-width: 800px; /* 稍微縮窄，適合閱讀長文 */
+            max-width: 800px;
             margin: 0 auto;
         }
 
         header {
             text-align: center;
-            margin-bottom: 50px;
+            margin-bottom: 60px;
         }
 
         h1 {
-            font-size: 2.2rem;
-            font-weight: 800;
-            color: var(--primary);
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #1e293b;
             margin: 0 0 10px 0;
-            letter-spacing: -0.5px;
+            letter-spacing: -1px;
         }
 
-        .subtitle {
-            font-size: 1rem;
-            color: var(--text-light);
-            font-weight: 500;
-        }
-
-        /* 統計數據條 */
         .stats-bar {
             display: inline-block;
             background: white;
-            padding: 8px 20px;
-            border-radius: 50px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            margin-top: 15px;
+            padding: 6px 16px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
             font-size: 0.9rem;
-            color: var(--text-dark);
-            font-weight: 600;
-        }
-
-        .stats-highlight {
-            color: var(--primary);
+            color: var(--text-sub);
+            font-weight: 500;
         }
 
         #loading {
             text-align: center;
             padding: 60px;
-            color: var(--text-light);
+            color: var(--text-sub);
         }
 
-        /* 卡片列表容器 */
-        .card-list {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        /* 新版卡片樣式 */
-        .record-card {
-            background: var(--card-bg);
-            border-radius: 16px;
-            padding: 24px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-            border: 1px solid rgba(0,0,0,0.02);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        /* --- 時間軸核心樣式 --- */
+        .timeline {
             position: relative;
-            overflow: hidden;
+            padding-left: 30px; /* 預留左側空間給線條 */
         }
 
-        .record-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
-            border-color: #bfdbfe;
-        }
-
-        /* 左側裝飾線 */
-        .record-card::before {
+        /* 垂直線 */
+        .timeline::before {
             content: '';
             position: absolute;
             left: 0;
-            top: 0;
+            top: 10px;
             bottom: 0;
-            width: 5px;
-            background-color: var(--primary);
-            opacity: 0.8;
+            width: 2px;
+            background: var(--line-color);
+            border-radius: 2px;
         }
 
-        /* 卡片上層：日期 */
-        .card-header {
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
+        /* 時間軸項目容器 */
+        .timeline-item {
+            position: relative;
+            margin-bottom: 40px;
+            padding-left: 20px; /* 卡片與線的距離 */
         }
 
-        .date-badge {
+        /* 時間點 (圓點) */
+        .timeline-marker {
+            position: absolute;
+            left: -35px; /* 調整圓點位置以對齊線條 */
+            top: 24px; /* 對齊日期高度 */
+            width: 12px;
+            height: 12px;
+            background: var(--dot-color);
+            border: 3px solid #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 0 1px var(--dot-color);
+            z-index: 1;
+        }
+
+        /* 內容卡片 */
+        .timeline-content {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0,0,0,0.03);
+            transition: transform 0.2s ease;
+        }
+
+        .timeline-content:hover {
+            transform: translateX(5px);
+            border-color: #cbd5e1;
+        }
+
+        /* 日期顯示 */
+        .date-label {
+            font-family: 'Inter', monospace;
             font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--text-light);
-            background-color: #f3f4f6;
-            padding: 4px 12px;
-            border-radius: 6px;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .date-badge svg {
-            width: 14px;
-            height: 14px;
-            opacity: 0.7;
-        }
-
-        /* 卡片中層：標題 */
-        .program-name {
-            font-size: 1.35rem;
             font-weight: 700;
-            color: #111827;
-            line-height: 1.4;
+            color: var(--text-sub);
+            margin-bottom: 8px;
+            display: block;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* 節目名稱 (支援長標題) */
+        .program-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-main);
+            line-height: 1.5;
             margin-bottom: 16px;
         }
 
-        /* 卡片下層：標籤 */
-        .tags-container {
+        /* 標籤區域 */
+        .tags-group {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
-            margin-top: auto;
-            border-top: 1px solid #f3f4f6;
+            gap: 8px;
             padding-top: 16px;
+            border-top: 1px solid #f1f5f9;
         }
 
-        .price-tag {
-            background-color: #ecfdf5; /* 淺綠底 */
-            color: #059669;           /* 深綠字 */
-            border: 1px solid #d1fae5;
-            padding: 6px 14px;
-            border-radius: 8px;
+        .tag {
+            background-color: var(--accent-bg);
+            color: var(--accent-text);
+            padding: 4px 12px;
+            border-radius: 6px;
             font-size: 0.9rem;
             font-weight: 600;
-            letter-spacing: 0.3px;
-        }
-        
-        /* 響應式：手機版字體調整 */
-        @media (max-width: 600px) {
-            .program-name {
-                font-size: 1.2rem;
-            }
-            .record-card {
-                padding: 20px;
-            }
+            font-family: monospace; /* 讓數字看起來整齊 */
         }
 
         footer {
-            margin-top: 60px;
+            margin-top: 80px;
             text-align: center;
-            font-size: 0.9rem;
-            color: var(--text-light);
-            border-top: 1px solid #e5e7eb;
+            font-size: 0.85rem;
+            color: var(--text-sub);
+            border-top: 1px solid #e2e8f0;
             padding-top: 30px;
+        }
+
+        /* 手機版微調 */
+        @media (max-width: 600px) {
+            .timeline {
+                padding-left: 20px;
+            }
+            .timeline::before {
+                left: 0;
+            }
+            .timeline-marker {
+                left: -25px;
+                width: 10px;
+                height: 10px;
+            }
+            .timeline-item {
+                padding-left: 15px;
+            }
         }
     </style>
 </head>
@@ -192,18 +192,18 @@
         <header>
             <h1>Muiii 搶票戰績</h1>
             <div class="stats-bar">
-                已同步 <span id="total-count" class="stats-highlight">0</span> 場戰役紀錄
+                已同步 <span id="total-count" style="color: #3b82f6;">0</span> 場戰役
             </div>
         </header>
 
-        <div id="loading">正在讀取雲端戰報...</div>
+        <div id="loading">讀取戰報中...</div>
         
-        <div id="card-list" class="card-list">
-            <!-- 卡片將在此生成 -->
+        <div id="timeline-container" class="timeline">
+            <!-- 這裡會動態生成時間軸項目 -->
         </div>
 
         <footer>
-            &copy; 2026 Muiii Project &bull; Live Data Sync
+            &copy; 2026 Muiii Project &bull; Live Timeline
         </footer>
     </div>
 
@@ -215,16 +215,16 @@
                 download: true,
                 header: true,
                 complete: function(results) {
-                    renderCards(results.data);
+                    renderTimeline(results.data);
                 },
                 error: function() {
-                    document.getElementById('loading').innerText = '連線錯誤：無法讀取資料。';
+                    document.getElementById('loading').innerText = '連線異常，無法讀取資料。';
                 }
             });
         }
 
-        function renderCards(data) {
-            const container = document.getElementById('card-list');
+        function renderTimeline(data) {
+            const container = document.getElementById('timeline-container');
             const loading = document.getElementById('loading');
             const totalCount = document.getElementById('total-count');
             
@@ -234,7 +234,7 @@
             const validData = data.filter(item => item['節目名稱'] && item['節目名稱'].trim() !== '');
 
             if (validData.length === 0) {
-                container.innerHTML = '<p style="text-align:center; color:#9b9b9b;">目前尚無資料。</p>';
+                container.innerHTML = '<p style="padding-left:20px; color:#94a3b8;">目前尚無戰績。</p>';
                 return;
             }
 
@@ -246,28 +246,20 @@
                 const countItems = countsRaw.split(/\s+/).filter(item => item.trim() !== '');
 
                 const tagsHtml = countItems.map(item => `
-                    <span class="price-tag">${item}</span>
+                    <span class="tag">${item}</span>
                 `).join('');
 
-                // 日期圖示 SVG
-                const calendarIcon = `
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                    </svg>
-                `;
-
                 return `
-                    <div class="record-card">
-                        <div class="card-header">
-                            <div class="date-badge">
-                                ${calendarIcon} ${ticket['售票日期']}
+                    <div class="timeline-item">
+                        <div class="timeline-marker"></div>
+                        <div class="timeline-content">
+                            <span class="date-label">${ticket['售票日期']}</span>
+                            <div class="program-title">
+                                ${ticket['節目名稱']}
                             </div>
-                        </div>
-                        <div class="program-name">
-                            ${ticket['節目名稱']}
-                        </div>
-                        <div class="tags-container">
-                            ${tagsHtml}
+                            <div class="tags-group">
+                                ${tagsHtml}
+                            </div>
                         </div>
                     </div>
                 `;
