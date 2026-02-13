@@ -1,4 +1,4 @@
-const CACHE_NAME = 'muiii-ticket-tracker-v1';
+const CACHE_NAME = 'muiii-ticket-tracker-v2'; // 更新版本號以強制刷新
 const urlsToCache = [
   './index.html',
   './manifest.json',
@@ -7,9 +7,24 @@ const urlsToCache = [
 ];
 
 self.addEventListener('install', event => {
+  self.skipWaiting(); // 強制跳過等待，立即更新
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => cache.addAll(urlsToCache))
+  );
+});
+
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.map(cacheName => {
+          if (cacheName !== CACHE_NAME) {
+            return caches.delete(cacheName); // 刪除舊快取
+          }
+        })
+      );
+    })
   );
 });
 
