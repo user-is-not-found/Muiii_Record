@@ -12,14 +12,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* --- 視覺藝術與核心結構 --- */
+        /* --- 視覺藝術核心與核心結構 --- */
         *, *::before, *::after { box-sizing: border-box; }
         
         :root {
             --bg-color: #f1f4f9;
             --card-bg: #ffffff;
             --text-main: #64748b;
-            --text-title: #1e293b;
+            --text-title: #0f172a;
             --primary: #2563eb;
             --primary-dark: #1e40af;
             --primary-light: rgba(37, 99, 235, 0.08);
@@ -27,7 +27,7 @@
             --tag-bg: #f1f5f9;
             --tag-border: #e2e8f0;
             --shadow-sm: 0 2px 4px rgba(0,0,0,0.02);
-            --shadow-md: 0 10px 30px -5px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 12px 30px -10px rgba(0, 0, 0, 0.05);
             --shadow-lg: 0 20px 50px -12px rgba(0, 0, 0, 0.08);
             --radius-lg: 24px;
             --radius-md: 16px;
@@ -44,6 +44,7 @@
             --header-bg: rgba(15, 23, 42, 0.95);
             --tag-bg: #0f172a;
             --tag-border: #334155;
+            --shadow-lg: 0 25px 60px -15px rgba(0, 0, 0, 0.5);
         }
 
         html, body {
@@ -70,7 +71,7 @@
             font-size: 1.65rem; font-weight: 900; color: var(--primary); 
             letter-spacing: -1.5px; text-transform: uppercase;
         }
-        .system-actions { display: flex; gap: 10px; align-items: center; }
+        .system-actions { display: flex !important; flex-direction: row !important; gap: 10px; align-items: center; }
 
         .control-row { display: flex; align-items: center; gap: 20px; width: 100%; }
         .stats-group { display: flex; gap: 10px; flex-shrink: 0; }
@@ -96,8 +97,12 @@
         .icon-btn:hover { background-color: var(--primary); color: white; transform: translateY(-3px); }
         .icon-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
 
+        @media (max-width: 768px) {
+            .icon-btn { width: 40px; height: 40px; padding: 0; border-radius: 50%; }
+        }
+
         .search-input {
-            width: 100%; height: 42px; padding: 0 15px 0 46px; border-radius: 14px;
+            width: 100%; height: 42px; padding: 0 15px 0 44px; border-radius: 14px;
             border: 1px solid var(--tag-border); background-color: var(--bg-color); color: var(--text-title); outline: none;
             font-size: 1rem; transition: var(--transition);
         }
@@ -119,7 +124,7 @@
         .scroll-area::-webkit-scrollbar { width: 4px; }
         .scroll-area::-webkit-scrollbar-thumb { background: var(--tag-border); border-radius: 10px; }
 
-        /* 網格列表 */
+        /* 網格列表 (電腦雙欄 / 手機單欄) */
         .ticket-list { 
             display: grid; 
             grid-template-columns: 1fr;
@@ -133,7 +138,7 @@
             .ticket-list { grid-template-columns: repeat(2, 1fr); }
         }
 
-        /* --- 🎫 擬真票券卡片設計 --- */
+        /* --- 🎫 擬真票券卡片回歸 --- */
         .ticket-card {
             background-color: var(--card-bg); border-radius: var(--radius-md); display: flex;
             overflow: hidden; box-shadow: var(--shadow-sm); border: 1px solid var(--tag-border);
@@ -147,32 +152,35 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        /* 票根 (左側日期) */
         .ticket-stub {
             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: white; padding: 20px;
+            color: white; padding: 18px;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            min-width: 100px; text-align: center; border-right: 2px dashed rgba(255,255,255,0.3); position: relative;
+            min-width: 95px; text-align: center; border-right: 2px dashed rgba(255,255,255,0.35); position: relative;
             flex-shrink: 0;
         }
         
-        /* 票券缺口裝飾 */
+        /* 票券缺口工藝 */
         .ticket-stub::before, .ticket-stub::after {
             content: ''; position: absolute; right: -12px; width: 24px; height: 24px;
             background-color: var(--bg-color); border-radius: 50%; 
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05); /* 內凹陰影 */
         }
         .ticket-stub::before { top: -12px; }
         .ticket-stub::after { bottom: -12px; }
 
-        /* 日期顯示：年月日 */
-        .stub-year { font-size: 0.75rem; font-weight: 700; opacity: 0.8; margin-bottom: 2px; letter-spacing: 1px; }
+        /* 日期：年月日順序 */
+        .stub-year { font-size: 0.75rem; font-weight: 700; opacity: 0.75; margin-bottom: 2px; letter-spacing: 1px; }
         .stub-date { font-size: 1.15rem; font-weight: 800; letter-spacing: -0.5px; }
 
+        /* 票身 (右側資訊) */
         .ticket-body { 
-            flex: 1; padding: 20px 28px; display: flex; flex-direction: column; justify-content: center; gap: 10px;
+            flex: 1; padding: 18px 28px; display: flex; flex-direction: column; justify-content: center; gap: 10px;
             overflow: hidden;
         }
         
+        /* 節目名稱精緻化 */
         .ticket-title { 
             font-size: 1.05rem; font-weight: 700; color: var(--text-title); margin: 0; 
             line-height: 1.45; letter-spacing: -0.2px;
@@ -184,7 +192,7 @@
             .tools-group { flex-direction: column; align-items: stretch; }
             .search-area { max-width: none; }
             .ticket-card { border-radius: 20px; }
-            .ticket-stub { min-width: 90px; padding: 15px; }
+            .ticket-stub { min-width: 85px; padding: 15px; }
             .stub-date { font-size: 1rem; }
             .ticket-title { font-size: 0.95rem; } 
             .ticket-body { padding: 16px 20px; }
@@ -193,7 +201,7 @@
         .tag-row { display: flex; flex-wrap: wrap; gap: 6px; }
         .tag { 
             font-size: 0.68rem; font-weight: 800; background-color: var(--tag-bg); color: var(--primary); 
-            padding: 4px 12px; border-radius: 8px; border: 1px solid var(--tag-border); 
+            padding: 3px 12px; border-radius: 8px; border: 1px solid var(--tag-border); 
             transition: 0.3s;
         }
         .tag:hover { background-color: var(--primary); color: white; border-color: var(--primary); }
