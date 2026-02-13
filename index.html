@@ -12,7 +12,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* --- 視覺藝術與核心結構 --- */
+        /* --- 頂級視覺藝術與核心結構 --- */
         *, *::before, *::after { box-sizing: border-box; }
         
         :root {
@@ -66,7 +66,7 @@
             .mobile-only { display: flex !important; }
         }
 
-        /* --- 頂部面板：懸浮島嶼設計 --- */
+        /* --- 頂部面板：控制島嶼設計 --- */
         .header-panel {
             flex-shrink: 0; background-color: var(--header-bg);
             backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
@@ -75,9 +75,8 @@
         }
         .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; width: 100%; }
 
-        /* --- 電腦版精確排版 --- */
+        /* --- 電腦版精確佈局 --- */
         .desktop-header { flex-direction: column; gap: 14px; }
-        
         .top-row { display: flex; justify-content: space-between; align-items: center; }
         .brand { 
             font-size: 1.65rem; font-weight: 900; color: var(--primary); 
@@ -87,14 +86,9 @@
             -webkit-text-fill-color: transparent;
         }
         
-        /* 系統按鈕：水平排列 */
         .system-actions { display: flex !important; flex-direction: row !important; gap: 10px; align-items: center; }
 
-        /* 第二列：緊湊型控制列 (消除空白) */
-        .control-row { 
-            display: flex; align-items: center; gap: 20px; width: 100%;
-        }
-
+        .control-row { display: flex; align-items: center; gap: 20px; width: 100%; }
         .stats-group { display: flex; gap: 10px; flex-shrink: 0; }
         .stat-card {
             background: var(--primary-light); border: 1px solid var(--tag-border);
@@ -103,13 +97,11 @@
         }
         .stat-card:hover { transform: translateY(-2px); border-color: var(--primary); }
 
-        .tools-group { 
-            display: flex; gap: 12px; flex-grow: 1; align-items: center; justify-content: flex-end;
-        }
+        .tools-group { display: flex; gap: 12px; flex-grow: 1; align-items: center; justify-content: flex-end; }
         .search-area { flex-grow: 1; position: relative; max-width: 400px; } 
         .filters { display: flex; gap: 8px; flex-shrink: 0; }
 
-        /* --- 手機版佈局精修 --- */
+        /* --- 手機版佈局 --- */
         .mobile-header { flex-direction: column; gap: 12px; width: 100%; }
         .mobile-nav { display: flex; justify-content: space-between; align-items: center; min-height: 48px; }
         .mobile-stats { display: flex; gap: 10px; }
@@ -117,7 +109,7 @@
         .mobile-tools { display: flex; flex-direction: column; gap: 12px; }
         .mobile-filters { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 
-        /* --- 共用按鈕與輸入框 --- */
+        /* --- UI 元件 --- */
         .icon-btn {
             height: 42px; padding: 0 18px; border-radius: 50px; background-color: var(--tag-bg);
             border: 1px solid var(--tag-border); color: var(--text-title); cursor: pointer;
@@ -152,19 +144,17 @@
         .stat-val { font-size: 1.5rem; font-weight: 900; color: var(--primary); line-height: 1; }
         .stat-lbl { font-size: 0.65rem; font-weight: 800; opacity: 0.5; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
 
-        /* --- 下方展示捲動區 --- */
+        /* --- 列表區 --- */
         .scroll-area {
             flex-grow: 1; overflow-y: auto; padding: 20px 0 80px 0;
             background-color: var(--bg-color); -webkit-overflow-scrolling: touch;
         }
-        /* 自定義優雅滾動條 */
         .scroll-area::-webkit-scrollbar { width: 4px; }
         .scroll-area::-webkit-scrollbar-thumb { background: var(--tag-border); border-radius: 10px; }
-        .scroll-area::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
         .ticket-list { display: flex; flex-direction: column; gap: 14px; }
 
-        /* --- 🎫 藝術級票券卡片 --- */
+        /* --- 🎫 擬真票券卡片 --- */
         .ticket-card {
             background-color: var(--card-bg); border-radius: var(--radius-md); display: flex;
             overflow: hidden; box-shadow: var(--shadow-sm); border: 1px solid var(--tag-border);
@@ -185,22 +175,14 @@
             min-width: 95px; text-align: center; border-right: 2px dashed rgba(255,255,255,0.35); position: relative;
         }
         
-        /* 🎫 擬真票券缺口工藝 */
         .ticket-stub::before, .ticket-stub::after {
             content: ''; position: absolute; right: -12px; width: 24px; height: 24px;
-            background-color: var(--bg-color); border-radius: 50%; 
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05); /* 內凹陰影 */
+            background-color: var(--bg-color); border-radius: 50%; box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
         }
         .ticket-stub::before { top: -12px; }
         .ticket-stub::after { bottom: -12px; }
 
-        .ticket-body { 
-            flex: 1; padding: 18px 28px; display: flex; flex-direction: column; justify-content: center; gap: 10px;
-            background-image: radial-gradient(var(--tag-border) 0.5px, transparent 0.5px); /* 輕微網格背景 */
-            background-size: 20px 20px;
-        }
-        
-        /* 下方節目名稱精緻化（小字級、加重字重） */
+        .ticket-body { flex: 1; padding: 18px 28px; display: flex; flex-direction: column; justify-content: center; gap: 10px; }
         .ticket-title { font-size: 1rem; font-weight: 700; color: var(--text-title); margin: 0; line-height: 1.45; letter-spacing: -0.2px; }
         
         @media (max-width: 768px) {
@@ -215,14 +197,8 @@
         }
 
         .tag-row { display: flex; flex-wrap: wrap; gap: 6px; }
-        .tag { 
-            font-size: 0.68rem; font-weight: 800; background-color: var(--tag-bg); color: var(--primary); 
-            padding: 3px 12px; border-radius: 8px; border: 1px solid var(--tag-border); 
-            transition: 0.3s;
-        }
-        .tag:hover { background-color: var(--primary); color: white; border-color: var(--primary); transform: scale(1.05); }
+        .tag { font-size: 0.68rem; font-weight: 800; background-color: var(--tag-bg); color: var(--primary); padding: 3px 12px; border-radius: 8px; border: 1px solid var(--tag-border); transition: 0.3s; }
 
-        /* --- 浮動功能按鈕 --- */
         #back-to-top {
             position: fixed; bottom: 28px; right: 28px; width: 50px; height: 50px;
             background-color: var(--primary); color: white; border: none; border-radius: 50%;
@@ -306,9 +282,7 @@
 
         <main class="scroll-area" id="scroll-main">
             <div class="container">
-                <div id="list-container" class="ticket-list">
-                    <!-- 由 JS 渲染 -->
-                </div>
+                <div id="list-container" class="ticket-list"></div>
                 <footer>&copy; 2026 Muiii Project &bull; Live Records</footer>
             </div>
         </main>
@@ -370,7 +344,7 @@
 
             document.querySelectorAll('.reload-btn').forEach(el => el.onclick = loadData);
             document.querySelectorAll('.theme-toggle').forEach(el => el.onclick = () => {
-                const isDark = document.documentElement.getAttribute('data-theme') === 'dark');
+                const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
                 const newTheme = isDark ? 'light' : 'dark';
                 document.documentElement.setAttribute('data-theme', newTheme);
                 localStorage.setItem('muiii_theme', newTheme);
