@@ -16,7 +16,7 @@
         *, *::before, *::after { box-sizing: border-box; }
         
         :root {
-            --bg-color: #f3f4f6; /* 稍微深一點的灰白，讓卡片更突出 */
+            --bg-color: #f1f4f9;
             --card-bg: #ffffff;
             --text-main: #64748b;
             --text-title: #0f172a;
@@ -24,16 +24,19 @@
             --primary-dark: #1e40af;
             --primary-light: rgba(37, 99, 235, 0.08);
             --header-bg: rgba(255, 255, 255, 0.95);
-            --tag-bg: #f8fafc;
+            --tag-bg: #f1f5f9;
             --tag-border: #e2e8f0;
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.02);
-            --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
-            --radius-card: 12px;
-            --transition: all 0.3s ease;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.02);
+            --shadow-md: 0 10px 30px -5px rgba(0, 0, 0, 0.04);
+            --shadow-lg: 0 20px 50px -12px rgba(0, 0, 0, 0.08);
+            --radius-lg: 24px;
+            --radius-md: 16px;
+            --radius-sm: 10px;
+            --transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
         }
 
         [data-theme="dark"] {
-            --bg-color: #0b1120;
+            --bg-color: #020617;
             --card-bg: #1e293b;
             --text-main: #94a3b8;
             --text-title: #f8fafc;
@@ -42,7 +45,7 @@
             --header-bg: rgba(15, 23, 42, 0.95);
             --tag-bg: #0f172a;
             --tag-border: #334155;
-            --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 25px 60px -15px rgba(0, 0, 0, 0.5);
         }
 
         html, body {
@@ -54,180 +57,174 @@
 
         .app-wrapper { display: flex; flex-direction: column; height: 100vh; }
 
-        /* --- 頂部面板 --- */
+        /* --- 頂部面板：控制島嶼設計 --- */
         .header-panel {
             flex-shrink: 0; background-color: var(--header-bg);
             backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
             border-bottom: 1px solid var(--tag-border); z-index: 1000;
-            padding: 16px 0;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+            box-shadow: var(--shadow-sm); padding: 14px 0;
         }
-        .container { max-width: 1000px; margin: 0 auto; padding: 0 24px; width: 100%; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; width: 100%; }
 
         /* 電腦版精確排版 */
         .desktop-header { flex-direction: column; gap: 14px; }
         .top-row { display: flex; justify-content: space-between; align-items: center; }
         .brand { 
-            font-size: 1.6rem; font-weight: 900; color: var(--primary); 
-            letter-spacing: -1px; text-transform: uppercase;
+            font-size: 1.65rem; font-weight: 900; color: var(--primary); 
+            letter-spacing: -1.5px; text-transform: uppercase;
         }
         .system-actions { display: flex !important; flex-direction: row !important; gap: 10px; align-items: center; }
 
-        .control-row { display: flex; align-items: center; gap: 24px; width: 100%; }
-        .stats-group { display: flex; gap: 12px; flex-shrink: 0; }
+        .control-row { display: flex; align-items: center; gap: 20px; width: 100%; }
+        .stats-group { display: flex; gap: 10px; flex-shrink: 0; }
         .stat-card {
             background: var(--primary-light); border: 1px solid var(--tag-border);
-            padding: 8px 20px; border-radius: 10px; text-align: center;
-            min-width: 100px; transition: var(--transition);
+            padding: 10px 20px; border-radius: var(--radius-md); text-align: center;
+            min-width: 105px; transition: var(--transition);
         }
-        .stat-val { font-size: 1.4rem; font-weight: 900; color: var(--primary); line-height: 1; }
-        .stat-lbl { font-size: 0.7rem; font-weight: 700; opacity: 0.6; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .stat-val { font-size: 1.5rem; font-weight: 900; color: var(--primary); line-height: 1; }
+        .stat-lbl { font-size: 0.65rem; font-weight: 800; opacity: 0.5; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
 
-        .tools-group { display: flex; gap: 10px; flex-grow: 1; align-items: center; justify-content: flex-end; }
-        .search-area { flex-grow: 1; position: relative; max-width: 380px; } 
-
-        /* UI 元件 */
-        .icon-btn {
-            height: 40px; padding: 0 16px; border-radius: 50px; background-color: var(--tag-bg);
-            border: 1px solid var(--tag-border); color: var(--text-title); cursor: pointer;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-            font-size: 0.9rem; font-weight: 800; transition: var(--transition);
-            white-space: nowrap; outline: none;
-        }
-        .icon-btn:hover { background-color: var(--primary); color: white; border-color: var(--primary); transform: translateY(-2px); }
-        .icon-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
-
-        .search-input {
-            width: 100%; height: 40px; padding: 0 15px 0 42px; border-radius: 10px;
-            border: 1px solid var(--tag-border); background-color: var(--bg-color); color: var(--text-title); outline: none;
-            font-size: 0.95rem; transition: var(--transition);
-        }
-        .search-input:focus { border-color: var(--primary); background-color: var(--card-bg); box-shadow: 0 0 0 3px var(--primary-light); }
-        .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-main); pointer-events: none; opacity: 0.6; }
-
-        .filter-group { display: flex; gap: 8px; }
-        .custom-select, .btn-filter {
-            height: 40px; padding: 0 14px; border-radius: 10px; border: 1px solid var(--tag-border);
-            background-color: var(--card-bg); color: var(--text-title); font-size: 0.85rem; font-weight: 600; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; gap: 6px; transition: var(--transition); white-space: nowrap;
-        }
-        .btn-filter:hover { border-color: var(--primary); color: var(--primary); background-color: var(--primary-light); }
-
-        /* --- 顯示控制 --- */
-        .desktop-only { display: flex; }
-        .mobile-only { display: none; }
-
-        /* --- 下方捲動列表 --- */
-        .scroll-area {
-            flex-grow: 1; overflow-y: auto; padding: 25px 0 80px 0;
-            background-color: var(--bg-color); -webkit-overflow-scrolling: touch;
-        }
-        .scroll-area::-webkit-scrollbar { width: 6px; }
-        .scroll-area::-webkit-scrollbar-thumb { background: var(--tag-border); border-radius: 10px; }
-
-        .ticket-list { 
-            display: flex; flex-direction: column; gap: 14px; 
-            max-width: 1000px; margin: 0 auto; padding: 0 20px;
-        }
-
-        /* --- ✨ 極簡清單卡片設計 --- */
-        .ticket-card {
-            background-color: var(--card-bg); 
-            border-radius: var(--radius-card); 
-            display: grid; 
-            grid-template-columns: 6px 100px 1fr auto; /* 裝飾條 | 日期 | 內容 | 標籤 */
-            align-items: center; 
-            box-shadow: var(--shadow-card); 
-            border: 1px solid var(--tag-border);
-            transition: var(--transition); 
-            position: relative;
-            overflow: hidden;
-            animation: slideUp 0.5s ease-out backwards;
-            padding: 0; /* 讓裝飾條滿版 */
-        }
-        .ticket-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px -5px rgba(0,0,0,0.06); border-color: var(--primary); }
-
-        @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* 裝飾條 */
-        .accent-bar {
-            width: 100%; height: 100%;
-            background-color: var(--primary);
-        }
-
-        /* 日期區塊 */
-        .date-col {
-            padding: 16px 10px;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            border-right: 1px solid var(--tag-border);
-            color: var(--text-title);
-        }
-        .date-md { font-size: 1.1rem; font-weight: 800; letter-spacing: -0.5px; }
-        .date-y { font-size: 0.75rem; font-weight: 600; opacity: 0.5; margin-top: 2px; }
-
-        /* 內容區塊 */
-        .info-col {
-            padding: 16px 24px;
-            display: flex; flex-direction: column; justify-content: center;
-        }
-        .ticket-title { 
-            font-size: 1.05rem; font-weight: 700; color: var(--text-title); margin: 0; 
-            line-height: 1.4;
-        }
-
-        /* 標籤區塊 */
-        .tags-col {
-            padding: 16px 24px;
-            display: flex; flex-direction: column; align-items: flex-end; gap: 6px;
-        }
-        .tag { 
-            font-size: 0.75rem; font-weight: 700; background-color: var(--tag-bg); color: var(--text-main); 
-            padding: 4px 12px; border-radius: 50px; border: 1px solid var(--tag-border); 
-            transition: 0.2s; white-space: nowrap;
-        }
-        .ticket-card:hover .tag { color: var(--primary); border-color: var(--primary); background-color: #fff; }
+        .tools-group { display: flex; gap: 12px; flex-grow: 1; align-items: center; justify-content: flex-end; }
+        .search-area { flex-grow: 1; position: relative; max-width: 400px; } 
+        .filters { display: flex; gap: 8px; flex-shrink: 0; }
 
         /* 手機版佈局 */
         .mobile-header { flex-direction: column; gap: 12px; width: 100%; }
         .mobile-nav { display: flex; justify-content: space-between; align-items: center; min-height: 48px; }
         .mobile-stats { display: flex; gap: 10px; }
-        .mobile-stats .stat-card { flex: 1; padding: 10px; }
+        .mobile-stats .stat-card { flex: 1; padding: 12px; border-radius: var(--radius-md); }
         .mobile-tools { display: flex; flex-direction: column; gap: 12px; }
         .mobile-filters { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 
-        @media (max-width: 992px) {
+        /* UI 元件 */
+        .icon-btn {
+            height: 42px; padding: 0 18px; border-radius: 50px; background-color: var(--tag-bg);
+            border: 1px solid var(--tag-border); color: var(--text-title); cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            font-size: 0.9rem; font-weight: 800; transition: var(--transition);
+            white-space: nowrap; outline: none;
+        }
+        .icon-btn:hover { background-color: var(--primary); color: white; border-color: var(--primary); transform: translateY(-3px); box-shadow: 0 8px 20px rgba(37, 99, 235, 0.2); }
+        .icon-btn:active { transform: scale(0.95); }
+        .icon-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+        @media (max-width: 768px) {
+            .icon-btn { width: 40px; height: 40px; padding: 0; border-radius: 50%; }
+        }
+
+        .search-input {
+            width: 100%; height: 42px; padding: 0 15px 0 46px; border-radius: 14px;
+            border: 1px solid var(--tag-border); background-color: var(--bg-color); color: var(--text-title); outline: none;
+            font-size: 1rem; transition: var(--transition);
+        }
+        .search-input:focus { border-color: var(--primary); background-color: var(--card-bg); box-shadow: 0 0 0 4px var(--primary-light); }
+        .search-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-main); pointer-events: none; opacity: 0.7; }
+
+        .custom-select, .btn-filter {
+            height: 42px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--tag-border);
+            background-color: var(--card-bg); color: var(--text-title); font-size: 0.85rem; font-weight: 600; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 6px; transition: var(--transition);
+            white-space: nowrap;
+        }
+        .btn-filter:hover { border-color: var(--primary); color: var(--primary); background-color: var(--primary-light); }
+
+        /* --- 下方捲動列表 --- */
+        .scroll-area {
+            flex-grow: 1; overflow-y: auto; padding: 30px 0 80px 0;
+            background-color: var(--bg-color); -webkit-overflow-scrolling: touch;
+        }
+        .scroll-area::-webkit-scrollbar { width: 4px; }
+        .scroll-area::-webkit-scrollbar-thumb { background: var(--tag-border); border-radius: 10px; }
+
+        .ticket-list { 
+            display: grid; 
+            grid-template-columns: 1fr;
+            gap: 20px; 
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        @media (min-width: 992px) {
+            .ticket-list { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        /* --- 🎫 擬真票券卡片設計 --- */
+        .ticket-card {
+            background-color: var(--card-bg); border-radius: var(--radius-md); display: flex;
+            overflow: hidden; box-shadow: var(--shadow-sm); border: 1px solid var(--tag-border);
+            transition: var(--transition); position: relative;
+            animation: slideInUp 0.6s cubic-bezier(0.23, 1, 0.32, 1) backwards;
+        }
+        .ticket-card:hover { transform: translateY(-6px) scale(1.01); box-shadow: var(--shadow-lg); }
+
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .ticket-stub {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white; padding: 20px;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            min-width: 100px; text-align: center; border-right: 2px dashed rgba(255,255,255,0.3); position: relative;
+            flex-shrink: 0;
+        }
+        
+        .ticket-stub::before, .ticket-stub::after {
+            content: ''; position: absolute; right: -12px; width: 24px; height: 24px;
+            background-color: var(--bg-color); border-radius: 50%; 
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .ticket-stub::before { top: -12px; }
+        .ticket-stub::after { bottom: -12px; }
+
+        .stub-year { font-size: 0.75rem; font-weight: 700; opacity: 0.8; margin-bottom: 2px; letter-spacing: 1px; }
+        .stub-date { font-size: 1.15rem; font-weight: 800; letter-spacing: -0.5px; }
+
+        .ticket-body { 
+            flex: 1; padding: 22px 28px; display: flex; flex-direction: column; justify-content: center; gap: 10px;
+            overflow: hidden;
+        }
+        
+        .ticket-title { 
+            font-size: 1.05rem; font-weight: 700; color: var(--text-title); margin: 0; 
+            line-height: 1.45; letter-spacing: -0.2px;
+            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+        }
+
+        .tag-row { display: flex; flex-wrap: wrap; gap: 6px; }
+        .tag { 
+            font-size: 0.68rem; font-weight: 800; background-color: var(--tag-bg); color: var(--primary); 
+            padding: 3px 12px; border-radius: 8px; border: 1px solid var(--tag-border); 
+            transition: 0.3s;
+        }
+        .tag:hover { background-color: var(--primary); color: white; border-color: var(--primary); }
+
+        @media (max-width: 768px) {
             .desktop-only { display: none !important; }
             .mobile-only { display: flex !important; }
             
-            .ticket-card {
-                grid-template-columns: 6px 1fr; /* 裝飾條 | 內容 */
-                padding: 0;
-            }
-            .accent-bar { grid-row: 1 / span 3; } /* 裝飾條拉長 */
-            
-            .date-col { 
-                grid-column: 2; 
-                flex-direction: row; justify-content: flex-start; gap: 8px; align-items: baseline;
-                border-right: none; padding: 14px 18px 4px 18px;
-            }
-            .date-md { font-size: 1rem; color: var(--primary); }
-            
-            .info-col { grid-column: 2; padding: 4px 18px 8px 18px; }
-            .ticket-title { font-size: 1rem; line-height: 1.4; }
-            
-            .tags-col { grid-column: 2; padding: 0 18px 16px 18px; flex-direction: row; justify-content: flex-start; flex-wrap: wrap; }
-            .tag { font-size: 0.8rem; padding: 4px 10px; }
+            .control-row { flex-direction: column; align-items: stretch; gap: 12px; }
+            .tools-group { flex-direction: column; align-items: stretch; }
+            .search-area { max-width: none; }
+            .ticket-card { border-radius: 20px; }
+            .ticket-stub { min-width: 90px; padding: 15px; }
+            .stub-date { font-size: 1rem; }
+            .ticket-title { font-size: 0.95rem; } 
+            .ticket-body { padding: 16px 20px; }
         }
 
         #back-to-top {
-            position: fixed; bottom: 30px; right: 30px; width: 48px; height: 48px;
+            position: fixed; bottom: 28px; right: 28px; width: 50px; height: 50px;
             background-color: var(--primary); color: white; border: none; border-radius: 50%;
             display: none; align-items: center; justify-content: center; cursor: pointer;
-            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4); z-index: 2000; transition: var(--transition);
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.35); z-index: 2000; transition: var(--transition);
         }
-        #back-to-top:hover { transform: scale(1.1); background-color: var(--primary-dark); }
+        #back-to-top:hover { transform: scale(1.15) rotate(-5deg); background-color: var(--primary-dark); }
 
-        footer { text-align: center; padding: 60px 0; opacity: 0.4; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.5px; }
+        footer { text-align: center; padding: 60px 0; opacity: 0.4; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.5px; }
     </style>
 </head>
 <body>
@@ -254,11 +251,17 @@
                         <div class="tools-group">
                             <div class="search-area">
                                 <svg class="search-icon" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                                <input type="text" class="search-input" placeholder="搜尋藝人、節目名稱或日期...">
+                                <input type="text" class="search-input" placeholder="搜尋藝人、節目名称或日期...">
                             </div>
                             <div class="filter-group">
                                 <select class="year-filter custom-select"><option value="all">年份</option></select>
-                                <select class="month-filter custom-select" disabled><option value="all">月份</option></select>
+                                <select class="month-filter custom-select" disabled>
+                                    <option value="all">月份</option>
+                                    <option value="01">1月</option><option value="02">2月</option><option value="03">3月</option>
+                                    <option value="04">4月</option><option value="05">5月</option><option value="06">6月</option>
+                                    <option value="07">7月</option><option value="08">8月</option><option value="09">9月</option>
+                                    <option value="10">10月</option><option value="11">11月</option><option value="12">12月</option>
+                                </select>
                                 <button class="sort-btn btn-filter"><span>⬇</span> <span class="sort-label">新到舊</span></button>
                                 <button class="reset-btn btn-filter">
                                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="14"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
@@ -290,7 +293,13 @@
                         </div>
                         <div class="mobile-filters">
                             <select class="year-filter custom-select"><option value="all">年份</option></select>
-                            <select class="month-filter custom-select" disabled><option value="all">月份</option></select>
+                            <select class="month-filter custom-select" disabled>
+                                <option value="all">月份</option>
+                                <option value="01">1月</option><option value="02">2月</option><option value="03">3月</option>
+                                <option value="04">4月</option><option value="05">5月</option><option value="06">6月</option>
+                                <option value="07">7月</option><option value="08">8月</option><option value="09">9月</option>
+                                <option value="10">10月</option><option value="11">11月</option><option value="12">12月</option>
+                            </select>
                             <button class="sort-btn btn-filter"><span>⬇</span> <span class="sort-label">新到舊</span></button>
                             <button class="reset-btn btn-filter"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="14"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg></button>
                         </div>
@@ -434,15 +443,14 @@
                 const delay = (idx % 12) * 0.05;
                 return `
                     <div class="ticket-card" style="animation-delay: ${delay}s">
-                        <div class="accent-bar"></div>
-                        <div class="date-col">
-                            <span class="date-y">${dateParts[0] || ''}</span>
-                            <span class="date-md">${dateParts[1] ? dateParts[1] + '.' + dateParts[2] : ''}</span>
+                        <div class="ticket-stub">
+                            <div class="stub-year">${dateParts[0] || ''}</div>
+                            <div class="stub-date">${dateParts[1] ? dateParts[1] + '.' + dateParts[2] : ''}</div>
                         </div>
-                        <div class="info-col">
+                        <div class="ticket-body">
                             <h3 class="ticket-title">${t['節目名稱']}</h3>
+                            <div class="tag-row">${tags}</div>
                         </div>
-                        <div class="tags-col">${tags}</div>
                     </div>
                 `;
             }).join('');
