@@ -39,14 +39,6 @@
             --toggle-text: #64748b;
             --highlight-bg: #fef08a;
             --highlight-text: #854d0e;
-            
-            /* 難度標籤顏色 */
-            --diff-hell-bg: #fef2f2;
-            --diff-hell-text: #dc2626;
-            --diff-hard-bg: #fff7ed;
-            --diff-hard-text: #ea580c;
-            --diff-norm-bg: #f0fdf4;
-            --diff-norm-text: #16a34a;
         }
 
         /* 深色主題 (Dark) */
@@ -70,13 +62,6 @@
             --toggle-text: #cbd5e1;
             --highlight-bg: #854d0e;
             --highlight-text: #fef08a;
-            
-            --diff-hell-bg: rgba(153, 27, 27, 0.2);
-            --diff-hell-text: #fca5a5;
-            --diff-hard-bg: rgba(154, 52, 18, 0.2);
-            --diff-hard-text: #fdba74;
-            --diff-norm-bg: rgba(22, 101, 52, 0.2);
-            --diff-norm-text: #86efac;
         }
 
         body {
@@ -379,22 +364,6 @@
             gap: 8px;
         }
 
-        /* 難度標籤 */
-        .difficulty-badge {
-            font-size: 0.75rem;
-            padding: 2px 8px;
-            border-radius: 6px;
-            font-weight: 700;
-            white-space: nowrap;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-        }
-        
-        .diff-hell { background: var(--diff-hell-bg); color: var(--diff-hell-text); }
-        .diff-hard { background: var(--diff-hard-bg); color: var(--diff-hard-text); }
-        .diff-normal { background: var(--diff-norm-bg); color: var(--diff-norm-text); }
-
         .tags-group {
             display: flex;
             flex-direction: column;
@@ -683,22 +652,6 @@
             });
         });
 
-        // AI 難度判斷邏輯
-        function getDifficulty(title) {
-            const lowerTitle = title.toLowerCase();
-            
-            const hellKeywords = ['五月天', 'mayday', 'blackpink', 'bts', 'taylor swift', 'coldplay', '陳奕迅', 'super junior', '鄧紫棋', '蔡依林', '張惠妹', 'amei', 'jay chou', '周杰倫'];
-            const hardKeywords = ['大港開唱', '伍佰', '動力火車', '告五人', '蘇打綠', 'babymonster', '頑童', '林俊傑', 'jj lin', 'maroon 5', 'bruno mars', 'twice', 'ive', 'aespa'];
-            
-            if (hellKeywords.some(k => lowerTitle.includes(k))) {
-                return { label: '🔥 地獄級', class: 'diff-hell' };
-            }
-            if (hardKeywords.some(k => lowerTitle.includes(k))) {
-                return { label: '😰 困難', class: 'diff-hard' };
-            }
-            return { label: '😐 一般', class: 'diff-normal' };
-        }
-
         function loadData() {
             Papa.parse(CSV_URL, {
                 download: true,
@@ -878,9 +831,6 @@
                 const displayTitle = highlightText(ticket['節目名稱'], searchTerm);
                 const displayDate = highlightText(dateStr, searchTerm);
                 
-                // AI 判斷
-                const diff = getDifficulty(ticket['節目名稱']);
-
                 html += `
                     <div class="ticket-card">
                         <div class="date-box">
@@ -888,7 +838,6 @@
                         </div>
                         <div class="program-title">
                             ${displayTitle}
-                            <span class="difficulty-badge ${diff.class}">${diff.label}</span>
                         </div>
                         <div class="tags-group">
                             ${tagsHtml}
