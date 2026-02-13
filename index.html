@@ -172,7 +172,7 @@
             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             color: white; padding: 18px;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            min-width: 95px; text-align: center; border-right: 2px dashed rgba(255,255,255,0.35); position: relative;
+            min-width: 105px; text-align: center; border-right: 2px dashed rgba(255,255,255,0.35); position: relative;
         }
         
         .ticket-stub::before, .ticket-stub::after {
@@ -182,16 +182,22 @@
         .ticket-stub::before { top: -12px; }
         .ticket-stub::after { bottom: -12px; }
 
+        /* 日期顯示：年月日 順序 */
+        .stub-year { font-size: 0.75rem; font-weight: 700; opacity: 0.75; margin-bottom: 2px; letter-spacing: 1px; }
+        .stub-date { font-size: 1.15rem; font-weight: 800; letter-spacing: -0.5px; }
+
         .ticket-body { flex: 1; padding: 18px 28px; display: flex; flex-direction: column; justify-content: center; gap: 10px; }
         .ticket-title { font-size: 1rem; font-weight: 700; color: var(--text-title); margin: 0; line-height: 1.45; letter-spacing: -0.2px; }
         
         @media (max-width: 768px) {
             .ticket-card { flex-direction: column; border-radius: 20px; }
             .ticket-stub { 
-                flex-direction: row; min-width: 100%; padding: 12px 20px; justify-content: flex-start; gap: 14px;
+                flex-direction: row; min-width: 100%; padding: 12px 24px; justify-content: flex-start; gap: 12px;
                 border-right: none; border-bottom: 2px dashed rgba(255,255,255,0.25);
             }
             .ticket-stub::before, .ticket-stub::after { left: 50%; transform: translateX(-50%); right: auto; top: auto; bottom: -12px; }
+            .stub-year { margin-bottom: 0; }
+            .stub-date::before { content: ' • '; opacity: 0.5; font-weight: 400; margin: 0 4px; }
             .ticket-title { font-size: 0.92rem; font-weight: 600; } 
             .ticket-body { padding: 16px 20px; }
         }
@@ -222,7 +228,7 @@
                         <div class="system-actions">
                             <button class="install-btn icon-btn" style="display:none"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg><span>下載 APP</span></button>
                             <button class="reload-btn icon-btn"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg><span>重整資料</span></button>
-                            <button class="theme-toggle icon-btn"><svg class="theme-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg><span>深色模式</span></button>
+                            <button class="theme-toggle icon-btn"><svg class="theme-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg><span>切換模式</span></button>
                         </div>
                     </div>
                     
@@ -413,8 +419,8 @@
                 return `
                     <div class="ticket-card" style="animation-delay: ${delay}s">
                         <div class="ticket-stub">
-                            <div class="stub-date">${dateParts[1]}.${dateParts[2]}</div>
                             <div class="stub-year">${dateParts[0]}</div>
+                            <div class="stub-date">${dateParts[1]}.${dateParts[2]}</div>
                         </div>
                         <div class="ticket-body">
                             <h3 class="ticket-title">${t['節目名稱']}</h3>
