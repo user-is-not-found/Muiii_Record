@@ -108,6 +108,7 @@
             transition: all 0.3s ease;
         }
 
+        /* 右上角按鈕群組 */
         .top-actions {
             position: absolute;
             right: 20px;
@@ -133,7 +134,7 @@
             padding: 0 16px; /* 左右增加內距 */
             gap: 6px; /* 圖示與文字間距 */
             font-size: 0.9rem;
-            font-weight: 600;
+            font-weight: 700;
             white-space: nowrap;
         }
 
@@ -170,6 +171,7 @@
             letter-spacing: -0.5px;
             padding-right: 180px; /* 避開更寬的按鈕列 */
             padding-left: 40px;
+            text-align: left;
         }
 
         /* 搜尋框 */
@@ -452,7 +454,7 @@
             color: #94a3b8;
         }
 
-        /* --- 手機版響應式設計 --- */
+        /* --- 手機版響應式設計 (關鍵修正) --- */
         @media (max-width: 768px) {
             .container { padding: 0 15px 30px 15px; }
 
@@ -464,18 +466,33 @@
                 padding: 15px 20px 10px 20px;
             }
 
-            .top-actions { right: 15px; top: 15px; }
-            
-            /* 手機版：隱藏按鈕文字，變回圓形 */
-            .icon-btn { 
-                width: 36px; 
-                height: 36px; 
-                padding: 0; 
-                border-radius: 50%;
+            .top-actions { 
+                right: 15px; 
+                top: 15px; 
+                /* 確保按鈕列在最上方 */
             }
-            .icon-btn span { display: none; }
+            
+            /* 手機版按鈕：縮小文字與 padding，但強制顯示 */
+            .icon-btn { 
+                height: 32px; 
+                padding: 0 10px;
+                font-size: 0.8rem;
+                border-radius: 20px;
+            }
+            .icon-btn svg {
+                width: 14px;
+                height: 14px;
+            }
+            /* 強制顯示文字 */
+            .icon-btn span { display: inline-block; }
 
-            h1 { font-size: 1.5rem; padding: 0 90px 0 40px; text-align: left; }
+            /* 標題增加上間距，避免被按鈕擋住 */
+            h1 { 
+                font-size: 1.5rem; 
+                padding: 0 20px;
+                margin-top: 40px; /* 讓出空間給按鈕 */
+                text-align: center;
+            }
 
             .controls-bar { flex-direction: column; align-items: stretch; gap: 12px; }
             
@@ -483,18 +500,13 @@
             .filter-group { 
                 justify-content: space-between; 
                 width: 100%;
-                flex-wrap: wrap; /* 允許換行 */
-                gap: 10px; /* 增加間距 */
+                flex-wrap: wrap;
+                gap: 10px;
             }
 
             /* 每個元素佔一半寬度 */
-            #year-filter, #month-filter {
+            #year-filter, #month-filter, #sort-btn, #reset-btn {
                 flex: 1 1 45%; 
-                min-width: 0;
-            }
-
-            #sort-btn, #reset-btn {
-                flex: 1 1 45%;
                 min-width: 0;
             }
 
@@ -614,7 +626,6 @@
                             <span id="sort-text">新到舊</span>
                         </button>
                         
-                        <!-- 重置按鈕 -->
                         <button id="reset-btn" class="btn-text" title="重置">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                             <span>重置</span>
@@ -703,7 +714,7 @@
         });
 
         function loadData() {
-            // 顯示載入動畫 (重整時也會出現)
+            // 顯示載入動畫
             document.getElementById('list-container').innerHTML = `
                 <div class="skeleton"><div class="skeleton-date shimmer"></div><div class="skeleton-title shimmer"></div><div class="skeleton-tags shimmer"></div></div>
                 <div class="skeleton"><div class="skeleton-date shimmer"></div><div class="skeleton-title shimmer"></div><div class="skeleton-tags shimmer"></div></div>
