@@ -255,6 +255,7 @@
         .btn-text {
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 6px;
             background-color: var(--card-bg);
             border: 1px solid var(--tag-border);
@@ -265,6 +266,7 @@
             color: var(--text-main);
             cursor: pointer;
             transition: all 0.2s;
+            white-space: nowrap;
         }
         
         .btn-text:hover {
@@ -476,8 +478,25 @@
             h1 { font-size: 1.5rem; padding: 0 90px 0 40px; text-align: left; }
 
             .controls-bar { flex-direction: column; align-items: stretch; gap: 12px; }
-            .filter-group { justify-content: space-between; width: 100%; }
-            .filter-group select, .filter-group button { flex: 1; }
+            
+            /* 修改手機版篩選群組佈局：2x2 排列 */
+            .filter-group { 
+                justify-content: space-between; 
+                width: 100%;
+                flex-wrap: wrap; /* 允許換行 */
+                gap: 10px; /* 增加間距 */
+            }
+
+            /* 每個元素佔一半寬度 */
+            #year-filter, #month-filter {
+                flex: 1 1 45%; 
+                min-width: 0;
+            }
+
+            #sort-btn, #reset-btn {
+                flex: 1 1 45%;
+                min-width: 0;
+            }
 
             .header-row { display: none; }
 
@@ -595,8 +614,10 @@
                             <span id="sort-text">新到舊</span>
                         </button>
                         
+                        <!-- 重置按鈕 -->
                         <button id="reset-btn" class="btn-text" title="重置">
-                            重置
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                            <span>重置</span>
                         </button>
                     </div>
                     
@@ -627,6 +648,7 @@
         </footer>
     </div>
 
+    <!-- 回到頂部按鈕 -->
     <button id="back-to-top" title="回到頂部">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
