@@ -37,32 +37,52 @@
 
         header {
             text-align: center;
-            margin-bottom: 50px;
+            margin-bottom: 40px;
         }
 
         h1 {
             font-size: 2.2rem;
             font-weight: 900;
             color: var(--text-title);
-            margin: 0 0 10px 0;
+            margin: 0 0 20px 0;
             letter-spacing: -0.5px;
         }
 
-        .stats-badge {
-            display: inline-block;
-            background: #fff;
-            padding: 6px 16px;
-            border-radius: 50px;
-            font-size: 0.9rem;
-            color: var(--text-main);
-            font-weight: 600;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        /* 搜尋框樣式 */
+        .search-container {
+            max-width: 400px;
+            margin: 0 auto;
+            position: relative;
         }
 
-        #loading {
-            text-align: center;
-            padding: 60px;
+        .search-input {
+            width: 100%;
+            padding: 12px 20px 12px 45px; /* 預留左側圖示空間 */
+            border-radius: 50px;
+            border: 1px solid #e2e8f0;
+            background-color: #ffffff;
+            font-size: 1rem;
+            color: var(--text-main);
+            outline: none;
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            font-family: inherit;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 18px;
+            height: 18px;
             color: #94a3b8;
+            pointer-events: none;
         }
 
         /* --- 票卡列表樣式 --- */
@@ -181,13 +201,14 @@
     <div class="container">
         <header>
             <h1>Muiii 搶票戰績</h1>
-            <div class="stats-badge">
-                已同步 <span id="total-count" style="color: #2563eb;">0</span> 場戰役
+            <div class="search-container">
+                <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+                <input type="text" id="search-input" class="search-input" placeholder="搜尋節目或日期...">
             </div>
         </header>
 
-        <div id="loading">讀取戰報中...</div>
-        
         <div id="list-container" class="ticket-list">
             <!-- 列表將在此生成 -->
         </div>
@@ -199,38 +220,56 @@
 
     <script>
         const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vThZZurHBpfes9J-dLaoi51jpb0MnQ4oABmBux77r-OO5LOvuoex6lesE4GvZb-UQ5zgiqWEfiHxNQy/pub?gid=0&single=true&output=csv';
+        let allTickets = []; // 儲存所有資料以供搜尋使用
 
         function loadData() {
             Papa.parse(CSV_URL, {
                 download: true,
                 header: true,
                 complete: function(results) {
-                    renderList(results.data);
+                    // 過濾無效資料並儲存
+                    allTickets = results.data.filter(item => item['節目名稱'] && item['節目名稱'].trim() !== '');
+                    renderList(allTickets);
                 },
                 error: function() {
-                    document.getElementById('loading').innerText = '連線異常，無法讀取資料。';
+                    console.error('連線異常，無法讀取資料。');
                 }
             });
         }
 
-        function renderList(data) {
-            const container = document.getElementById('list-container');
-            const loading = document.getElementById('loading');
-            const totalCount = document.getElementById('total-count');
+        // 搜尋功能監聽
+        document.getElementById('search-input').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase().trim();
             
-            loading.style.display = 'none';
-
-            // 過濾無效資料
-            const validData = data.filter(item => item['節目名稱'] && item['節目名稱'].trim() !== '');
-
-            if (validData.length === 0) {
-                container.innerHTML = '<p style="text-align:center; color:#94a3b8;">目前尚無戰績。</p>';
+            if (searchTerm === '') {
+                renderList(allTickets);
                 return;
             }
 
-            totalCount.innerText = validData.length;
+            const filteredData = allTickets.filter(ticket => {
+                const title = (ticket['節目名稱'] || '').toLowerCase();
+                const date = (ticket['售票日期'] || '').toLowerCase();
+                return title.includes(searchTerm) || date.includes(searchTerm);
+            });
 
-            const html = validData.map(ticket => {
+            renderList(filteredData);
+        });
+
+        function renderList(data) {
+            const container = document.getElementById('list-container');
+            
+            if (data.length === 0) {
+                // 如果是搜尋結果為空，顯示提示；如果是初始載入為空（但allTickets有值），代表搜尋沒結果
+                if (allTickets.length > 0) {
+                     container.innerHTML = '<p style="text-align:center; color:#94a3b8;">找不到符合的戰績。</p>';
+                } else {
+                     // 初始就真的沒資料
+                     container.innerHTML = ''; 
+                }
+                return;
+            }
+
+            const html = data.map(ticket => {
                 // 處理空格分割的價位
                 const countsRaw = ticket['張數'] || '';
                 const countItems = countsRaw.split(/\s+/).filter(item => item.trim() !== '');
