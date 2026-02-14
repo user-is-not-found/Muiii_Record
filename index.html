@@ -12,125 +12,96 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* --- 視覺藝術核心設定 --- */
+        /* --- 視覺藝術核心 --- */
         *, *::before, *::after { box-sizing: border-box; }
         
         :root {
-            /* 華麗淺色主題 */
-            --bg-gradient: linear-gradient(135deg, #e0e7ff 0%, #cffafe 50%, #f3e8ff 100%);
-            --card-bg: rgba(255, 255, 255, 0.95);
-            --text-main: #475569;
+            --bg-color: #f0f4f9;
+            --card-bg: #ffffff;
+            --text-main: #64748b;
             --text-title: #0f172a;
             --primary: #4f46e5;
             --primary-dark: #4338ca;
             --primary-light: rgba(79, 70, 229, 0.08);
-            --header-bg: rgba(255, 255, 255, 0.85);
-            --glass-border: rgba(255, 255, 255, 0.6);
+            --header-bg: rgba(255, 255, 255, 0.95);
             --tag-bg: #f8fafc;
             --tag-border: #e2e8f0;
-            
             --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-            --shadow-card: 0 10px 20px -5px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
-            --shadow-hover: 0 20px 40px -10px rgba(79, 70, 229, 0.15);
-            
+            --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+            --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
             --radius-lg: 24px;
             --radius-md: 16px;
-            --radius-sm: 10px;
-            --transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            --radius-sm: 8px;
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
 
         [data-theme="dark"] {
-            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #111827 100%);
-            --card-bg: rgba(30, 41, 59, 0.85);
-            --text-main: #cbd5e1;
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #94a3b8;
             --text-title: #f8fafc;
             --primary: #818cf8;
             --primary-dark: #6366f1;
             --primary-light: rgba(99, 102, 241, 0.15);
-            --header-bg: rgba(15, 23, 42, 0.7);
-            --glass-border: rgba(255, 255, 255, 0.08);
+            --header-bg: rgba(15, 23, 42, 0.85);
             --tag-bg: #0f172a;
             --tag-border: #334155;
-            --shadow-card: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+            --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
             --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.6);
         }
 
-        /* 動態流光背景 */
         body {
-            height: 100%; margin: 0; padding: 0; overflow: hidden;
+            margin: 0; padding: 0;
             font-family: 'Inter', 'Noto Sans TC', sans-serif;
-            background: var(--bg-gradient);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
-            color: var(--text-main);
-            transition: color 0.3s;
+            background-color: var(--bg-color); color: var(--text-main);
+            background-image: radial-gradient(at 0% 0%, hsla(253,16%,7%,0) 0, hsla(253,16%,7%,0) 50%), radial-gradient(at 50% 0%, hsla(225,39%,30%,0) 0, hsla(225,39%,30%,0) 50%), radial-gradient(at 100% 0%, hsla(339,49%,30%,0) 0, hsla(339,49%,30%,0) 50%);
+            min-height: 100vh;
         }
 
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        .app-wrapper { display: flex; flex-direction: column; height: 100vh; }
+        .app-wrapper { display: flex; flex-direction: column; min-height: 100vh; }
 
         /* --- 頂部面板 --- */
         .header-panel {
-            flex-shrink: 0;
+            position: sticky; top: 0; z-index: 1000;
             background-color: var(--header-bg);
             backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-            border-bottom: 1px solid var(--glass-border);
-            z-index: 1000;
-            padding: 14px 0;
+            border-bottom: 1px solid var(--tag-border);
+            padding: 12px 0;
             box-shadow: var(--shadow-sm);
         }
         .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; width: 100%; }
 
-        /* 第一列：品牌與系統按鈕 */
-        .nav-bar { 
-            display: flex; justify-content: space-between; align-items: center; 
-            margin-bottom: 16px;
-        }
-        
+        /* 導覽列 */
+        .nav-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
         .brand { 
-            font-size: 1.6rem; font-weight: 900; 
-            background: linear-gradient(to right, var(--primary), var(--primary-dark));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            font-size: 1.6rem; font-weight: 900; color: var(--primary); 
             letter-spacing: -0.5px; text-transform: uppercase;
+            text-shadow: 0 2px 10px rgba(79, 70, 229, 0.2);
         }
-        
-        /* 電腦版按鈕：橫向排列 */
         .system-actions { display: flex; gap: 10px; align-items: center; flex-wrap: nowrap; }
 
-        /* 第二列：儀表板 (統計 + 工具) */
-        .control-row { 
-            display: flex; align-items: center; gap: 20px; width: 100%;
-        }
-
-        /* 統計卡片 */
-        .stats-group { display: flex; gap: 12px; flex-shrink: 0; }
+        /* 控制列 */
+        .control-row { display: flex; align-items: center; gap: 20px; width: 100%; }
+        
+        .stats-group { display: flex; gap: 10px; flex-shrink: 0; }
         .stat-card {
-            background-color: var(--card-bg); 
-            border: 1px solid var(--glass-border);
-            padding: 8px 20px; border-radius: 12px; text-align: center;
-            min-width: 95px;
-            box-shadow: var(--shadow-sm);
+            background-color: var(--card-bg); border: 1px solid var(--tag-border);
+            padding: 8px 18px; border-radius: 12px; text-align: center;
+            min-width: 90px; box-shadow: var(--shadow-sm);
             transition: var(--transition);
         }
         .stat-card:hover { transform: translateY(-2px); border-color: var(--primary); }
-        .stat-val { font-size: 1.4rem; font-weight: 900; color: var(--primary); line-height: 1.1; }
+        .stat-val { font-size: 1.3rem; font-weight: 900; color: var(--primary); line-height: 1.1; }
         .stat-lbl { font-size: 0.7rem; font-weight: 700; opacity: 0.7; margin-top: 2px; }
 
-        /* 工具列 */
         .tools-group { display: flex; gap: 10px; flex-grow: 1; align-items: center; justify-content: flex-end; }
         .search-area { flex-grow: 1; position: relative; max-width: 380px; } 
         .filter-group { display: flex; gap: 8px; flex-shrink: 0; }
 
-        /* --- UI 元件 --- */
-        /* 電腦版按鈕：膠囊型 + 文字 */
+        /* UI 元件 */
         .icon-btn {
             height: 40px; padding: 0 16px; border-radius: 50px; 
-            background-color: var(--card-bg); border: 1px solid var(--glass-border);
+            background-color: var(--card-bg); border: 1px solid var(--tag-border); 
             color: var(--text-title); cursor: pointer;
             display: flex; align-items: center; justify-content: center; gap: 6px;
             font-size: 0.9rem; font-weight: 700; transition: var(--transition);
@@ -143,23 +114,17 @@
         .icon-btn span { display: inline-block; }
         .icon-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
 
-        /* 手機版按鈕：縮小為圓形 */
-        @media (max-width: 768px) {
-            .icon-btn { width: 40px; padding: 0; border-radius: 50%; }
-            .icon-btn span { display: none; }
-        }
-
         .search-input {
             width: 100%; height: 40px; padding: 0 15px 0 42px; border-radius: 12px;
-            border: 1px solid var(--glass-border); background-color: var(--card-bg); 
+            border: 1px solid var(--tag-border); background-color: var(--card-bg); 
             color: var(--text-title); outline: none; font-size: 0.95rem;
             transition: var(--transition); box-shadow: inset 0 1px 2px rgba(0,0,0,0.02);
         }
-        .search-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+        .search-input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-light); }
         .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-main); opacity: 0.7; }
 
         .custom-select, .btn-filter {
-            height: 40px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--glass-border);
+            height: 40px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--tag-border);
             background-color: var(--card-bg); color: var(--text-title); font-size: 0.85rem; font-weight: 600; 
             cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; 
             transition: var(--transition); white-space: nowrap; box-shadow: var(--shadow-sm);
@@ -175,104 +140,66 @@
             flex-grow: 1; overflow-y: auto; padding: 24px 0 80px 0;
             -webkit-overflow-scrolling: touch;
         }
-        .scroll-area::-webkit-scrollbar { width: 6px; }
-        .scroll-area::-webkit-scrollbar-thumb { background: rgba(79, 70, 229, 0.3); border-radius: 10px; }
-        .scroll-area::-webkit-scrollbar-thumb:hover { background: var(--primary); }
-
         .ticket-list { 
             display: grid; grid-template-columns: 1fr; gap: 16px;
             max-width: 1000px; margin: 0 auto; padding: 0 20px;
         }
-        
-        /* 電腦版雙欄 */
         @media (min-width: 900px) {
             .ticket-list { grid-template-columns: repeat(2, 1fr); gap: 24px; }
         }
 
-        /* --- 🎫 擬真票券卡片 --- */
+        /* --- 🎫 卡片設計 --- */
         .ticket-card {
-            background-color: var(--card-bg); 
-            border-radius: var(--radius-md); 
-            display: grid;
-            grid-template-columns: 110px 1fr auto; /* 左中右佈局 */
-            align-items: center; gap: 20px;
-            padding: 20px 24px;
-            
+            background-color: var(--card-bg); border-radius: var(--radius-lg); 
+            display: grid; grid-template-columns: 110px 1fr auto;
+            align-items: center; gap: 20px; padding: 20px 24px;
             border: 1px solid rgba(255,255,255,0.6);
             box-shadow: 0 8px 20px -5px rgba(0, 0, 0, 0.05);
             backdrop-filter: blur(5px);
-            
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative; overflow: hidden;
             animation: slideUp 0.5s ease-out backwards;
             min-height: 100px;
         }
-
         [data-theme="dark"] .ticket-card { border-color: rgba(255,255,255,0.05); box-shadow: 0 8px 20px -5px rgba(0,0,0,0.3); }
 
-        .ticket-card:hover { 
-            transform: translateY(-5px) scale(1.02); 
-            box-shadow: var(--shadow-hover); 
-            border-color: var(--primary-light);
-        }
-        
-        /* 裝飾線 */
+        .ticket-card:hover { transform: translateY(-5px) scale(1.02); box-shadow: var(--shadow-hover); border-color: var(--primary-light); }
         .ticket-card::before {
             content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 6px;
-            background: linear-gradient(to bottom, var(--primary), var(--primary-dark));
-            opacity: 0.8;
+            background: linear-gradient(to bottom, var(--primary), var(--primary-dark)); opacity: 0.8;
         }
 
         @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* 左側票根：淺色背景，深色文字 (修復閱讀性) */
+        /* 左側票根 (年份日期) */
         .ticket-stub {
-            background: var(--primary-light); /* 淺色 */
-            color: var(--primary); /* 深色字 */
-            border-radius: 12px;
-            padding: 15px; 
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            text-align: center; position: relative; 
-            flex-shrink: 0;
-            border: 1px solid var(--glass-border);
+            background: var(--primary-light); color: var(--primary);
+            padding: 15px; display: flex; flex-direction: column; justify-content: center; align-items: center;
+            min-width: 100px; text-align: center; border-right: 2px dashed rgba(0,0,0,0.1); position: relative;
+            flex-shrink: 0; border-radius: 12px;
         }
-        
-        /* 半圓缺口 */
         .ticket-stub::before, .ticket-stub::after {
-            content: ''; position: absolute; right: -12px; width: 24px; height: 24px;
+            content: ''; position: absolute; right: -10px; width: 20px; height: 20px;
             background-color: var(--bg-color); border-radius: 50%; 
             box-shadow: inset 1px 1px 3px rgba(0,0,0,0.05);
-            background-image: var(--bg-gradient); /* 背景對齊 */
-            background-attachment: fixed;
+            background-image: var(--bg-gradient); background-attachment: fixed;
         }
-        /* 電腦版缺口在右側 */
-        .ticket-stub::before { top: -12px; }
-        .ticket-stub::after { bottom: -12px; }
+        .ticket-stub::before { top: -10px; }
+        .ticket-stub::after { bottom: -10px; }
 
-        .stub-year { font-size: 0.75rem; font-weight: 700; opacity: 0.8; margin-bottom: 2px; letter-spacing: 1px; }
-        .stub-date { font-size: 1.4rem; font-weight: 900; letter-spacing: -0.5px; line-height: 1; }
+        .stub-year { font-size: 0.75rem; font-weight: 700; opacity: 0.9; margin-bottom: 2px; }
+        .stub-date { font-size: 1.3rem; font-weight: 900; letter-spacing: -0.5px; line-height: 1; }
 
-        /* 票身 */
-        .ticket-body { 
-            flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 6px;
-            overflow: hidden; min-width: 0;
-        }
-        
-        .ticket-title { 
-            font-size: 1.05rem; font-weight: 700; color: var(--text-title); 
-            margin: 0; line-height: 1.45; letter-spacing: -0.2px;
-        }
+        /* 中間票身 (名稱) */
+        .ticket-body { flex: 1; display: flex; flex-direction: column; justify-content: center; overflow: hidden; min-width: 0; }
+        .ticket-title { font-size: 1.05rem; font-weight: 700; color: var(--text-title); margin: 0; line-height: 1.45; }
 
-        /* 票尾標籤 */
-        .tag-row { 
-            display: flex; flex-direction: column; align-items: flex-end; gap: 6px; 
-            min-width: 90px;
-        }
+        /* 右側標籤 */
+        .tag-row { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; min-width: 90px; }
         .tag { 
             font-size: 0.75rem; font-weight: 700; background-color: var(--tag-bg); color: var(--primary); 
-            padding: 4px 12px; border-radius: 50px; 
-            border: 1px solid var(--tag-border); white-space: nowrap;
-            transition: 0.2s;
+            padding: 4px 12px; border-radius: 50px; border: 1px solid var(--tag-border); 
+            transition: 0.2s; white-space: nowrap;
         }
         .ticket-card:hover .tag { background-color: var(--primary); color: white; border-color: var(--primary); }
 
@@ -285,12 +212,15 @@
         }
         #back-to-top:hover { transform: scale(1.15) rotate(-10deg); }
 
-        footer { text-align: center; padding: 50px 0; opacity: 0.4; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.5px; }
+        footer { text-align: center; padding: 50px 0; opacity: 0.4; font-size: 0.85rem; font-weight: 600; }
 
-        /* --- 手機版適配 (RWD) --- */
+        /* --- 手機版適配 --- */
         @media (max-width: 768px) {
             .container { padding: 0 15px; }
             .header-panel { padding: 12px 0; }
+            
+            .icon-btn { width: 38px; height: 38px; padding: 0; border-radius: 50%; }
+            .icon-btn span { display: none; } /* 手機隱藏文字 */
             
             .nav-bar { margin-bottom: 12px; }
             
@@ -302,20 +232,14 @@
             .filter-group { display: grid; grid-template-columns: 1fr 1fr; width: 100%; gap: 10px; }
             .btn-filter, .custom-select { width: 100%; }
 
-            /* 手機版卡片：垂直排列 */
-            .ticket-card { 
-                grid-template-columns: 1fr; /* 單欄 */
-                grid-template-rows: auto auto auto;
-                padding: 0; border-radius: 20px;
-            }
+            .ticket-card { border-radius: 20px; flex-direction: column; min-height: auto; }
             .ticket-card::before { width: 100%; height: 4px; bottom: auto; background: linear-gradient(to right, var(--primary), var(--primary-dark)); }
 
             .ticket-stub { 
-                width: 100%; flex-direction: row; gap: 10px; padding: 12px 20px; justify-content: flex-start;
+                width: 100%; flex-direction: row; gap: 10px; padding: 10px 20px; justify-content: flex-start;
                 border-right: none; border-bottom: 1px dashed rgba(0,0,0,0.1);
-                background: var(--tag-bg); /* 手機版票根背景微調 */
+                background: var(--tag-bg); /* 手機版票根淺色 */
             }
-            /* 手機版缺口調整 */
             .ticket-stub::before, .ticket-stub::after { left: 50%; transform: translateX(-50%); right: auto; }
             .ticket-stub::before { top: auto; bottom: -12px; }
             .ticket-stub::after { display: none; }
@@ -323,12 +247,12 @@
             .stub-year { margin-bottom: 0; font-size: 0.8rem; }
             .stub-date { font-size: 1.1rem; }
 
-            .ticket-body { padding: 16px 20px; gap: 10px; }
+            .ticket-body { padding: 16px 20px; gap: 10px; width: 100%; }
             .ticket-title { font-size: 1rem; } 
             
             .tag-row { 
                 flex-direction: row; flex-wrap: wrap; justify-content: flex-start; align-items: center;
-                padding: 0 20px 16px 20px; width: 100%;
+                width: 100%; padding-top: 5px;
             }
         }
     </style>
@@ -337,7 +261,7 @@
     <div class="app-wrapper">
         <header class="header-panel">
             <div class="container">
-                <!-- 導覽列 -->
+                <!-- 第一列 -->
                 <div class="nav-bar">
                     <div class="brand">Muiii 搶票戰績</div>
                     <div class="system-actions">
@@ -356,7 +280,7 @@
                     </div>
                 </div>
                 
-                <!-- 儀表板控制列 -->
+                <!-- 第二列 -->
                 <div class="control-row">
                     <div class="stats-group">
                         <div class="stat-card">
@@ -409,6 +333,11 @@
         const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vThZZurHBpfes9J-dLaoi51jpb0MnQ4oABmBux77r-OO5LOvuoex6lesE4GvZb-UQ5zgiqWEfiHxNQy/pub?gid=0&single=true&output=csv';
         let allTickets = [], currentSort = 'desc', currentYear = 'all', currentMonth = 'all';
 
+        // 關鍵：欄位對應（處理 BOM 與不同命名）
+        let KEY_DATE = '售票日期';
+        let KEY_TITLE = '節目名稱';
+        let KEY_COUNT = '張數';
+
         function init() {
             const savedTheme = localStorage.getItem('muiii_theme');
             if (savedTheme === 'dark') {
@@ -421,7 +350,8 @@
         }
 
         function bindEvents() {
-            document.querySelector('.search-input').oninput = render;
+            const inputs = document.querySelector('.search-input');
+            inputs.oninput = (e) => { render(); };
 
             const yearSelect = document.querySelector('.year-filter');
             const monthSelect = document.querySelector('.month-filter');
@@ -443,7 +373,7 @@
             };
 
             document.querySelector('.reset-btn').onclick = () => {
-                document.querySelector('.search-input').value = '';
+                inputs.value = '';
                 yearSelect.value = 'all';
                 monthSelect.value = 'all';
                 monthSelect.disabled = true;
@@ -470,28 +400,34 @@
 
         function loadData() {
             const container = document.getElementById('list-container');
-            container.innerHTML = '<div style="text-align:center;padding:50px;color:#94a3b8;animation:pulse 1.5s infinite">資料載入中...</div>';
+            container.innerHTML = '<div style="text-align:center;padding:50px;color:#94a3b8">資料載入中...</div>';
             
-            // 安全載入，處理BOM與空資料
             const ts = new Date().getTime();
             Papa.parse(`${CSV_URL}&t=${ts}`, {
                 download: true, header: true,
                 skipEmptyLines: true,
-                transformHeader: h => h.trim(),
                 complete: (res) => {
-                    allTickets = res.data.filter(i => i['節目名稱'] && i['節目名稱'].trim() !== '');
+                    if (res.data.length > 0) {
+                        // 自動偵測欄位名稱 (解決 BOM 問題)
+                        const keys = Object.keys(res.data[0]);
+                        KEY_DATE = keys.find(k => k.includes('日期')) || '售票日期';
+                        KEY_TITLE = keys.find(k => k.includes('節目')) || '節目名稱';
+                        KEY_COUNT = keys.find(k => k.includes('張數')) || '張數';
+                    }
+                    
+                    allTickets = res.data.filter(i => i[KEY_TITLE] && i[KEY_TITLE].trim() !== '');
                     setupYearFilters();
                     render();
                 },
                 error: (err) => {
-                    container.innerHTML = `<div style="text-align:center;padding:50px;color:red">連線錯誤，請重整</div>`;
+                    container.innerHTML = '<div style="text-align:center;padding:50px;color:red">無法讀取資料，請確認網路連線</div>';
                 }
             });
         }
 
         function setupYearFilters() {
             const years = [...new Set(allTickets.map(t => {
-                const d = t['售票日期'];
+                const d = t[KEY_DATE];
                 return d ? d.split('.')[0] : '';
             }))].filter(y => y && y.length === 4).sort().reverse();
             
@@ -505,17 +441,21 @@
             const search = searchInputEl ? searchInputEl.value.toLowerCase() : '';
             
             let data = allTickets.filter(t => {
-                const title = (t['節目名稱']||'').toLowerCase();
-                const date = (t['售票日期']||'');
+                const title = (t[KEY_TITLE]||'').toLowerCase();
+                const date = (t[KEY_DATE]||'');
                 return (title.includes(search) || date.includes(search)) &&
                        (currentYear === 'all' || date.startsWith(currentYear)) &&
                        (currentMonth === 'all' || date.split('.')[1] === currentMonth);
             });
 
-            data.sort((a, b) => currentSort === 'desc' ? b['售票日期'].localeCompare(a['售票日期']) : a['售票日期'].localeCompare(b['售票日期']));
+            data.sort((a, b) => {
+                const dateA = a[KEY_DATE] || '';
+                const dateB = b[KEY_DATE] || '';
+                return currentSort === 'desc' ? dateB.localeCompare(dateA) : dateA.localeCompare(dateB);
+            });
 
             let totalTickets = 0;
-            data.forEach(t => (t['張數']||'').match(/\*(\d+)/g)?.forEach(m => totalTickets += parseInt(m.replace('*',''))));
+            data.forEach(t => (t[KEY_COUNT]||'').match(/\*(\d+)/g)?.forEach(m => totalTickets += parseInt(m.replace('*',''))));
             document.querySelector('.total-tickets').innerText = totalTickets;
             document.querySelector('.total-records').innerText = data.length;
 
@@ -526,14 +466,15 @@
             }
 
             container.innerHTML = data.map((t, idx) => {
-                const dateStr = t['售票日期'] || '';
+                const dateStr = t[KEY_DATE] || '';
                 const dateParts = dateStr.split('.');
                 const year = dateParts[0] || '----';
                 const date = dateParts[1] ? `${dateParts[1]}.${dateParts[2]}` : '--.--';
                 
-                const tags = (t['張數']||'').split(/\s+/).filter(x => x).map(x => `<span class="tag">${x}</span>`).join('');
-                const delay = (idx % 12) * 0.05;
+                const tags = (t[KEY_COUNT]||'').split(/\s+/).filter(x => x).map(x => `<span class="tag">${x}</span>`).join('');
+                const delay = (idx % 15) * 0.04;
                 
+                // 產生正確的票券 HTML
                 return `
                     <div class="ticket-card" style="animation: slideInUp 0.5s ease-out backwards; animation-delay: ${delay}s">
                         <div class="ticket-stub">
@@ -541,16 +482,16 @@
                             <div class="stub-date">${date}</div>
                         </div>
                         <div class="ticket-body">
-                            <h3 class="ticket-title">${t['節目名稱']}</h3>
-                            <div class="tag-row">${tags}</div>
+                            <h3 class="ticket-title">${t[KEY_TITLE]}</h3>
                         </div>
+                        <div class="tag-row">${tags}</div>
                     </div>
                 `;
             }).join('');
         }
         
         const style = document.createElement('style');
-        style.innerHTML = `@keyframes slideInUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } } @keyframes pulse { 0% { opacity:0.6; } 50% { opacity:1; } 100% { opacity:0.6; } }`;
+        style.innerHTML = `@keyframes slideInUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }`;
         document.head.appendChild(style);
 
         const scrollMain = document.getElementById('scroll-main');
