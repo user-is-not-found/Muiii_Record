@@ -7,7 +7,7 @@
     
     <!-- PWA 設定 -->
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#050505">
+    <meta name="theme-color" content="#f8fafc">
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2972/2972528.png">
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -24,9 +24,8 @@
                         oswald: ['Oswald', 'sans-serif'],
                     },
                     animation: {
-                        'blob': 'blob 10s infinite',
+                        'blob': 'blob 12s infinite',
                         'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
-                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                     },
                     keyframes: {
                         blob: {
@@ -45,104 +44,116 @@
         }
     </script>
     <style>
+        :root {
+            --bg-color: #f1f5f9;
+            --primary: #4f46e5;
+            --accent: #f43f5e;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+        }
+
         body {
-            background-color: #050505;
+            background-color: var(--bg-color);
+            color: var(--text-dark);
             overflow-x: hidden;
+            min-height: 100vh;
         }
         
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #111; }
-        ::-webkit-scrollbar-thumb { background: #444; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #f43f5e; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
-        /* 已取消凍結窗格設定 */
+        /* 標題區域背景 (淺色磨砂) */
         .standard-header {
             position: relative;
-            background: rgba(5, 5, 5, 0.95);
+            background: rgba(255, 255, 255, 0.7);
             backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
         }
 
         .ticket-card {
             position: relative;
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 1);
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
         }
         
         .ticket-card:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 20px 40px -10px rgba(244, 63, 94, 0.2);
-            border-color: rgba(244, 63, 94, 0.4);
+            transform: translateY(-8px) scale(1.01);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border-color: var(--primary);
         }
 
         .ticket-dashed-line {
-            border-bottom: 2px dashed rgba(255, 255, 255, 0.15);
+            border-bottom: 2px dashed rgba(0, 0, 0, 0.08);
             position: relative;
         }
         .ticket-dashed-line::before, .ticket-dashed-line::after {
             content: ''; position: absolute; width: 20px; height: 20px;
-            background-color: #050505; border-radius: 50%; top: -10px;
+            background-color: var(--bg-color); border-radius: 50%; top: -10px;
         }
-        .ticket-dashed-line::before { left: -32px; }
-        .ticket-dashed-line::after { right: -32px; }
+        .ticket-dashed-line::before { left: -34px; }
+        .ticket-dashed-line::after { right: -34px; }
 
-        .neon-text { text-shadow: 0 0 15px rgba(244, 63, 94, 0.7); }
+        .glow-text { text-shadow: 0 2px 10px rgba(79, 70, 229, 0.2); }
         
         .price-tag {
-            background: rgba(14, 165, 233, 0.15);
-            border: 1px solid rgba(14, 165, 233, 0.3);
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
             padding: 4px 10px;
             border-radius: 6px;
             font-size: 0.75rem;
-            color: #38bdf8;
+            color: var(--primary);
             font-family: 'Oswald', sans-serif;
             letter-spacing: 0.05em;
-            font-weight: 500;
+            font-weight: 600;
             display: inline-flex;
             align-items: center;
             white-space: nowrap;
         }
 
+        /* 淺色版下拉選單樣式 */
         .cyber-select {
-            background-color: #1a1a1a;
-            color: #ffffff;
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            background-color: #ffffff;
+            color: var(--text-dark);
+            border: 1px solid #e2e8f0;
             border-radius: 9999px;
             padding: 0.5rem 1.8rem 0.5rem 1rem;
             font-size: 0.875rem;
             cursor: pointer;
             transition: all 0.2s;
             appearance: none;
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23f9fafb' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2364748b' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
             background-position: right 0.6rem center;
             background-repeat: no-repeat;
             background-size: 1em 1em;
             outline: none;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
-        
-        .cyber-select option {
-            background-color: #1a1a1a;
-            color: #ffffff;
-        }
+        .cyber-select:hover { border-color: var(--primary); }
+        .cyber-select:disabled { background-color: #f8fafc; opacity: 0.6; cursor: not-allowed; }
 
+        /* 淺色版系統按鈕樣式 */
         .sys-btn {
             height: 38px;
             padding: 0 16px;
             border-radius: 9999px;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.15);
-            color: #94a3b8;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            color: var(--text-muted);
             display: flex; align-items: center; justify-content: center; gap: 8px;
             transition: all 0.3s;
             cursor: pointer;
             font-size: 0.85rem;
             font-weight: 600;
             white-space: nowrap;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
-        .sys-btn:hover { background: rgba(255,255,255,0.15); color: #fff; border-color: rgba(255,255,255,0.3); transform: translateY(-1px); }
+        .sys-btn:hover { background: #f8fafc; color: var(--primary); border-color: var(--primary); transform: translateY(-1px); }
         
         @media (max-width: 768px) {
             .sys-btn { width: 38px; padding: 0; border-radius: 50%; }
@@ -150,30 +161,30 @@
         }
     </style>
 </head>
-<body class="min-h-screen text-white flex flex-col">
+<body class="selection:bg-indigo-100 selection:text-indigo-900 flex flex-col">
 
-    <!-- 背景特效 -->
-    <div class="fixed inset-0 pointer-events-none z-[-1]">
-        <div class="absolute top-0 left-1/4 w-96 h-96 bg-purple-600 rounded-full mix-blend-multiply filter blur-[128px] opacity-20 animate-blob"></div>
-        <div class="absolute top-0 right-1/4 w-96 h-96 bg-rose-600 rounded-full mix-blend-multiply filter blur-[128px] opacity-20 animate-blob animation-delay-2000"></div>
-        <div class="absolute -bottom-32 left-1/3 w-96 h-96 bg-blue-600 rounded-full mix-blend-multiply filter blur-[128px] opacity-20 animate-blob animation-delay-4000"></div>
+    <!-- 背景動態裝飾 -->
+    <div class="fixed inset-0 pointer-events-none z-[-1] overflow-hidden">
+        <div class="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-blue-100 rounded-full mix-blend-multiply filter blur-[120px] opacity-60 animate-blob"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-indigo-50 rounded-full mix-blend-multiply filter blur-[120px] opacity-60 animate-blob animation-delay-2000"></div>
+        <div class="absolute top-[20%] right-[10%] w-[40%] h-[40%] bg-pink-50 rounded-full mix-blend-multiply filter blur-[120px] opacity-40 animate-blob animation-delay-4000"></div>
     </div>
 
     <!-- 頂部標題與儀表板區 -->
-    <div class="standard-header pt-6 pb-4 shadow-2xl">
+    <div class="standard-header pt-6 pb-6">
         <div class="container mx-auto px-4 max-w-7xl">
             
-            <!-- Header 上半部：品牌與系統按鈕水平平行 -->
-            <div class="flex justify-between items-center mb-6 w-full gap-4">
+            <!-- Header 上半部：標題與系統按鈕水平平行 -->
+            <div class="flex justify-between items-center mb-8 w-full gap-4">
                 <div class="text-left relative flex items-center gap-4">
                     <div class="relative shrink-0">
-                        <h1 class="text-5xl md:text-6xl font-black font-oswald tracking-tighter italic bg-clip-text text-transparent bg-gradient-to-r from-rose-500 via-purple-500 to-blue-500">
+                        <h1 class="text-5xl md:text-6xl font-black font-oswald tracking-tighter italic bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-blue-500">
                             MUIII
                         </h1>
-                        <span class="absolute -top-2 -right-6 bg-yellow-400 text-black text-[10px] font-bold px-1.5 py-0.5 transform rotate-12 shadow-lg">VIP</span>
+                        <span class="absolute -top-2 -right-6 bg-indigo-600 text-white text-[10px] font-bold px-1.5 py-0.5 transform rotate-12 shadow-lg rounded">VIP</span>
                     </div>
-                    <div class="h-8 w-px bg-white/10 hidden md:block"></div>
-                    <h2 class="text-xl md:text-2xl font-bold tracking-widest text-white/80 hidden sm:block">
+                    <div class="h-8 w-px bg-slate-200 hidden md:block"></div>
+                    <h2 class="text-xl md:text-2xl font-bold tracking-widest text-slate-800 hidden sm:block">
                         戰績儀表板
                     </h2>
                 </div>
@@ -184,25 +195,25 @@
                 </div>
             </div>
 
-            <!-- Stats：修正電腦版數據卡片寬度，改為 md:w-fit -->
-            <div class="grid grid-cols-2 gap-4 md:gap-6 mb-6 md:w-fit">
-                <div class="bg-white/5 border border-white/10 rounded-2xl px-5 py-3 md:px-8 md:py-4 flex flex-col md:flex-row items-center gap-2 md:gap-5 transition-all hover:border-white/20">
-                    <div class="text-gray-400 text-[10px] md:text-xs uppercase font-bold tracking-widest">總征戰</div>
-                    <div class="text-5xl md:text-6xl font-black font-oswald text-white leading-none" id="stat-events">0</div>
+            <!-- Stats：放大數據展示 -->
+            <div class="grid grid-cols-2 gap-4 md:gap-6 mb-8 md:w-fit">
+                <div class="bg-white border border-white rounded-2xl px-6 py-4 flex flex-col md:flex-row items-center gap-2 md:gap-5 shadow-sm transition-all hover:shadow-md">
+                    <div class="text-slate-400 text-[10px] md:text-xs uppercase font-bold tracking-widest">總征戰</div>
+                    <div class="text-5xl md:text-6xl font-black font-oswald text-slate-900 leading-none" id="stat-events">0</div>
                 </div>
-                <div class="bg-white/5 border border-white/10 rounded-2xl px-5 py-3 md:px-8 md:py-4 flex flex-col md:flex-row items-center gap-2 md:gap-5 transition-all hover:border-rose-500/30">
-                    <div class="text-rose-400/80 text-[10px] md:text-xs uppercase font-bold tracking-widest">總票數</div>
-                    <div class="text-5xl md:text-6xl font-black font-oswald text-rose-500 neon-text leading-none" id="stat-tickets">0</div>
+                <div class="bg-white border border-white rounded-2xl px-6 py-4 flex flex-col md:flex-row items-center gap-2 md:gap-5 shadow-sm transition-all hover:shadow-md">
+                    <div class="text-indigo-400 text-[10px] md:text-xs uppercase font-bold tracking-widest">總票數</div>
+                    <div class="text-5xl md:text-6xl font-black font-oswald text-indigo-600 glow-text leading-none" id="stat-tickets">0</div>
                 </div>
             </div>
 
             <!-- Header 下半部：搜尋與篩選 -->
-            <div class="relative group z-10">
-                <div class="relative flex flex-col md:flex-row items-center bg-black/60 backdrop-blur-xl rounded-2xl md:rounded-full border border-white/10 p-1.5 transition-all focus-within:border-rose-500/50">
+            <div class="relative group z-10 max-w-5xl">
+                <div class="relative flex flex-col md:flex-row items-center bg-white rounded-2xl md:rounded-full border border-slate-200 p-1.5 transition-all focus-within:ring-2 focus-within:ring-indigo-500/10 focus-within:border-indigo-500 shadow-sm">
                     <div class="flex items-center flex-grow w-full md:w-auto px-4">
-                        <i class="fas fa-search text-gray-500 mr-3"></i>
+                        <i class="fas fa-search text-slate-400 mr-3"></i>
                         <input type="text" id="searchInput" placeholder="搜尋藝人、場館、日期..." 
-                            class="w-full bg-transparent text-white py-2.5 focus:outline-none placeholder-gray-600 font-medium">
+                            class="w-full bg-transparent text-slate-800 py-2.5 focus:outline-none placeholder-slate-400 font-medium">
                     </div>
                     <div class="flex flex-wrap md:flex-nowrap gap-2 justify-end w-full md:w-auto px-1 pb-1 md:pb-0">
                         <select id="year-filter" class="cyber-select text-xs">
@@ -219,7 +230,7 @@
                             <option value="desc">新 → 舊</option>
                             <option value="asc">舊 → 新</option>
                         </select>
-                        <button id="reset-btn" class="bg-rose-500 hover:bg-rose-600 text-white px-5 h-9 rounded-full flex items-center gap-2 transition text-xs font-bold shadow-lg shadow-rose-500/20">
+                        <button id="reset-btn" class="bg-slate-900 hover:bg-black text-white px-5 h-9 rounded-full flex items-center gap-2 transition text-xs font-bold shadow-md">
                             <i class="fas fa-undo text-[10px]"></i><span>重置</span>
                         </button>
                     </div>
@@ -229,27 +240,30 @@
     </div>
 
     <!-- 列表內容區 -->
-    <div class="container mx-auto px-4 py-8 max-w-7xl flex-grow">
-        <!-- 讀取動畫 -->
+    <div class="container mx-auto px-4 py-10 max-w-7xl flex-grow">
+        <!-- 讀取中 -->
         <div id="loading" class="flex flex-col items-center justify-center py-20 gap-4">
-            <div class="relative w-16 h-16">
-                <div class="absolute inset-0 border-4 border-rose-500/20 rounded-full"></div>
-                <div class="absolute inset-0 border-4 border-rose-500 rounded-full border-t-transparent animate-spin"></div>
+            <div class="relative w-12 h-12">
+                <div class="absolute inset-0 border-4 border-indigo-100 rounded-full"></div>
+                <div class="absolute inset-0 border-4 border-indigo-600 rounded-full border-t-transparent animate-spin"></div>
             </div>
-            <p class="text-rose-400 text-xs font-bold tracking-[0.3em] animate-pulse">LOADING DATA</p>
+            <p class="text-indigo-600 text-xs font-bold tracking-[0.3em] animate-pulse">載入戰績中</p>
         </div>
 
-        <div id="record-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden pb-20"></div>
-        <div id="no-results" class="hidden text-center py-20 text-gray-500 text-xl font-medium">找不到相關紀錄</div>
+        <div id="record-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 hidden pb-24"></div>
+        <div id="no-results" class="hidden text-center py-20 text-slate-400 text-xl font-medium">沒有找到相符的戰績</div>
+        
+        <footer class="mt-auto text-center py-10 border-t border-slate-200">
+            <p class="text-slate-400 text-xs font-bold tracking-widest">&copy; 2026 MUIII PROJECT • LIVE RECORDS TRACKER</p>
+        </footer>
     </div>
 
-    <button id="back-to-top" class="fixed bottom-6 right-6 bg-rose-500 text-white w-12 h-12 rounded-full hidden items-center justify-center shadow-lg transition hover:scale-110 z-[2000]"><i class="fas fa-arrow-up"></i></button>
+    <button id="back-to-top" class="fixed bottom-8 right-8 bg-white border border-slate-200 text-slate-900 w-12 h-12 rounded-full hidden items-center justify-center shadow-xl transition hover:scale-110 hover:bg-indigo-600 hover:text-white z-[2000]"><i class="fas fa-arrow-up"></i></button>
 
     <script>
         const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vThZZurHBpfes9J-dLaoi51jpb0MnQ4oABmBux77r-OO5LOvuoex6lesE4GvZb-UQ5zgiqWEfiHxNQy/pub?output=csv';
         let allTickets = [], currentYear = 'all', currentMonth = 'all';
 
-        // 關鍵欄位對應
         let KEY_DATE = '售票日期';
         let KEY_TITLE = '節目名稱';
         let KEY_COUNT = '張數';
@@ -343,7 +357,7 @@
             
             let current = start;
             const range = end - start;
-            const steps = 25;
+            const steps = 20;
             const increment = range / steps;
             let count = 0;
 
@@ -426,26 +440,26 @@
                 grid.classList.remove('hidden');
                 data.forEach((item, index) => {
                     const card = document.createElement('div');
-                    card.className = `ticket-card rounded-2xl flex flex-col h-full animate-fade-in-up`;
+                    card.className = `ticket-card rounded-3xl flex flex-col h-full animate-fade-in-up`;
                     card.style.animationDelay = `${index * 30}ms`;
                     const tagsHtml = item.priceTags.map(tag => `<span class="price-tag"><i class="fas fa-ticket-alt mr-2 text-[10px] opacity-70"></i>${tag}</span>`).join('');
                     card.innerHTML = `
-                        <div class="p-6 flex-1 relative z-10">
-                            <div class="flex items-start gap-4">
-                                <div class="flex flex-col items-center bg-white/5 rounded-lg p-2 border border-white/10 min-w-[70px]">
-                                    <span class="text-[10px] text-rose-400 font-bold tracking-widest">${item.dateData.month}</span>
-                                    <span class="text-3xl font-black font-oswald text-white">${item.dateData.day}</span>
-                                    <span class="text-[10px] text-gray-500">${item.dateData.year}</span>
+                        <div class="p-8 flex-1 relative z-10">
+                            <div class="flex items-start gap-5">
+                                <div class="flex flex-col items-center bg-slate-50 rounded-2xl p-3 border border-slate-100 min-w-[75px]">
+                                    <span class="text-[10px] text-indigo-600 font-bold tracking-widest">${item.dateData.month}</span>
+                                    <span class="text-3xl font-black font-oswald text-slate-900">${item.dateData.day}</span>
+                                    <span class="text-[10px] text-slate-400 font-bold">${item.dateData.year}</span>
                                 </div>
                                 <div class="flex-1">
-                                    <h3 class="text-lg font-bold text-white leading-tight line-clamp-2 min-h-[3rem] mb-1">
+                                    <h3 class="text-lg font-bold text-slate-900 leading-tight line-clamp-2 min-h-[3rem] mb-1">
                                         ${item[KEY_TITLE]}
                                     </h3>
                                 </div>
                             </div>
                         </div>
-                        <div class="ticket-dashed-line mx-4"></div>
-                        <div class="p-4 bg-black/20">
+                        <div class="ticket-dashed-line mx-6"></div>
+                        <div class="p-6 bg-slate-50/50">
                             <div class="flex flex-wrap gap-2">${tagsHtml}</div>
                         </div>
                     `;
