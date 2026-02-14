@@ -136,18 +136,33 @@
         .cyber-select:disabled { opacity: 0.5; cursor: not-allowed; }
         .cyber-select option { background-color: #1a1a1a; color: white; }
 
-        /* 系統按鈕群組 */
+        /* 系統按鈕群組 (電腦版顯示文字) */
         .sys-btn {
-            width: 36px; height: 36px;
-            border-radius: 50%;
+            height: 36px;
+            padding: 0 16px; /* 增加左右內距 */
+            border-radius: 9999px; /* 膠囊狀 */
             background: rgba(255,255,255,0.05);
             border: 1px solid rgba(255,255,255,0.1);
             color: #94a3b8;
-            display: flex; align-items: center; justify-content: center;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
             transition: all 0.3s;
             cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
         }
-        .sys-btn:hover { background: rgba(255,255,255,0.15); color: #fff; transform: rotate(15deg); border-color: rgba(255,255,255,0.3); }
+        .sys-btn:hover { background: rgba(255,255,255,0.15); color: #fff; transform: translateY(-2px); border-color: rgba(255,255,255,0.3); }
+        
+        /* 手機版：隱藏文字，變回圓形 */
+        @media (max-width: 768px) {
+            .sys-btn {
+                width: 36px;
+                padding: 0;
+                border-radius: 50%;
+            }
+            .sys-btn span {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body class="min-h-screen text-white selection:bg-rose-500 selection:text-white flex flex-col">
@@ -160,9 +175,15 @@
     </div>
 
     <!-- 右上角系統工具列 (PWA/Reload) -->
-    <div class="absolute top-4 right-4 z-50 flex gap-2">
-        <button id="install-btn" class="sys-btn hidden" title="安裝 App"><i class="fas fa-download"></i></button>
-        <button id="reload-btn" class="sys-btn" title="重新整理"><i class="fas fa-sync-alt"></i></button>
+    <div class="absolute top-4 right-4 z-50 flex gap-3">
+        <button id="install-btn" class="sys-btn hidden" title="安裝 App">
+            <i class="fas fa-download"></i>
+            <span>安裝 App</span>
+        </button>
+        <button id="reload-btn" class="sys-btn" title="重新整理">
+            <i class="fas fa-sync-alt"></i>
+            <span>重新整理</span>
+        </button>
     </div>
 
     <div class="container mx-auto px-4 py-8 md:py-12 max-w-7xl flex-grow">
@@ -233,8 +254,10 @@
                         <option value="asc">舊 → 新</option>
                     </select>
 
-                    <button id="reset-btn" class="bg-rose-500 hover:bg-rose-600 text-white w-10 h-10 rounded-full flex items-center justify-center transition flex-shrink-0" title="重置">
+                    <!-- 重置按鈕：電腦版有文字，手機版圓形 -->
+                    <button id="reset-btn" class="bg-rose-500 hover:bg-rose-600 text-white md:w-auto md:px-6 w-10 h-10 rounded-full flex items-center justify-center transition flex-shrink-0 gap-2" title="重置">
                         <i class="fas fa-undo"></i>
+                        <span class="hidden md:inline font-bold text-sm">重置</span>
                     </button>
                 </div>
             </div>
