@@ -4,16 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Muiii 搶票戰績</title>
-    
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#ffffff">
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2972/2972528.png">
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;500;700;900&family=Oswald:wght@500;700&family=Plus+Jakarta+Sans:wght@400;700;800&display=swap" rel="stylesheet">
-    
     <script>
         tailwind.config = {
             theme: {
@@ -47,7 +44,6 @@
             --brand-accent: #8b5cf6;
             --bg-soft: #fcfcff;
         }
-
         body {
             background-color: var(--bg-soft);
             color: #0f172a;
@@ -55,29 +51,23 @@
             min-height: 100vh;
             -webkit-font-smoothing: antialiased;
         }
-        
         ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--brand-accent); }
-
         .ticket-card {
             background: #ffffff;
             border: 1px solid rgba(226, 232, 240, 0.8);
             transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.01);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
         }
-        
         .ticket-card:hover {
             transform: translateY(-6px);
             box-shadow: 0 20px 25px -5px rgba(109, 40, 217, 0.08);
             border-color: var(--brand-accent);
         }
-
         .ticket-stub {
             background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
             border-right: 1px dashed #e2e8f0;
         }
-
         .ticket-dashed-line {
             border-bottom: 2px dashed #f1f5f9;
             position: relative;
@@ -89,7 +79,6 @@
         }
         .ticket-dashed-line::before { left: -29px; }
         .ticket-dashed-line::after { right: -29px; }
-
         .cyber-select, .search-input {
             background-color: #ffffff;
             color: #334155;
@@ -98,12 +87,13 @@
             padding: 0.6rem 1rem;
             transition: all 0.3s ease;
             outline: none;
+            width: 100%;
+            height: 44px;
         }
         .cyber-select:focus, .search-input:focus { 
             border-color: var(--brand-primary);
             box-shadow: 0 0 0 4px rgba(109, 40, 217, 0.05);
         }
-        
         .cyber-select {
             appearance: none;
             padding-right: 2.2rem;
@@ -112,7 +102,6 @@
             background-repeat: no-repeat;
             background-size: 1.1em;
         }
-
         .sys-btn {
             height: 40px; padding: 0 16px; border-radius: 12px;
             background: #ffffff; border: 1px solid #e2e8f0; color: #64748b;
@@ -120,12 +109,10 @@
             transition: all 0.3s; cursor: pointer; font-size: 0.85rem; font-weight: 700;
         }
         .sys-btn:hover { 
-            background: #ffffff; 
             color: var(--brand-primary); 
             border-color: var(--brand-primary);
             transform: translateY(-1px);
         }
-        
         @media (max-width: 768px) {
             .sys-btn { width: 40px; padding: 0; border-radius: 50%; }
             .sys-btn span { display: none; }
@@ -133,25 +120,22 @@
     </style>
 </head>
 <body class="flex flex-col selection:bg-violet-100 selection:text-violet-900">
-
     <div class="fixed inset-0 pointer-events-none z-[-1] overflow-hidden">
         <div class="absolute top-[-10%] left-[-5%] w-[60%] h-[60%] bg-violet-100/40 rounded-full blur-[120px] animate-soft-blob"></div>
         <div class="absolute bottom-[-5%] right-[-5%] w-[50%] h-[50%] bg-blue-50/50 rounded-full blur-[120px] animate-soft-blob animation-delay-2000"></div>
     </div>
-
-    <div class="pt-8 pb-8 border-b border-slate-100 bg-white/50 backdrop-blur-md">
+    <div class="pt-6 pb-6 border-b border-slate-100 bg-white/50 backdrop-blur-md">
         <div class="container mx-auto px-4 max-w-7xl">
-            
-            <div class="flex justify-between items-center mb-8 w-full gap-4">
+            <div class="flex justify-between items-center mb-6 w-full gap-4">
                 <div class="flex items-center gap-4">
                     <div class="relative shrink-0">
-                        <h1 class="text-5xl md:text-6xl font-[800] font-sans tracking-tighter italic text-slate-900 leading-none">
+                        <h1 class="text-4xl md:text-6xl font-[800] font-sans tracking-tighter italic text-slate-900 leading-none">
                             MUIII<span class="text-violet-600">.</span>
                         </h1>
                     </div>
                     <div class="h-10 w-px bg-slate-200 hidden md:block"></div>
                     <div class="flex flex-col justify-center">
-                        <span class="text-xl md:text-2xl font-bold tracking-tight text-slate-700 uppercase leading-none">
+                        <span class="text-lg md:text-2xl font-bold tracking-tight text-slate-700 uppercase leading-none">
                             搶票戰績
                         </span>
                         <span class="text-[9px] font-bold text-slate-400 tracking-[0.4em] uppercase mt-1.5 hidden md:block">
@@ -159,78 +143,65 @@
                         </span>
                     </div>
                 </div>
-
-                <div class="flex gap-2.5 shrink-0">
+                <div class="flex gap-2 shrink-0">
                     <button id="install-btn" class="sys-btn hidden" title="安裝 App"><i class="fas fa-download"></i><span>安裝 App</span></button>
                     <button id="reload-btn" class="sys-btn"><i class="fas fa-sync-alt"></i><span>重整資料</span></button>
                 </div>
             </div>
-
-            <div class="flex flex-col lg:flex-row items-center bg-white rounded-2xl border border-slate-200 p-2 transition-all focus-within:shadow-xl focus-within:shadow-violet-500/5 max-w-7xl gap-2.5">
-                <div class="flex items-center flex-grow w-full px-3">
+            <div class="flex flex-col lg:flex-row items-center bg-white rounded-2xl border border-slate-200 p-2 gap-2 shadow-sm transition-all focus-within:shadow-lg focus-within:shadow-violet-500/5">
+                <div class="flex items-center flex-grow w-full px-3 h-[44px]">
                     <i class="fas fa-search text-slate-300 mr-3 text-sm"></i>
                     <input type="text" id="searchInput" placeholder="搜尋歌手、場館名稱..." 
                         class="w-full bg-transparent text-slate-800 py-2 focus:outline-none placeholder-slate-300 font-bold text-base">
                 </div>
-                
-                <div class="flex flex-wrap lg:flex-nowrap items-center gap-2 w-full lg:w-auto shrink-0 border-t lg:border-t-0 pt-2 lg:pt-0 lg:pl-3 border-slate-50">
-                    <select id="year-filter" class="cyber-select flex-1 lg:flex-none lg:w-24 font-bold text-slate-600">
+                <div class="grid grid-cols-2 lg:flex lg:flex-nowrap items-center gap-2 w-full lg:w-auto shrink-0 border-t lg:border-t-0 pt-2 lg:pt-0 lg:pl-2">
+                    <select id="year-filter" class="cyber-select font-bold text-slate-600">
                         <option value="all">年份</option>
                     </select>
-                    <select id="month-filter" class="cyber-select flex-1 lg:flex-none lg:w-24 font-bold text-slate-600" disabled>
+                    <select id="month-filter" class="cyber-select font-bold text-slate-600" disabled>
                         <option value="all">月份</option>
                         <option value="01">01月</option><option value="02">02月</option><option value="03">03月</option>
                         <option value="04">04月</option><option value="05">05月</option><option value="06">06月</option>
                         <option value="07">07月</option><option value="08">08月</option><option value="09">09月</option>
                         <option value="10">10月</option><option value="11">11月</option><option value="12">12月</option>
                     </select>
-                    <select id="sortSelect" class="cyber-select flex-1 lg:flex-none lg:w-28 font-bold text-violet-600">
+                    <select id="sortSelect" class="cyber-select font-bold text-violet-600">
                         <option value="desc">新到舊</option>
                         <option value="asc">舊到新</option>
                     </select>
-                    <button id="reset-btn" class="bg-slate-900 hover:bg-black text-white px-5 h-10 rounded-xl flex items-center justify-center gap-2 transition text-xs font-black shrink-0 shadow-lg shadow-slate-200">
+                    <button id="reset-btn" class="h-[44px] bg-slate-900 hover:bg-black text-white px-5 rounded-xl flex items-center justify-center gap-2 transition text-xs font-black shrink-0 shadow-sm w-full lg:w-auto">
                         <i class="fas fa-undo text-[10px]"></i><span>重置</span>
                     </button>
                 </div>
             </div>
         </div>
     </div>
-
     <div class="container mx-auto px-4 py-10 max-w-7xl flex-grow">
         <div id="loading" class="flex flex-col items-center justify-center py-20 gap-4">
             <div class="w-10 h-10 border-[3px] border-slate-100 border-t-violet-600 rounded-full animate-spin"></div>
             <p class="text-violet-600 text-[11px] font-black tracking-widest uppercase">Syncing Records</p>
         </div>
-
         <div id="record-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden pb-24"></div>
-        
         <div id="no-results" class="hidden text-center py-32">
             <div class="bg-slate-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
                 <i class="fas fa-search text-slate-200 text-3xl"></i>
             </div>
             <p class="text-slate-400 font-bold text-lg">沒有找到符合的戰績</p>
-            <p class="text-slate-300 text-sm mt-1">試試其他的關鍵字或重置篩選</p>
         </div>
     </div>
-
     <footer class="mt-auto text-center py-12 border-t border-slate-100 bg-white/80">
         <p class="text-slate-300 text-[10px] font-bold tracking-[0.5em] uppercase">&copy; 2026 MUIII PROJECT • TRACKING SINCE 2020</p>
     </footer>
-
     <button id="back-to-top" class="fixed bottom-8 right-8 bg-slate-900 text-white w-12 h-12 rounded-full hidden items-center justify-center shadow-2xl transition hover:scale-110 hover:bg-violet-600 z-[1000]"><i class="fas fa-arrow-up"></i></button>
-
     <script>
         const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vThZZurHBpfes9J-dLaoi51jpb0MnQ4oABmBux77r-OO5LOvuoex6lesE4GvZb-UQ5zgiqWEfiHxNQy/pub?output=csv';
         let allRecords = [], currentYear = 'all', currentMonth = 'all';
-
         let KEY_DATE = '售票日期', KEY_TITLE = '節目名稱', KEY_COUNT = '張數';
-
         function init() {
             if ('serviceWorker' in navigator) navigator.serviceWorker.register('service-worker.js');
             fetchRecords();
             setupEventListeners();
         }
-
         async function fetchRecords() {
             document.getElementById('loading').classList.remove('hidden');
             const ts = new Date().getTime();
@@ -250,66 +221,50 @@
                 }
             });
         }
-
         function setupEventListeners() {
             document.getElementById('searchInput').addEventListener('input', updateDashboard);
             document.getElementById('sortSelect').addEventListener('change', updateDashboard);
-            
             const yearFilter = document.getElementById('year-filter');
             const monthFilter = document.getElementById('month-filter');
-            
             yearFilter.addEventListener('change', (e) => {
                 currentYear = e.target.value;
                 monthFilter.disabled = currentYear === 'all';
-                if(currentYear === 'all') { 
-                    currentMonth = 'all'; 
-                    monthFilter.value = 'all'; 
-                }
+                if(currentYear === 'all') { currentMonth = 'all'; monthFilter.value = 'all'; }
                 updateDashboard();
             });
-            
             monthFilter.addEventListener('change', (e) => {
                 currentMonth = e.target.value;
                 updateDashboard();
             });
-
             document.getElementById('reset-btn').onclick = () => {
                 document.getElementById('searchInput').value = '';
                 document.getElementById('sortSelect').value = 'desc';
                 yearFilter.value = 'all';
                 monthFilter.value = 'all';
                 monthFilter.disabled = true;
-                currentYear = 'all'; 
-                currentMonth = 'all';
+                currentYear = 'all'; currentMonth = 'all';
                 updateDashboard();
             };
-
             document.getElementById('reload-btn').onclick = fetchRecords;
-            
             let defP;
             window.addEventListener('beforeinstallprompt', (e) => {
                 e.preventDefault(); defP = e;
                 document.getElementById('install-btn').classList.remove('hidden');
             });
             document.getElementById('install-btn').onclick = () => { if(defP) defP.prompt(); };
-
             window.onscroll = () => {
                 document.getElementById('back-to-top').style.display = window.scrollY > 400 ? 'flex' : 'none';
             };
             document.getElementById('back-to-top').onclick = () => window.scrollTo({top: 0, behavior: 'smooth'});
         }
-
         function populateYears() {
-            const years = [...new Set(allRecords.map(item => (item[KEY_DATE] || '').split('.')[0]))]
-                            .filter(y => y && y.length === 4).sort().reverse();
+            const years = [...new Set(allRecords.map(item => (item[KEY_DATE] || '').split('.')[0]))].filter(y => y && y.length === 4).sort().reverse();
             const select = document.getElementById('year-filter');
             select.innerHTML = '<option value="all">年份</option>' + years.map(y => `<option value="${y}">${y} 年</option>`).join('');
         }
-
         function updateDashboard() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             const sortOrder = document.getElementById('sortSelect').value;
-
             let filtered = allRecords.filter(item => {
                 const dateVal = item[KEY_DATE] || '';
                 const titleMatch = (item[KEY_TITLE] || '').toLowerCase().includes(searchTerm);
@@ -318,20 +273,16 @@
                 const monthMatch = currentMonth === 'all' || dateVal.split('.')[1] === currentMonth;
                 return (titleMatch || dateMatch) && yearMatch && monthMatch;
             });
-
             filtered.sort((a, b) => {
                 const d1 = a[KEY_DATE] || '';
                 const d2 = b[KEY_DATE] || '';
                 return sortOrder === 'desc' ? d2.localeCompare(d1) : d1.localeCompare(d2);
             });
-
             renderUI(filtered);
         }
-
         function renderUI(data) {
             const grid = document.getElementById('record-grid');
             const noResults = document.getElementById('no-results');
-
             grid.innerHTML = ''; 
             if (data.length === 0) {
                 grid.classList.add('hidden');
@@ -343,17 +294,14 @@
                     const card = document.createElement('div');
                     card.className = `ticket-card rounded-2xl flex flex-col h-full animate-fade-in-up overflow-hidden`;
                     card.style.animationDelay = `${index * 30}ms`;
-                    
                     const dateParts = (item[KEY_DATE] || '').split('.');
                     const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
                     const mStr = monthNames[parseInt(dateParts[1]) - 1] || '---';
-                    
                     const tags = (item[KEY_COUNT] || '').split(' ').filter(t => t.trim()).map(tag => 
                         `<span class="bg-violet-50 text-violet-600 px-3 py-1.5 rounded-lg text-[11px] font-black flex items-center border border-violet-100/50 shadow-sm">
                             <i class="fas fa-ticket-alt mr-2 opacity-40"></i>${tag}
                         </span>`
                     ).join('');
-
                     card.innerHTML = `
                         <div class="flex-1 flex flex-col">
                             <div class="flex items-stretch gap-0 h-full">
@@ -363,23 +311,18 @@
                                     <span class="text-[10px] font-bold text-slate-400">${dateParts[0] || '----'}</span>
                                 </div>
                                 <div class="p-5 md:p-6 flex-1 flex items-center bg-white">
-                                    <h3 class="text-sm md:text-lg font-black text-slate-800 leading-snug line-clamp-3">
-                                        ${item[KEY_TITLE]}
-                                    </h3>
+                                    <h3 class="text-sm md:text-lg font-black text-slate-800 leading-snug line-clamp-3">${item[KEY_TITLE]}</h3>
                                 </div>
                             </div>
                         </div>
                         <div class="ticket-dashed-line mx-8"></div>
-                        <div class="p-5 bg-slate-50/30 flex flex-wrap gap-2.5">
-                            ${tags}
-                        </div>
+                        <div class="p-5 bg-slate-50/30 flex flex-wrap gap-2.5">${tags}</div>
                     `;
                     grid.appendChild(card);
                 });
             }
             document.getElementById('loading').classList.add('hidden');
         }
-
         init();
     </script>
 </body>
