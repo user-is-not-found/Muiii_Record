@@ -12,41 +12,46 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* --- 視覺藝術與核心結構 --- */
+        /* --- 視覺藝術核心 --- */
         *, *::before, *::after { box-sizing: border-box; }
         
         :root {
-            --bg-color: #f0f4f9;
-            --card-bg: #ffffff;
-            --text-main: #64748b;
-            --text-title: #0f172a;
-            --primary: #4f46e5;
-            --primary-dark: #4338ca;
+            /* 華麗淺色主題 */
+            --bg-gradient: linear-gradient(135deg, #e0e7ff 0%, #cffafe 50%, #f3e8ff 100%);
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --text-main: #475569;
+            --text-title: #1e293b;
+            --primary: #4f46e5; /* 高級靛藍 */
+            --primary-dark: #3730a3;
             --primary-light: rgba(79, 70, 229, 0.08);
             --header-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.6);
             --tag-bg: #f8fafc;
             --tag-border: #e2e8f0;
+            
             --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
-            --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --shadow-card: 0 10px 20px -5px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+            --shadow-hover: 0 20px 40px -10px rgba(79, 70, 229, 0.15);
+            
             --radius-lg: 24px;
             --radius-md: 16px;
             --radius-sm: 10px;
-            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         [data-theme="dark"] {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --text-main: #94a3b8;
+            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #111827 100%);
+            --card-bg: rgba(30, 41, 59, 0.8);
+            --text-main: #cbd5e1;
             --text-title: #f8fafc;
             --primary: #818cf8;
             --primary-dark: #6366f1;
             --primary-light: rgba(99, 102, 241, 0.15);
-            --header-bg: rgba(15, 23, 42, 0.85);
+            --header-bg: rgba(15, 23, 42, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.08);
             --tag-bg: #0f172a;
             --tag-border: #334155;
-            --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+            --shadow-card: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
             --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.6);
         }
 
@@ -55,12 +60,10 @@
             height: 100%; margin: 0; padding: 0; overflow: hidden;
             font-family: 'Inter', 'Noto Sans TC', sans-serif;
             background: var(--bg-gradient);
-            background-image: radial-gradient(at 0% 0%, hsla(253,16%,7%,0) 0, hsla(253,16%,7%,0) 50%), radial-gradient(at 50% 0%, hsla(225,39%,30%,0) 0, hsla(225,39%,30%,0) 50%), radial-gradient(at 100% 0%, hsla(339,49%,30%,0) 0, hsla(339,49%,30%,0) 50%);
             background-size: 400% 400%;
             animation: gradientBG 15s ease infinite;
             color: var(--text-main);
             transition: color 0.3s;
-            min-height: 100vh;
         }
 
         @keyframes gradientBG {
@@ -71,13 +74,14 @@
 
         .app-wrapper { display: flex; flex-direction: column; height: 100vh; }
 
-        /* --- 頂部面板 --- */
+        /* --- 頂部面板：懸浮毛玻璃 --- */
         .header-panel {
-            position: sticky; top: 0; z-index: 1000;
+            flex-shrink: 0;
             background-color: var(--header-bg);
             backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-            border-bottom: 1px solid var(--tag-border);
-            padding: 14px 0;
+            border-bottom: 1px solid var(--glass-border);
+            z-index: 1000;
+            padding: 16px 0;
             box-shadow: var(--shadow-sm);
         }
         .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; width: 100%; }
@@ -92,11 +96,12 @@
             letter-spacing: -0.5px; text-transform: uppercase;
             text-shadow: 0 2px 10px rgba(79, 70, 229, 0.2);
         }
-        .system-actions { display: flex !important; flex-direction: row !important; gap: 10px; align-items: center; }
+        
+        .system-actions { display: flex; gap: 10px; align-items: center; flex-wrap: nowrap; }
 
         /* 第二列：儀表板 (統計 + 工具) */
         .control-row { display: flex; align-items: center; gap: 20px; width: 100%; }
-        .stats-group { display: flex; gap: 10px; flex-shrink: 0; }
+        .stats-group { display: flex; gap: 12px; flex-shrink: 0; }
         .stat-card {
             background-color: var(--card-bg); border: 1px solid var(--tag-border);
             padding: 8px 18px; border-radius: 12px; text-align: center;
@@ -112,10 +117,9 @@
         .filter-group { display: flex; gap: 8px; flex-shrink: 0; }
 
         /* UI 元件 */
-        /* 電腦版按鈕：膠囊型 + 文字 */
         .icon-btn {
             height: 40px; padding: 0 16px; border-radius: 50px; 
-            background-color: var(--card-bg); border: 1px solid var(--tag-border); 
+            background-color: var(--card-bg); border: 1px solid var(--glass-border); 
             color: var(--text-title); cursor: pointer;
             display: flex; align-items: center; justify-content: center; gap: 6px;
             font-size: 0.9rem; font-weight: 700; transition: var(--transition);
@@ -128,7 +132,6 @@
         .icon-btn span { display: inline-block; }
         .icon-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
 
-        /* 手機版按鈕：圓形 (透過 Media Query 覆蓋) */
         @media (max-width: 768px) {
             .icon-btn { width: 40px; height: 40px; padding: 0; border-radius: 50%; }
             .icon-btn span { display: none; }
@@ -136,7 +139,7 @@
 
         .search-input {
             width: 100%; height: 40px; padding: 0 15px 0 42px; border-radius: 12px;
-            border: 1px solid var(--tag-border); background-color: var(--card-bg); 
+            border: 1px solid var(--glass-border); background-color: var(--card-bg); 
             color: var(--text-title); outline: none; font-size: 0.95rem;
             transition: var(--transition); box-shadow: inset 0 1px 2px rgba(0,0,0,0.02);
         }
@@ -144,7 +147,7 @@
         .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-main); opacity: 0.7; }
 
         .custom-select, .btn-filter {
-            height: 40px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--tag-border);
+            height: 40px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--glass-border);
             background-color: var(--card-bg); color: var(--text-title); font-size: 0.85rem; font-weight: 600; 
             cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; 
             transition: var(--transition); white-space: nowrap; box-shadow: var(--shadow-sm);
@@ -178,13 +181,13 @@
             background-color: var(--card-bg); border-radius: var(--radius-lg); 
             display: grid; grid-template-columns: 110px 1fr auto;
             align-items: center; gap: 20px; padding: 20px 24px;
-            border: 1px solid var(--tag-border);
+            border: 1px solid rgba(255,255,255,0.6);
             box-shadow: 0 8px 20px -5px rgba(0, 0, 0, 0.05);
             backdrop-filter: blur(5px);
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative; overflow: hidden;
-            min-height: 100px;
             animation: slideUp 0.5s ease-out backwards;
+            min-height: 100px;
         }
         [data-theme="dark"] .ticket-card { border-color: rgba(255,255,255,0.05); box-shadow: 0 8px 20px -5px rgba(0,0,0,0.3); }
 
@@ -202,10 +205,13 @@
 
         /* 左側票根 */
         .ticket-stub {
-            background: var(--primary-light); color: var(--primary);
-            padding: 15px; display: flex; flex-direction: column; justify-content: center; align-items: center;
-            min-width: 100px; text-align: center; border-right: 2px dashed rgba(0,0,0,0.1); position: relative;
-            flex-shrink: 0; border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.15) 1px, transparent 0);
+            background-size: 8px 8px;
+            color: white; padding: 15px; width: 110px;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; border-right: 2px dashed rgba(255,255,255,0.3); position: relative;
+            flex-shrink: 0;
         }
         
         /* 票券缺口 */
@@ -219,9 +225,9 @@
         .ticket-stub::after { bottom: -10px; }
 
         .stub-year { font-size: 0.75rem; font-weight: 700; opacity: 0.9; margin-bottom: 2px; letter-spacing: 1px; }
-        .stub-date { font-size: 1.3rem; font-weight: 900; letter-spacing: -0.5px; line-height: 1; }
+        .stub-date { font-size: 1.3rem; font-weight: 900; letter-spacing: -0.5px; line-height: 1; text-shadow: 0 2px 5px rgba(0,0,0,0.1); }
 
-        /* 中間票身 */
+        /* 右側票身 */
         .ticket-body { 
             flex: 1; padding: 0; display: flex; flex-direction: column; justify-content: center; gap: 6px;
             overflow: hidden; min-width: 0;
@@ -232,7 +238,6 @@
             line-height: 1.45; letter-spacing: -0.2px;
         }
 
-        /* 右側標籤 */
         .tag-row { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; min-width: 90px; }
         .tag { 
             font-size: 0.75rem; font-weight: 700; background-color: var(--tag-bg); color: var(--primary); 
@@ -252,10 +257,13 @@
 
         footer { text-align: center; padding: 50px 0; opacity: 0.4; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.5px; }
 
-        /* --- 手機版適配 (RWD) --- */
+        /* --- 手機版適配 --- */
         @media (max-width: 768px) {
             .container { padding: 0 15px; }
             .header-panel { padding: 12px 0; }
+            
+            .icon-btn { width: 38px; height: 38px; padding: 0; border-radius: 50%; }
+            .icon-btn span { display: none; }
             
             .nav-bar { margin-bottom: 12px; }
             
@@ -272,8 +280,8 @@
 
             .ticket-stub { 
                 width: 100%; flex-direction: row; gap: 10px; padding: 12px 20px; justify-content: flex-start;
-                border-right: none; border-bottom: 2px dashed rgba(0,0,0,0.1);
-                background: var(--tag-bg);
+                border-right: none; border-bottom: 2px dashed rgba(255,255,255,0.3);
+                text-align: left;
             }
             .ticket-stub::before, .ticket-stub::after { left: 50%; transform: translateX(-50%); right: auto; }
             .ticket-stub::before { top: auto; bottom: -12px; }
@@ -319,12 +327,12 @@
                 <div class="control-row">
                     <div class="stats-group">
                         <div class="stat-card">
+                            <div class="total-tickets stat-val">0</div>
                             <div class="stat-lbl">🎟️ 總張數</div>
-                            <div class="stat-val total-tickets">0</div>
                         </div>
                         <div class="stat-card">
+                            <div class="total-records stat-val">0</div>
                             <div class="stat-lbl">🎤 總場次</div>
-                            <div class="stat-val total-records">0</div>
                         </div>
                     </div>
                     <div class="tools-group">
