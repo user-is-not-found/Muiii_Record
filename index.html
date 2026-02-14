@@ -12,48 +12,64 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* --- 視覺藝術與核心結構 --- */
+        /* --- 視覺藝術核心設定 --- */
         *, *::before, *::after { box-sizing: border-box; }
         
         :root {
-            --bg-color: #f1f4f9;
-            --card-bg: #ffffff;
-            --text-main: #64748b;
-            --text-title: #0f172a;
-            --primary: #2563eb;
-            --primary-dark: #1e40af;
-            --primary-light: #eff6ff; /* 淺藍色背景 */
-            --header-bg: rgba(255, 255, 255, 0.95);
+            /* 華麗淺色主題 */
+            --bg-gradient: linear-gradient(135deg, #e0e7ff 0%, #cffafe 50%, #f3e8ff 100%);
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --text-main: #475569;
+            --text-title: #1e293b;
+            --primary: #4f46e5; /* 高級靛藍 */
+            --primary-dark: #3730a3;
+            --primary-light: rgba(79, 70, 229, 0.1);
+            --header-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.6);
             --tag-bg: #f8fafc;
             --tag-border: #e2e8f0;
-            --shadow-sm: 0 2px 4px rgba(0,0,0,0.02);
-            --shadow-md: 0 10px 30px -5px rgba(0, 0, 0, 0.04);
-            --shadow-lg: 0 20px 50px -12px rgba(0, 0, 0, 0.08);
+            
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            --shadow-card: 0 10px 20px -5px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+            --shadow-hover: 0 20px 40px -10px rgba(79, 70, 229, 0.15);
+            
             --radius-lg: 24px;
             --radius-md: 16px;
             --radius-sm: 10px;
-            --transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+            --transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         [data-theme="dark"] {
-            --bg-color: #020617;
-            --card-bg: #1e293b;
-            --text-main: #94a3b8;
+            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #111827 100%);
+            --card-bg: rgba(30, 41, 59, 0.8);
+            --text-main: #cbd5e1;
             --text-title: #f8fafc;
-            --primary: #3b82f6;
-            --primary-dark: #2563eb;
-            --primary-light: rgba(59, 130, 246, 0.15);
-            --header-bg: rgba(15, 23, 42, 0.95);
+            --primary: #818cf8;
+            --primary-dark: #6366f1;
+            --primary-light: rgba(99, 102, 241, 0.15);
+            --header-bg: rgba(15, 23, 42, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.08);
             --tag-bg: #0f172a;
             --tag-border: #334155;
-            --shadow-lg: 0 25px 60px -15px rgba(0, 0, 0, 0.5);
+            --shadow-card: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+            --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.6);
         }
 
-        html, body {
+        /* 動態流光背景 */
+        body {
             height: 100%; margin: 0; padding: 0; overflow: hidden;
             font-family: 'Inter', 'Noto Sans TC', sans-serif;
-            background-color: var(--bg-color); color: var(--text-main);
-            transition: background-color 0.4s ease;
+            background: var(--bg-gradient);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: var(--text-main);
+            transition: color 0.3s;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         .app-wrapper { display: flex; flex-direction: column; height: 100vh; }
@@ -62,217 +78,273 @@
         .desktop-only { display: flex; }
         .mobile-only { display: none; }
 
-        @media (max-width: 992px) {
+        @media (max-width: 900px) {
             .desktop-only { display: none !important; }
             .mobile-only { display: flex !important; }
         }
 
-        /* --- 頂部面板 --- */
+        /* --- 頂部面板：懸浮毛玻璃 (Glassmorphism) --- */
         .header-panel {
-            flex-shrink: 0; background-color: var(--header-bg);
-            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--tag-border); z-index: 1000;
-            padding: 14px 0;
+            flex-shrink: 0;
+            background-color: var(--header-bg);
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--glass-border);
+            z-index: 1000;
+            padding: 16px 0;
             box-shadow: var(--shadow-sm);
         }
-        .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; width: 100%; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 0 24px; width: 100%; }
 
-        /* --- 電腦版佈局 --- */
-        .desktop-header { flex-direction: column; gap: 14px; }
-        .top-row { display: flex; justify-content: space-between; align-items: center; }
-        .brand { 
-            font-size: 1.65rem; font-weight: 900; color: var(--primary); 
-            letter-spacing: -1.5px; text-transform: uppercase;
+        /* =========================================
+           1. 電腦版 Header (.desktop-header)
+           ========================================= */
+        .desktop-header { display: flex; flex-direction: column; gap: 14px; }
+        
+        .desktop-header .top-row { display: flex; justify-content: space-between; align-items: center; }
+        
+        .desktop-header .brand { 
+            font-size: 1.8rem; font-weight: 900; 
+            background: linear-gradient(to right, var(--primary), var(--primary-dark));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            letter-spacing: -1px; text-transform: uppercase;
+            text-shadow: 0 2px 10px rgba(79, 70, 229, 0.2);
         }
         
-        .system-actions { display: flex !important; flex-direction: row !important; gap: 10px; align-items: center; }
-
-        .control-row { display: flex; align-items: center; gap: 20px; width: 100%; }
-        .stats-group { display: flex; gap: 10px; flex-shrink: 0; }
-        .stat-card {
-            background: var(--primary-light); border: 1px solid var(--tag-border);
-            padding: 10px 20px; border-radius: var(--radius-md); text-align: center;
-            min-width: 105px; transition: var(--transition);
+        /* 電腦版按鈕：膠囊型 + 文字，水平排列 */
+        .desktop-header .system-actions { 
+            display: flex; gap: 10px; align-items: center; flex-wrap: nowrap; 
         }
-        .stat-val { font-size: 1.5rem; font-weight: 900; color: var(--primary); line-height: 1; }
-        .stat-lbl { font-size: 0.65rem; font-weight: 800; opacity: 0.5; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
 
-        .tools-group { display: flex; gap: 12px; flex-grow: 1; align-items: center; justify-content: flex-end; }
-        .search-area { flex-grow: 1; position: relative; max-width: 400px; } 
-        .filters { display: flex; gap: 8px; flex-shrink: 0; }
-
-        /* --- 手機版佈局 (重點修復：強制同行) --- */
-        .mobile-header { flex-direction: column; gap: 12px; width: 100%; }
+        /* 控制列 */
+        .desktop-header .control-row { display: flex; align-items: center; gap: 20px; width: 100%; }
         
-        .mobile-nav { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            min-height: 48px; 
-            flex-wrap: nowrap; /* 關鍵：禁止換行 */
-            gap: 10px;
+        .desktop-header .stats-group { display: flex; gap: 10px; flex-shrink: 0; }
+        .desktop-header .stat-card {
+            background: var(--card-bg); border: 1px solid var(--glass-border);
+            padding: 8px 20px; border-radius: 12px; text-align: center;
+            min-width: 100px; box-shadow: var(--shadow-sm);
+            transition: transform 0.3s;
         }
+        .desktop-header .stat-card:hover { transform: translateY(-2px); border-color: var(--primary); }
+        .stat-val { font-size: 1.4rem; font-weight: 900; color: var(--primary); line-height: 1.1; }
+        .stat-lbl { font-size: 0.7rem; font-weight: 700; opacity: 0.7; margin-top: 2px; }
+
+        .desktop-header .tools-group { display: flex; gap: 10px; flex-grow: 1; align-items: center; justify-content: flex-end; }
+        .desktop-header .search-area { flex-grow: 1; position: relative; max-width: 400px; } 
+        .desktop-header .filter-group { display: flex; gap: 8px; flex-shrink: 0; }
+
+        /* =========================================
+           2. 手機版 Header (.mobile-header)
+           ========================================= */
+        .mobile-header { display: flex; flex-direction: column; gap: 12px; width: 100%; }
         
-        .mobile-brand {
-            font-size: 1.4rem; font-weight: 900; color: var(--primary); letter-spacing: -1px;
-            white-space: nowrap; 
-            overflow: hidden; 
-            text-overflow: ellipsis; /* 標題太長自動 ... */
-            flex-shrink: 1; /* 允許標題縮小 */
+        .mobile-header .nav-bar { 
+            display: flex; justify-content: space-between; align-items: center; 
+            margin-bottom: 0; min-height: 44px;
+        }
+        .mobile-header .brand {
+             font-size: 1.4rem; font-weight: 900; 
+             background: linear-gradient(to right, var(--primary), var(--primary-dark));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+             letter-spacing: -1px;
         }
 
-        .mobile-header .system-actions { 
-            display: flex; gap: 8px; align-items: center; 
-            flex-shrink: 0; /* 按鈕群組不縮小 */
-        }
-        
-        .mobile-stats { display: flex; gap: 10px; }
-        .mobile-stats .stat-card { flex: 1; padding: 12px; border-radius: var(--radius-md); }
-        .mobile-tools { display: flex; flex-direction: column; gap: 12px; }
-        .mobile-filters { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        /* 手機版按鈕：純圖示，水平排列 */
+        .mobile-header .system-actions { display: flex; gap: 8px; align-items: center; }
 
-        /* --- UI 元件 --- */
-        .icon-btn {
-            height: 42px; padding: 0 18px; border-radius: 50px; background-color: var(--tag-bg);
-            border: 1px solid var(--tag-border); color: var(--text-title); cursor: pointer;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-            font-size: 0.9rem; font-weight: 800; transition: var(--transition);
-            white-space: nowrap; outline: none;
+        .mobile-header .mobile-stats { display: flex; gap: 10px; }
+        .mobile-header .mobile-stats .stat-card { 
+            flex: 1; padding: 10px; border-radius: 12px;
+            background: rgba(255,255,255,0.4); border: 1px solid var(--glass-border); text-align: center;
         }
-        .icon-btn:hover { background-color: var(--primary); color: white; border-color: var(--primary); transform: translateY(-3px); box-shadow: 0 8px 20px rgba(37, 99, 235, 0.2); }
-        .icon-btn:active { transform: scale(0.95); }
+        [data-theme="dark"] .mobile-header .stat-card { background: rgba(0,0,0,0.2); }
+
+        .mobile-header .mobile-tools { display: flex; flex-direction: column; gap: 10px; }
+        .mobile-header .mobile-filters { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+        /* =========================================
+           UI 元件 (按鈕、輸入框)
+           ========================================= */
+        
+        /* 電腦版按鈕：膠囊型 + 文字 */
+        .desktop-header .icon-btn {
+            height: 40px; padding: 0 16px; border-radius: 50px; 
+            background-color: var(--card-bg); border: 1px solid var(--glass-border);
+            color: var(--text-title); cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 6px;
+            font-size: 0.9rem; font-weight: 700; transition: var(--transition);
+            white-space: nowrap; outline: none; box-shadow: var(--shadow-sm);
+        }
+        .desktop-header .icon-btn span { display: inline-block; } /* 顯示文字 */
+
+        /* 手機版按鈕：圓形 + 無文字 */
+        .mobile-header .icon-btn {
+            width: 38px; height: 38px; padding: 0; border-radius: 50%;
+            background-color: var(--card-bg); border: 1px solid var(--glass-border);
+            color: var(--text-title); cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: var(--transition); outline: none;
+        }
+        .mobile-header .icon-btn span { display: none; } /* 隱藏文字 */
+
+        .icon-btn:hover { 
+            background-color: var(--primary); color: white; border-color: var(--primary); 
+            transform: translateY(-2px); box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+        }
         .icon-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
 
-        @media (max-width: 768px) {
-            .icon-btn { width: 40px; height: 40px; padding: 0; border-radius: 50%; }
-            .icon-btn span { display: none; } /* 手機隱藏文字 */
-        }
-
         .search-input {
-            width: 100%; height: 42px; padding: 0 15px 0 46px; border-radius: 14px;
-            border: 1px solid var(--tag-border); background-color: var(--bg-color); color: var(--text-title); outline: none;
-            font-size: 1rem; transition: var(--transition);
+            width: 100%; height: 40px; padding: 0 15px 0 42px; border-radius: 12px;
+            border: 1px solid var(--glass-border); background: var(--glass-bg);
+            color: var(--text-title); outline: none; font-size: 0.95rem;
+            transition: all 0.3s; box-shadow: inset 0 1px 2px rgba(0,0,0,0.02);
         }
-        .search-input:focus { border-color: var(--primary); background-color: var(--card-bg); box-shadow: 0 0 0 4px var(--primary-light); }
-        .search-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-main); pointer-events: none; opacity: 0.7; }
+        .search-input:focus { 
+            background: var(--card-bg); border-color: var(--primary); 
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15); 
+        }
+        .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-main); opacity: 0.7; }
 
         .custom-select, .btn-filter {
-            height: 42px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--tag-border);
-            background-color: var(--card-bg); color: var(--text-title); font-size: 0.85rem; font-weight: 600; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; gap: 6px; transition: var(--transition);
-            white-space: nowrap;
+            height: 40px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--glass-border);
+            background-color: var(--card-bg); color: var(--text-title); font-size: 0.85rem; font-weight: 600; 
+            cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; 
+            transition: var(--transition); white-space: nowrap; box-shadow: var(--shadow-sm);
         }
-        .btn-filter:hover { border-color: var(--primary); color: var(--primary); background-color: var(--primary-light); }
-        
-        .custom-select:disabled { opacity: 0.5; cursor: not-allowed; background-color: var(--bg-color); }
+        .btn-filter:hover { 
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark)); 
+            color: white; border-color: transparent; 
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px -4px rgba(79, 70, 229, 0.4);
+        }
+        .custom-select:disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); }
 
-        /* 安裝按鈕 */
         #install-btn, #install-btn-m { display: none; color: var(--primary); background-color: var(--primary-light); border-color: transparent; }
         #install-btn:hover, #install-btn-m:hover { background-color: var(--primary); color: white; }
 
         /* --- 下方捲動列表 --- */
         .scroll-area {
             flex-grow: 1; overflow-y: auto; padding: 30px 0 80px 0;
-            background-color: var(--bg-color); -webkit-overflow-scrolling: touch;
+            -webkit-overflow-scrolling: touch;
         }
-        .scroll-area::-webkit-scrollbar { width: 4px; }
-        .scroll-area::-webkit-scrollbar-thumb { background: var(--tag-border); border-radius: 10px; }
+        .scroll-area::-webkit-scrollbar { width: 6px; }
+        .scroll-area::-webkit-scrollbar-thumb { background: rgba(79, 70, 229, 0.3); border-radius: 10px; }
+        .scroll-area::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
         .ticket-list { 
-            display: grid; 
-            grid-template-columns: 1fr;
-            gap: 20px; 
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        @media (min-width: 992px) {
-            .ticket-list { grid-template-columns: repeat(2, 1fr); }
-        }
-
-        /* --- 🎫 擬真票券卡片 (顏色修正版) --- */
-        .ticket-card {
-            background-color: var(--card-bg); border-radius: var(--radius-md); display: flex;
-            overflow: hidden; box-shadow: var(--shadow-sm); border: 1px solid var(--tag-border);
-            transition: var(--transition); position: relative;
-            animation: slideInUp 0.6s cubic-bezier(0.23, 1, 0.32, 1) backwards;
-        }
-        .ticket-card:hover { transform: translateY(-6px) scale(1.01); box-shadow: var(--shadow-lg); }
-
-        @keyframes slideInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* 票根 (左側日期) - 改為淺色底，深色字 */
-        .ticket-stub {
-            background: var(--primary-light); /* 淺藍色背景 */
-            color: var(--primary); /* 深藍色文字 */
-            padding: 20px;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            min-width: 100px; text-align: center; border-right: 2px dashed rgba(0,0,0,0.1); position: relative;
-            flex-shrink: 0;
+            display: grid; grid-template-columns: 1fr; gap: 16px;
+            max-width: 1000px; margin: 0 auto; padding: 0 20px;
         }
         
-        /* 票券半圓缺口 */
-        .ticket-stub::before, .ticket-stub::after {
-            content: ''; position: absolute; right: -12px; width: 24px; height: 24px;
-            background-color: var(--bg-color); border-radius: 50%; 
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+        /* 網格模式 */
+        .ticket-list.grid-view { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+
+        /* --- 🎫 華麗票券卡片 --- */
+        .ticket-card {
+            background: var(--glass-bg);
+            border-radius: var(--radius-md);
+            display: grid;
+            grid-template-columns: 110px 1fr auto; /* 左中右佈局 */
+            align-items: center; gap: 20px;
+            padding: 20px 24px;
+            
+            border: 1px solid rgba(255,255,255,0.6);
+            box-shadow: 0 8px 20px -5px rgba(0, 0, 0, 0.05);
+            backdrop-filter: blur(5px);
+            
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative; overflow: hidden;
+            animation: slideUp 0.5s ease-out backwards;
         }
-        .ticket-stub::before { top: -12px; }
-        .ticket-stub::after { bottom: -12px; }
 
-        /* 日期顯示：年月日 */
-        .stub-year { font-size: 0.8rem; font-weight: 800; opacity: 0.8; margin-bottom: 2px; letter-spacing: 1px; color: var(--text-main); }
-        .stub-date { font-size: 1.4rem; font-weight: 900; letter-spacing: -0.5px; line-height: 1; }
+        [data-theme="dark"] .ticket-card { border-color: rgba(255,255,255,0.05); box-shadow: 0 8px 20px -5px rgba(0,0,0,0.3); }
 
-        /* 票身 (右側資訊) */
+        .ticket-card:hover { 
+            transform: translateY(-5px) scale(1.01); 
+            box-shadow: var(--shadow-hover);
+            border-color: var(--primary-light);
+        }
+        
+        /* 裝飾線 */
+        .ticket-card::before {
+            content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 6px;
+            background: linear-gradient(to bottom, var(--primary), var(--primary-dark));
+            opacity: 0.8;
+        }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* 左側票根 */
+        .ticket-stub {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.15) 1px, transparent 0);
+            background-size: 8px 8px;
+            color: white; padding: 10px; 
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; border-radius: 12px;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .stub-year { font-size: 0.75rem; font-weight: 700; opacity: 0.9; margin-bottom: 2px; letter-spacing: 1px; }
+        .stub-date { font-size: 1.3rem; font-weight: 900; letter-spacing: -0.5px; line-height: 1; text-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+
+        /* 中間票身 */
         .ticket-body { 
-            flex: 1; padding: 22px 28px; display: flex; flex-direction: column; justify-content: center; gap: 10px;
-            overflow: hidden; min-width: 0;
+            display: flex; flex-direction: column; justify-content: center; overflow: hidden;
         }
         
         .ticket-title { 
-            font-size: 1.05rem; font-weight: 700; color: var(--text-title); margin: 0; 
-            line-height: 1.45; letter-spacing: -0.2px;
-            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+            font-size: 1.1rem; font-weight: 700; color: var(--text-title); 
+            margin: 0; line-height: 1.45; letter-spacing: -0.2px;
         }
 
-        .tag-row { display: flex; flex-wrap: wrap; gap: 6px; }
+        /* 右側標籤 */
+        .tag-row { 
+            display: flex; flex-direction: column; align-items: flex-end; gap: 6px; 
+            min-width: 100px;
+        }
         .tag { 
-            font-size: 0.68rem; font-weight: 800; background-color: var(--tag-bg); color: var(--primary); 
-            padding: 3px 12px; border-radius: 8px; border: 1px solid var(--tag-border); 
-            transition: 0.3s; white-space: normal; word-break: break-word;
+            font-size: 0.75rem; font-weight: 700; background-color: var(--tag-bg); color: var(--primary); 
+            padding: 4px 12px; border-radius: 50px; 
+            border: 1px solid var(--tag-border); white-space: nowrap;
+            transition: 0.2s;
         }
-        .tag:hover { background-color: var(--primary); color: white; border-color: var(--primary); }
+        .ticket-card:hover .tag { background-color: var(--primary); color: white; border-color: var(--primary); }
 
-        @media (max-width: 768px) {
-            .ticket-card { border-radius: 20px; flex-direction: column; }
-            .ticket-stub { 
-                /* 手機版票根：橫向 */
-                flex-direction: row; min-width: 100%; padding: 12px 20px; justify-content: flex-start; gap: 14px;
-                border-right: none; border-bottom: 2px dashed rgba(0,0,0,0.1);
+        /* 手機版卡片 */
+        @media (max-width: 900px) {
+            .ticket-card { 
+                grid-template-columns: 1fr; /* 單欄垂直 */
+                gap: 12px; padding: 16px; align-items: flex-start;
+                border-radius: 20px;
             }
-            .ticket-stub::before, .ticket-stub::after { left: 50%; transform: translateX(-50%); right: auto; top: auto; bottom: -12px; }
-            
-            .stub-year { margin-bottom: 0; font-size: 0.8rem; }
+            .ticket-card::before { width: 100%; height: 4px; bottom: auto; background: linear-gradient(to right, var(--primary), var(--primary-dark)); }
+
+            .ticket-stub { 
+                width: 100%; flex-direction: row; gap: 10px; padding: 8px 16px; justify-content: flex-start;
+                background: var(--tag-bg); color: var(--primary); /* 手機版改淺色底 */
+                box-shadow: none; border: 1px solid var(--tag-border);
+            }
+            .stub-year { color: var(--text-main); margin-bottom: 0; font-size: 0.8rem; }
             .stub-date { font-size: 1.1rem; }
+
+            .ticket-title { font-size: 1rem; } 
+            .tag-row { flex-direction: row; align-items: center; justify-content: flex-start; width: 100%; flex-wrap: wrap; }
             
-            .ticket-title { font-size: 0.95rem; } 
-            .ticket-body { padding: 16px 20px; }
+            /* 手機版強制忽略網格 */
+            .ticket-list.grid-view { grid-template-columns: 1fr; }
         }
 
         #back-to-top {
-            position: fixed; bottom: 28px; right: 28px; width: 50px; height: 50px;
-            background-color: var(--primary); color: white; border: none; border-radius: 50%;
+            position: fixed; bottom: 30px; right: 30px; width: 50px; height: 50px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark)); 
+            color: white; border: none; border-radius: 50%;
             display: none; align-items: center; justify-content: center; cursor: pointer;
-            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.35); z-index: 2000; transition: var(--transition);
+            box-shadow: 0 8px 25px rgba(79, 70, 229, 0.4); z-index: 2000; transition: var(--transition);
         }
-        #back-to-top:hover { transform: scale(1.15) rotate(-5deg); background-color: var(--primary-dark); }
+        #back-to-top:hover { transform: scale(1.15) rotate(-10deg); }
 
-        footer { text-align: center; padding: 60px 0; opacity: 0.4; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.5px; }
+        footer { text-align: center; padding: 50px 0; opacity: 0.5; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.5px; }
     </style>
 </head>
 <body>
@@ -280,14 +352,28 @@
         <header class="header-panel">
             <div class="container">
                 
-                <!-- 1. 電腦版控制島 -->
+                <!-- ==================== 1. 電腦版控制島 ==================== -->
                 <div class="desktop-header desktop-only">
                     <div class="top-row">
                         <div class="brand">MUIII 搶票戰績</div>
                         <div class="system-actions">
-                            <button class="install-btn icon-btn" title="安裝"><svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg><span>安裝</span></button>
-                            <button class="reload-btn icon-btn" title="重整"><svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg><span>重整</span></button>
-                            <button class="theme-toggle icon-btn" title="模式"><svg class="theme-icon" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg><span>模式</span></button>
+                            <button id="install-btn" class="icon-btn" title="安裝">
+                                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                <span>安裝</span>
+                            </button>
+                            <!-- 新增版面切換 -->
+                            <button id="layout-btn" class="icon-btn" title="版面">
+                                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
+                                <span>版面</span>
+                            </button>
+                            <button class="reload-btn icon-btn" title="重整">
+                                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                                <span>重整</span>
+                            </button>
+                            <button class="theme-toggle icon-btn" title="模式">
+                                <svg class="theme-icon" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                                <span>模式</span>
+                            </button>
                         </div>
                     </div>
                     
@@ -316,12 +402,12 @@
                     </div>
                 </div>
 
-                <!-- 2. 手機版控制島 -->
+                <!-- 2. 手機版控制島 (Mobile) -->
                 <div class="mobile-header mobile-only">
                     <div class="mobile-nav">
-                        <div class="mobile-brand">MUIII 搶票戰績</div>
+                        <div class="brand">MUIII 搶票戰績</div>
                         <div class="system-actions">
-                            <button class="install-btn icon-btn mobile-only-btn"><svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg></button>
+                            <button id="install-btn-m" class="icon-btn mobile-only-btn"><svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg></button>
                             <button class="reload-btn icon-btn mobile-only-btn"><svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg></button>
                             <button class="theme-toggle icon-btn mobile-only-btn"><svg class="theme-icon" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg></button>
                         </div>
@@ -364,6 +450,7 @@
     <script>
         const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vThZZurHBpfes9J-dLaoi51jpb0MnQ4oABmBux77r-OO5LOvuoex6lesE4GvZb-UQ5zgiqWEfiHxNQy/pub?gid=0&single=true&output=csv';
         let allTickets = [], currentSort = 'desc', currentYear = 'all', currentMonth = 'all';
+        let isGridView = false;
 
         function init() {
             const savedTheme = localStorage.getItem('muiii_theme');
@@ -371,11 +458,13 @@
                 document.documentElement.setAttribute('data-theme', 'dark');
                 updateThemeIcons(true);
             }
+            if (localStorage.getItem('muiii_layout') === 'grid') isGridView = true;
             if ('serviceWorker' in navigator) navigator.serviceWorker.register('service-worker.js');
             bindEvents();
             loadData();
         }
 
+        // 綁定事件
         function bindEvents() {
             const inputs = document.querySelectorAll('.search-input');
             inputs.forEach(el => el.oninput = (e) => {
@@ -410,7 +499,7 @@
                 inputs.forEach(i => i.value = '');
                 yearSelects.forEach(y => y.value = 'all');
                 monthSelects.forEach(m => { m.value = 'all'; m.disabled = true; });
-                currentYear = currentMonth = 'all';
+                currentYear = 'all'; currentMonth = 'all';
                 render();
             });
 
@@ -422,6 +511,30 @@
                 localStorage.setItem('muiii_theme', newTheme);
                 updateThemeIcons(!isDark);
             });
+
+            // 電腦版版面切換
+            const layoutBtn = document.getElementById('layout-btn');
+            if (layoutBtn) {
+                layoutBtn.onclick = () => {
+                    isGridView = !isGridView;
+                    localStorage.setItem('muiii_layout', isGridView ? 'grid' : 'list');
+                    updateLayoutIcon();
+                    render();
+                };
+            }
+        }
+
+        function updateLayoutIcon() {
+            const btn = document.getElementById('layout-btn');
+            if (!btn) return;
+            const container = document.getElementById('list-container');
+            if (isGridView) {
+                container.classList.add('grid-view');
+                btn.innerHTML = '<svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg><span>列表</span>';
+            } else {
+                container.classList.remove('grid-view');
+                btn.innerHTML = '<svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg><span>網格</span>';
+            }
         }
 
         function updateThemeIcons(isDark) {
@@ -433,13 +546,14 @@
 
         function loadData() {
             const container = document.getElementById('list-container');
-            container.innerHTML = '<div style="text-align:center;padding:50px;color:#94a3b8">資料載入中...</div>';
+            container.innerHTML = '<div style="text-align:center;padding:50px;color:#94a3b8;animation:pulse 1.5s infinite">資料載入中...</div>';
             const ts = new Date().getTime();
             Papa.parse(`${CSV_URL}&t=${ts}`, {
                 download: true, header: true,
                 complete: (res) => {
                     allTickets = res.data.filter(i => i['節目名稱'] && i['節目名稱'].trim() !== '');
                     setupYearFilters();
+                    if(isGridView) updateLayoutIcon();
                     render();
                 }
             });
@@ -473,6 +587,10 @@
             document.querySelectorAll('.total-records').forEach(el => el.innerText = data.length);
 
             const container = document.getElementById('list-container');
+            
+            if (isGridView && window.innerWidth > 992) container.classList.add('grid-view');
+            else container.classList.remove('grid-view');
+
             if (!data.length) {
                 container.innerHTML = '<div style="text-align:center;padding:50px;color:#94a3b8">無相符資料</div>';
                 return;
@@ -481,25 +599,24 @@
             container.innerHTML = data.map((t, idx) => {
                 const dateParts = t['售票日期'].split('.');
                 const tags = (t['張數']||'').split(/\s+/).filter(x => x).map(x => `<span class="tag">${x}</span>`).join('');
-                const delay = (idx % 12) * 0.05;
+                const delay = (idx % 15) * 0.04;
                 return `
-                    <div class="ticket-card" style="animation: slideInUp 0.4s ease-out backwards; animation-delay: ${delay}s">
+                    <div class="ticket-card" style="animation: slideInUp 0.5s ease-out backwards; animation-delay: ${delay}s">
                         <div class="ticket-stub">
                             <div class="stub-year">${dateParts[0] || ''}</div>
-                            <div class="stub-date">${dateParts[1] ? dateParts[1] + '.' + dateParts[2] : ''}</div>
+                            <div class="stub-date">${dateParts[1]}.${dateParts[2]}</div>
                         </div>
                         <div class="ticket-body">
                             <h3 class="ticket-title">${t['節目名稱']}</h3>
-                            <div class="tag-row">${tags}</div>
                         </div>
+                        <div class="tag-row">${tags}</div>
                     </div>
                 `;
             }).join('');
         }
 
-        // 動畫樣式
         const style = document.createElement('style');
-        style.innerHTML = `@keyframes slideInUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }`;
+        style.innerHTML = `@keyframes slideInUp { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:translateY(0); } } @keyframes pulse { 0% { opacity:0.5; } 50% { opacity:1; } 100% { opacity:0.5; } }`;
         document.head.appendChild(style);
 
         const scrollMain = document.getElementById('scroll-main');
@@ -511,9 +628,9 @@
         let defP;
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault(); defP = e;
-            document.querySelectorAll('.install-btn').forEach(b => b.style.display = 'flex');
+            document.querySelectorAll('#install-btn, #install-btn-m').forEach(b => b.style.display = 'flex');
         });
-        document.querySelectorAll('.install-btn').forEach(b => b.onclick = () => { if(defP) defP.prompt(); document.querySelectorAll('.install-btn').forEach(b => b.style.display = 'none'); });
+        document.querySelectorAll('#install-btn, #install-btn-m').forEach(b => b.onclick = () => { if(defP) defP.prompt(); b.style.display = 'none'; });
 
         init();
     </script>
