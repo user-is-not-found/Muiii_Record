@@ -87,8 +87,8 @@
             padding: 0.6rem 1rem;
             transition: all 0.3s ease;
             outline: none;
-            width: 100%;
             height: 44px;
+            white-space: nowrap;
         }
         .cyber-select:focus, .search-input:focus { 
             border-color: var(--brand-primary);
@@ -96,9 +96,9 @@
         }
         .cyber-select {
             appearance: none;
-            padding-right: 2.2rem;
+            padding-right: 2.5rem;
             background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2394a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-            background-position: right 0.7rem center;
+            background-position: right 0.8rem center;
             background-repeat: no-repeat;
             background-size: 1.1em;
         }
@@ -129,18 +129,12 @@
             <div class="flex justify-between items-center mb-6 w-full gap-4">
                 <div class="flex items-center gap-4">
                     <div class="relative shrink-0">
-                        <h1 class="text-4xl md:text-6xl font-[800] font-sans tracking-tighter italic text-slate-900 leading-none">
-                            MUIII<span class="text-violet-600">.</span>
-                        </h1>
+                        <h1 class="text-4xl md:text-6xl font-[800] font-sans tracking-tighter italic text-slate-900 leading-none">MUIII<span class="text-violet-600">.</span></h1>
                     </div>
                     <div class="h-10 w-px bg-slate-200 hidden md:block"></div>
                     <div class="flex flex-col justify-center">
-                        <span class="text-lg md:text-2xl font-bold tracking-tight text-slate-700 uppercase leading-none">
-                            搶票戰績
-                        </span>
-                        <span class="text-[9px] font-bold text-slate-400 tracking-[0.4em] uppercase mt-1.5 hidden md:block">
-                            Premium Performance Tracker
-                        </span>
+                        <span class="text-lg md:text-2xl font-bold tracking-tight text-slate-700 uppercase leading-none">搶票戰績</span>
+                        <span class="text-[9px] font-bold text-slate-400 tracking-[0.4em] uppercase mt-1.5 hidden md:block">Premium Performance Tracker</span>
                     </div>
                 </div>
                 <div class="flex gap-2 shrink-0">
@@ -151,27 +145,15 @@
             <div class="flex flex-col lg:flex-row items-center bg-white rounded-2xl border border-slate-200 p-2 gap-2 shadow-sm transition-all focus-within:shadow-lg focus-within:shadow-violet-500/5">
                 <div class="flex items-center flex-grow w-full px-3 h-[44px]">
                     <i class="fas fa-search text-slate-300 mr-3 text-sm"></i>
-                    <input type="text" id="searchInput" placeholder="搜尋歌手、場館名稱..." 
-                        class="w-full bg-transparent text-slate-800 py-2 focus:outline-none placeholder-slate-300 font-bold text-base">
+                    <input type="text" id="searchInput" placeholder="搜尋歌手、場館名稱..." class="w-full bg-transparent text-slate-800 py-2 focus:outline-none placeholder-slate-300 font-bold text-base">
                 </div>
                 <div class="grid grid-cols-2 lg:flex lg:flex-nowrap items-center gap-2 w-full lg:w-auto shrink-0 border-t lg:border-t-0 pt-2 lg:pt-0 lg:pl-2">
-                    <select id="year-filter" class="cyber-select font-bold text-slate-600">
-                        <option value="all">年份</option>
+                    <select id="year-filter" class="cyber-select font-bold text-slate-600 lg:w-auto lg:min-w-[100px]"><option value="all">年份</option></select>
+                    <select id="month-filter" class="cyber-select font-bold text-slate-600 lg:w-auto lg:min-w-[100px]" disabled>
+                        <option value="all">月份</option><option value="01">01月</option><option value="02">02月</option><option value="03">03月</option><option value="04">04月</option><option value="05">05月</option><option value="06">06月</option><option value="07">07月</option><option value="08">08月</option><option value="09">09月</option><option value="10">10月</option><option value="11">11月</option><option value="12">12月</option>
                     </select>
-                    <select id="month-filter" class="cyber-select font-bold text-slate-600" disabled>
-                        <option value="all">月份</option>
-                        <option value="01">01月</option><option value="02">02月</option><option value="03">03月</option>
-                        <option value="04">04月</option><option value="05">05月</option><option value="06">06月</option>
-                        <option value="07">07月</option><option value="08">08月</option><option value="09">09月</option>
-                        <option value="10">10月</option><option value="11">11月</option><option value="12">12月</option>
-                    </select>
-                    <select id="sortSelect" class="cyber-select font-bold text-violet-600">
-                        <option value="desc">新到舊</option>
-                        <option value="asc">舊到新</option>
-                    </select>
-                    <button id="reset-btn" class="h-[44px] bg-slate-900 hover:bg-black text-white px-5 rounded-xl flex items-center justify-center gap-2 transition text-xs font-black shrink-0 shadow-sm w-full lg:w-auto">
-                        <i class="fas fa-undo text-[10px]"></i><span>重置</span>
-                    </button>
+                    <select id="sortSelect" class="cyber-select font-bold text-violet-600 lg:w-auto lg:min-w-[110px]"><option value="desc">新到舊</option><option value="asc">舊到新</option></select>
+                    <button id="reset-btn" class="h-[44px] bg-slate-900 hover:bg-black text-white px-5 rounded-xl flex items-center justify-center gap-2 transition text-xs font-black shrink-0 shadow-sm w-full lg:w-auto whitespace-nowrap"><i class="fas fa-undo text-[10px]"></i><span>重置</span></button>
                 </div>
             </div>
         </div>
@@ -183,141 +165,59 @@
         </div>
         <div id="record-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden pb-24"></div>
         <div id="no-results" class="hidden text-center py-32">
-            <div class="bg-slate-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
-                <i class="fas fa-search text-slate-200 text-3xl"></i>
-            </div>
+            <div class="bg-slate-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6"><i class="fas fa-search text-slate-200 text-3xl"></i></div>
             <p class="text-slate-400 font-bold text-lg">沒有找到符合的戰績</p>
         </div>
     </div>
-    <footer class="mt-auto text-center py-12 border-t border-slate-100 bg-white/80">
-        <p class="text-slate-300 text-[10px] font-bold tracking-[0.5em] uppercase">&copy; 2026 MUIII PROJECT • TRACKING SINCE 2020</p>
-    </footer>
+    <footer class="mt-auto text-center py-12 border-t border-slate-100 bg-white/80"><p class="text-slate-300 text-[10px] font-bold tracking-[0.5em] uppercase">&copy; 2026 MUIII PROJECT • TRACKING SINCE 2020</p></footer>
     <button id="back-to-top" class="fixed bottom-8 right-8 bg-slate-900 text-white w-12 h-12 rounded-full hidden items-center justify-center shadow-2xl transition hover:scale-110 hover:bg-violet-600 z-[1000]"><i class="fas fa-arrow-up"></i></button>
     <script>
         const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vThZZurHBpfes9J-dLaoi51jpb0MnQ4oABmBux77r-OO5LOvuoex6lesE4GvZb-UQ5zgiqWEfiHxNQy/pub?output=csv';
-        let allRecords = [], currentYear = 'all', currentMonth = 'all';
-        let KEY_DATE = '售票日期', KEY_TITLE = '節目名稱', KEY_COUNT = '張數';
-        function init() {
-            if ('serviceWorker' in navigator) navigator.serviceWorker.register('service-worker.js');
-            fetchRecords();
-            setupEventListeners();
-        }
+        let allRecords = [], currentYear = 'all', currentMonth = 'all', KEY_DATE = '售票日期', KEY_TITLE = '節目名稱', KEY_COUNT = '張數';
+        function init() { if ('serviceWorker' in navigator) navigator.serviceWorker.register('service-worker.js'); fetchRecords(); setupEventListeners(); }
         async function fetchRecords() {
             document.getElementById('loading').classList.remove('hidden');
             const ts = new Date().getTime();
             Papa.parse(csvUrl + '&t=' + ts, {
-                download: true, header: true, skipEmptyLines: true,
-                transformHeader: h => h.trim().replace(/^\uFEFF/, ''),
+                download: true, header: true, skipEmptyLines: true, transformHeader: h => h.trim().replace(/^\uFEFF/, ''),
                 complete: function(results) {
-                    if (results.data.length > 0) {
-                        const keys = Object.keys(results.data[0]);
-                        KEY_DATE = keys.find(k => k.includes('日期')) || KEY_DATE;
-                        KEY_TITLE = keys.find(k => k.includes('節目')) || KEY_TITLE;
-                        KEY_COUNT = keys.find(k => k.includes('張數')) || KEY_COUNT;
-                    }
+                    if (results.data.length > 0) { const keys = Object.keys(results.data[0]); KEY_DATE = keys.find(k => k.includes('日期')) || KEY_DATE; KEY_TITLE = keys.find(k => k.includes('節目')) || KEY_TITLE; KEY_COUNT = keys.find(k => k.includes('張數')) || KEY_COUNT; }
                     allRecords = results.data.filter(item => item[KEY_TITLE] && item[KEY_TITLE].trim() !== '');
-                    populateYears();
-                    updateDashboard();
+                    populateYears(); updateDashboard();
                 }
             });
         }
         function setupEventListeners() {
             document.getElementById('searchInput').addEventListener('input', updateDashboard);
             document.getElementById('sortSelect').addEventListener('change', updateDashboard);
-            const yearFilter = document.getElementById('year-filter');
-            const monthFilter = document.getElementById('month-filter');
-            yearFilter.addEventListener('change', (e) => {
-                currentYear = e.target.value;
-                monthFilter.disabled = currentYear === 'all';
-                if(currentYear === 'all') { currentMonth = 'all'; monthFilter.value = 'all'; }
-                updateDashboard();
-            });
-            monthFilter.addEventListener('change', (e) => {
-                currentMonth = e.target.value;
-                updateDashboard();
-            });
-            document.getElementById('reset-btn').onclick = () => {
-                document.getElementById('searchInput').value = '';
-                document.getElementById('sortSelect').value = 'desc';
-                yearFilter.value = 'all';
-                monthFilter.value = 'all';
-                monthFilter.disabled = true;
-                currentYear = 'all'; currentMonth = 'all';
-                updateDashboard();
-            };
+            const yearFilter = document.getElementById('year-filter'), monthFilter = document.getElementById('month-filter');
+            yearFilter.addEventListener('change', (e) => { currentYear = e.target.value; monthFilter.disabled = currentYear === 'all'; if(currentYear === 'all') { currentMonth = 'all'; monthFilter.value = 'all'; } updateDashboard(); });
+            monthFilter.addEventListener('change', (e) => { currentMonth = e.target.value; updateDashboard(); });
+            document.getElementById('reset-btn').onclick = () => { document.getElementById('searchInput').value = ''; document.getElementById('sortSelect').value = 'desc'; yearFilter.value = 'all'; monthFilter.value = 'all'; monthFilter.disabled = true; currentYear = 'all'; currentMonth = 'all'; updateDashboard(); };
             document.getElementById('reload-btn').onclick = fetchRecords;
-            let defP;
-            window.addEventListener('beforeinstallprompt', (e) => {
-                e.preventDefault(); defP = e;
-                document.getElementById('install-btn').classList.remove('hidden');
-            });
+            let defP; window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); defP = e; document.getElementById('install-btn').classList.remove('hidden'); });
             document.getElementById('install-btn').onclick = () => { if(defP) defP.prompt(); };
-            window.onscroll = () => {
-                document.getElementById('back-to-top').style.display = window.scrollY > 400 ? 'flex' : 'none';
-            };
+            window.onscroll = () => { document.getElementById('back-to-top').style.display = window.scrollY > 400 ? 'flex' : 'none'; };
             document.getElementById('back-to-top').onclick = () => window.scrollTo({top: 0, behavior: 'smooth'});
         }
         function populateYears() {
             const years = [...new Set(allRecords.map(item => (item[KEY_DATE] || '').split('.')[0]))].filter(y => y && y.length === 4).sort().reverse();
-            const select = document.getElementById('year-filter');
-            select.innerHTML = '<option value="all">年份</option>' + years.map(y => `<option value="${y}">${y} 年</option>`).join('');
+            document.getElementById('year-filter').innerHTML = '<option value="all">年份</option>' + years.map(y => `<option value="${y}">${y} 年</option>`).join('');
         }
         function updateDashboard() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const sortOrder = document.getElementById('sortSelect').value;
-            let filtered = allRecords.filter(item => {
-                const dateVal = item[KEY_DATE] || '';
-                const titleMatch = (item[KEY_TITLE] || '').toLowerCase().includes(searchTerm);
-                const dateMatch = dateVal.includes(searchTerm);
-                const yearMatch = currentYear === 'all' || dateVal.startsWith(currentYear);
-                const monthMatch = currentMonth === 'all' || dateVal.split('.')[1] === currentMonth;
-                return (titleMatch || dateMatch) && yearMatch && monthMatch;
-            });
-            filtered.sort((a, b) => {
-                const d1 = a[KEY_DATE] || '';
-                const d2 = b[KEY_DATE] || '';
-                return sortOrder === 'desc' ? d2.localeCompare(d1) : d1.localeCompare(d2);
-            });
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase(), sortOrder = document.getElementById('sortSelect').value;
+            let filtered = allRecords.filter(item => { const dateVal = item[KEY_DATE] || '', titleMatch = (item[KEY_TITLE] || '').toLowerCase().includes(searchTerm), dateMatch = dateVal.includes(searchTerm), yearMatch = currentYear === 'all' || dateVal.startsWith(currentYear), monthMatch = currentMonth === 'all' || dateVal.split('.')[1] === currentMonth; return (titleMatch || dateMatch) && yearMatch && monthMatch; });
+            filtered.sort((a, b) => { const d1 = a[KEY_DATE] || '', d2 = b[KEY_DATE] || ''; return sortOrder === 'desc' ? d2.localeCompare(d1) : d1.localeCompare(d2); });
             renderUI(filtered);
         }
         function renderUI(data) {
-            const grid = document.getElementById('record-grid');
-            const noResults = document.getElementById('no-results');
-            grid.innerHTML = ''; 
-            if (data.length === 0) {
-                grid.classList.add('hidden');
-                noResults.classList.remove('hidden');
-            } else {
-                noResults.classList.add('hidden');
-                grid.classList.remove('hidden');
+            const grid = document.getElementById('record-grid'), noResults = document.getElementById('no-results'); grid.innerHTML = ''; 
+            if (data.length === 0) { grid.classList.add('hidden'); noResults.classList.remove('hidden'); } else {
+                noResults.classList.add('hidden'); grid.classList.remove('hidden');
                 data.forEach((item, index) => {
-                    const card = document.createElement('div');
-                    card.className = `ticket-card rounded-2xl flex flex-col h-full animate-fade-in-up overflow-hidden`;
-                    card.style.animationDelay = `${index * 30}ms`;
-                    const dateParts = (item[KEY_DATE] || '').split('.');
-                    const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
-                    const mStr = monthNames[parseInt(dateParts[1]) - 1] || '---';
-                    const tags = (item[KEY_COUNT] || '').split(' ').filter(t => t.trim()).map(tag => 
-                        `<span class="bg-violet-50 text-violet-600 px-3 py-1.5 rounded-lg text-[11px] font-black flex items-center border border-violet-100/50 shadow-sm">
-                            <i class="fas fa-ticket-alt mr-2 opacity-40"></i>${tag}
-                        </span>`
-                    ).join('');
-                    card.innerHTML = `
-                        <div class="flex-1 flex flex-col">
-                            <div class="flex items-stretch gap-0 h-full">
-                                <div class="ticket-stub flex flex-col items-center justify-center p-5 min-w-[90px] md:min-w-[100px] text-center">
-                                    <span class="text-[10px] font-black tracking-widest text-violet-500 uppercase">${mStr}</span>
-                                    <span class="text-3xl md:text-4xl font-black font-oswald my-1 text-slate-900">${dateParts[2] || '--'}</span>
-                                    <span class="text-[10px] font-bold text-slate-400">${dateParts[0] || '----'}</span>
-                                </div>
-                                <div class="p-5 md:p-6 flex-1 flex items-center bg-white">
-                                    <h3 class="text-sm md:text-lg font-black text-slate-800 leading-snug line-clamp-3">${item[KEY_TITLE]}</h3>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="ticket-dashed-line mx-8"></div>
-                        <div class="p-5 bg-slate-50/30 flex flex-wrap gap-2.5">${tags}</div>
-                    `;
+                    const card = document.createElement('div'); card.className = `ticket-card rounded-2xl flex flex-col h-full animate-fade-in-up overflow-hidden`; card.style.animationDelay = `${index * 30}ms`;
+                    const dateParts = (item[KEY_DATE] || '').split('.'), monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"], mStr = monthNames[parseInt(dateParts[1]) - 1] || '---', tags = (item[KEY_COUNT] || '').split(' ').filter(t => t.trim()).map(tag => `<span class="bg-violet-50 text-violet-600 px-3 py-1.5 rounded-lg text-[11px] font-black flex items-center border border-violet-100/50 shadow-sm"><i class="fas fa-ticket-alt mr-2 opacity-40"></i>${tag}</span>`).join('');
+                    card.innerHTML = `<div class="flex-1 flex flex-col"><div class="flex items-stretch gap-0 h-full"><div class="ticket-stub flex flex-col items-center justify-center p-5 min-w-[90px] md:min-w-[100px] text-center"><span class="text-[10px] font-black tracking-widest text-violet-500 uppercase">${mStr}</span><span class="text-3xl md:text-4xl font-black font-oswald my-1 text-slate-900">${dateParts[2] || '--'}</span><span class="text-[10px] font-bold text-slate-400">${dateParts[0] || '----'}</span></div><div class="p-5 md:p-6 flex-1 flex items-center bg-white"><h3 class="text-sm md:text-lg font-black text-slate-800 leading-snug line-clamp-3">${item[KEY_TITLE]}</h3></div></div></div><div class="ticket-dashed-line mx-8"></div><div class="p-5 bg-slate-50/30 flex flex-wrap gap-2.5">${tags}</div>`;
                     grid.appendChild(card);
                 });
             }
