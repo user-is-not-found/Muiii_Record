@@ -3,91 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Muiii 搶票戰績</title>
+    <title>Muiii 搶票戰績儀表板</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap');
-        body { font-family: 'Noto Sans TC', sans-serif; background-color: #f8fafc; }
-        .card-success { border-top: 5px solid #10b981; }
-        .card-fail { border-top: 5px solid #ef4444; }
-        .badge-success { background-color: #d1fae5; color: #065f46; }
-        .badge-fail { background-color: #fee2e2; color: #991b1b; }
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
+        body { font-family: 'Noto Sans TC', sans-serif; background-color: #0f172a; color: #f8fafc; }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .gradient-text {
+            background: linear-gradient(to right, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
     </style>
 </head>
-<body class="p-4 md:p-10">
+<body class="p-4 md:p-10 min-h-screen flex flex-col items-center">
 
-    <div class="max-w-6xl mx-auto">
-        <header class="text-center mb-12">
-            <h1 class="text-4xl font-bold text-gray-800 mb-2">🏆 Muiii 搶票戰績表</h1>
-            <p class="text-gray-500">同步自 Google Sheets 的即時紀錄</p>
-            <div id="stats" class="mt-6 flex justify-center gap-4 text-sm">
+    <div class="w-full max-w-7xl">
+        <header class="mb-10 text-center md:text-left flex flex-col md:flex-row justify-between items-center gap-6">
+            <div>
+                <h1 class="text-4xl md:text-5xl font-black mb-2 gradient-text tracking-wider">Muiii 搶票戰績</h1>
+                <p class="text-slate-400">Google Sheets 雲端即時同步儀表板</p>
+            </div>
+            
+            <div id="stats" class="flex gap-4 w-full md:w-auto">
+                <div class="glass-card p-4 rounded-2xl flex-1 md:w-40 text-center">
+                    <p class="text-slate-400 text-sm mb-1">總征戰場次</p>
+                    <p class="text-3xl font-bold text-white" id="stat-events">0</p>
                 </div>
+                <div class="glass-card p-4 rounded-2xl flex-1 md:w-40 text-center">
+                    <p class="text-slate-400 text-sm mb-1">累計搶到張數</p>
+                    <p class="text-3xl font-bold text-sky-400" id="stat-tickets">0</p>
+                </div>
+            </div>
         </header>
 
         <div id="loading" class="text-center py-20">
-            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
-            <p class="mt-4 text-gray-500">正在讀取戰績資料...</p>
+            <i class="fas fa-circle-notch fa-spin text-4xl text-sky-500 mb-4"></i>
+            <p class="text-slate-400 tracking-widest">正在載入戰績資料庫...</p>
         </div>
 
-        <div id="record-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div id="record-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden">
             </div>
     </div>
 
     <script>
+        // 你提供的 Google Sheet CSV 連結
         const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vThZZurHBpfes9J-dLaoi51jpb0MnQ4oABmBux77r-OO5LOvuoex6lesE4GvZb-UQ5zgiqWEfiHxNQy/pub?output=csv';
 
         async function fetchRecords() {
             Papa.parse(csvUrl, {
                 download: true,
                 header: true,
+                skipEmptyLines: true,
                 complete: function(results) {
-                    renderCards(results.data);
-                    document.getElementById('loading').classList.add('hidden');
+                    renderDashboard(results.data);
                 }
             });
         }
 
-        function renderCards(data) {
+        function renderDashboard(data) {
             const grid = document.getElementById('record-grid');
-            const statsContainer = document.getElementById('stats');
-            let successCount = 0;
+            let totalEvents = 0;
+            let totalTickets = 0;
 
             data.forEach(item => {
-                // 假設 CSV 欄位名稱為：日期, 活動名稱, 狀態, 座位區, 備註
-                if (!item.活動名稱) return; 
+                if (!item.節目名稱) return; 
+                totalEvents++;
 
-                const isSuccess = item.狀態 === '成功';
-                if (isSuccess) successCount++;
+                // 計算張數 (解析例如 "1880*2" 或 "3208*1 3208*2" 裡面的 *數字)
+                let ticketCountForEvent = 0;
+                const ticketString = item.張數 || '';
+                const matches = ticketString.match(/\*(\d+)/g);
+                
+                if (matches) {
+                    matches.forEach(match => {
+                        ticketCountForEvent += parseInt(match.replace('*', ''));
+                    });
+                } else if (ticketString.trim() !== '') {
+                    // 如果沒有 * 號但有文字，預設算 1 張
+                    ticketCountForEvent = 1; 
+                }
+                totalTickets += ticketCountForEvent;
 
+                // 建立卡片
                 const card = document.createElement('div');
-                card.className = `bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow ${isSuccess ? 'card-success' : 'card-fail'}`;
+                card.className = 'glass-card rounded-2xl p-6 hover:-translate-y-1 transition-transform duration-300';
                 
                 card.innerHTML = `
-                    <div class="flex justify-between items-start mb-4">
-                        <span class="text-xs font-medium text-gray-400">${item.日期 || ''}</span>
-                        <span class="px-2 py-1 rounded text-xs font-bold ${isSuccess ? 'badge-success' : 'badge-fail'}">
-                            ${item.狀態}
+                    <div class="flex justify-between items-start mb-4 border-b border-slate-700 pb-3">
+                        <span class="text-sm font-medium text-sky-400 px-3 py-1 bg-sky-500/10 rounded-full">
+                            <i class="far fa-calendar-alt mr-1"></i> ${item.售票日期 || '未知日期'}
+                        </span>
+                        <span class="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded">
+                            <i class="fas fa-ticket-alt mr-1"></i> ${ticketCountForEvent} 張
                         </span>
                     </div>
-                    <h3 class="text-xl font-bold text-gray-800 mb-2">${item.活動名稱}</h3>
-                    <p class="text-gray-600 text-sm mb-4">📍 ${item.座位區 || '未填寫'}</p>
-                    <div class="text-gray-400 text-xs italic border-t pt-4">
-                        ${item.備註 || '無備註資訊'}
+                    <h3 class="text-lg font-bold text-white mb-3 leading-snug">${item.節目名稱}</h3>
+                    <div class="text-slate-400 text-sm bg-slate-800/50 p-3 rounded-lg font-mono">
+                        ${item.張數 || '無詳細票價紀錄'}
                     </div>
                 `;
                 grid.appendChild(card);
             });
 
-            // 更新統計數據
-            const winRate = ((successCount / data.length) * 100).toFixed(1);
-            statsContainer.innerHTML = `
-                <span class="bg-blue-100 text-blue-700 px-4 py-2 rounded-full border border-blue-200">總場次：${data.length}</span>
-                <span class="bg-green-100 text-green-700 px-4 py-2 rounded-full border border-green-200">成功：${successCount}</span>
-                <span class="bg-purple-100 text-purple-700 px-4 py-2 rounded-full border border-purple-200">勝率：${winRate}%</span>
-            `;
+            // 更新頂部儀表板數字
+            document.getElementById('stat-events').innerText = totalEvents;
+            document.getElementById('stat-tickets').innerText = totalTickets;
+
+            // 隱藏讀取動畫，顯示網格
+            document.getElementById('loading').classList.add('hidden');
+            grid.classList.remove('hidden');
         }
 
+        // 啟動
         fetchRecords();
     </script>
 </body>
