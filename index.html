@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Muiii 搶票戰績</title>
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#ffffff">
+    <meta name="theme-color" content="#6d28d9">
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2972/2972528.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
@@ -25,9 +25,9 @@
                     },
                     keyframes: {
                         'soft-blob': {
-                            '0%, 100%': { transform: 'translate(0px, 0px) scale(1)', opacity: 0.3 },
-                            '33%': { transform: 'translate(40px, -40px) scale(1.1)', opacity: 0.5 },
-                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)', opacity: 0.3 },
+                            '0%, 100%': { transform: 'translate(0px, 0px) scale(1)', opacity: 0.4 },
+                            '33%': { transform: 'translate(40px, -40px) scale(1.1)', opacity: 0.6 },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)', opacity: 0.4 },
                         },
                         fadeInUp: {
                             '0%': { opacity: '0', transform: 'translateY(10px)' },
@@ -42,7 +42,7 @@
         :root {
             --brand-primary: #6d28d9;
             --brand-accent: #8b5cf6;
-            --bg-soft: #fcfcff;
+            --bg-soft: #f8fafc;
         }
         body {
             background-color: var(--bg-soft);
@@ -52,30 +52,29 @@
             -webkit-font-smoothing: antialiased;
         }
         ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         .ticket-card {
-            background: #ffffff;
-            border: 1px solid rgba(226, 232, 240, 0.8);
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+            box-shadow: 0 10px 15px -3px rgba(109, 40, 217, 0.2);
         }
         .ticket-card:hover {
             transform: translateY(-6px);
-            box-shadow: 0 20px 25px -5px rgba(109, 40, 217, 0.08);
-            border-color: var(--brand-accent);
+            box-shadow: 0 20px 25px -5px rgba(109, 40, 217, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
         }
         .ticket-stub {
-            background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
-            border-right: 1px dashed #e2e8f0;
+            background: rgba(255, 255, 255, 0.1);
+            border-right: 1px dashed rgba(255, 255, 255, 0.3);
         }
         .ticket-dashed-line {
-            border-bottom: 2px dashed #f1f5f9;
+            border-bottom: 2px dashed rgba(255, 255, 255, 0.2);
             position: relative;
         }
         .ticket-dashed-line::before, .ticket-dashed-line::after {
             content: ''; position: absolute; width: 18px; height: 18px;
             background-color: var(--bg-soft); border-radius: 50%; top: -9px;
-            box-shadow: inset 0 0 4px rgba(0,0,0,0.03);
         }
         .ticket-dashed-line::before { left: -29px; }
         .ticket-dashed-line::after { right: -29px; }
@@ -121,8 +120,8 @@
 </head>
 <body class="flex flex-col selection:bg-violet-100 selection:text-violet-900">
     <div class="fixed inset-0 pointer-events-none z-[-1] overflow-hidden">
-        <div class="absolute top-[-10%] left-[-5%] w-[60%] h-[60%] bg-violet-100/40 rounded-full blur-[120px] animate-soft-blob"></div>
-        <div class="absolute bottom-[-5%] right-[-5%] w-[50%] h-[50%] bg-blue-50/50 rounded-full blur-[120px] animate-soft-blob animation-delay-2000"></div>
+        <div class="absolute top-[-10%] left-[-5%] w-[60%] h-[60%] bg-violet-200/30 rounded-full blur-[120px] animate-soft-blob"></div>
+        <div class="absolute bottom-[-5%] right-[-5%] w-[50%] h-[50%] bg-blue-100/40 rounded-full blur-[120px] animate-soft-blob animation-delay-2000"></div>
     </div>
     <div class="pt-6 pb-6 border-b border-slate-100 bg-white/50 backdrop-blur-md">
         <div class="container mx-auto px-4 max-w-7xl">
@@ -216,8 +215,8 @@
                 noResults.classList.add('hidden'); grid.classList.remove('hidden');
                 data.forEach((item, index) => {
                     const card = document.createElement('div'); card.className = `ticket-card rounded-2xl flex flex-col h-full animate-fade-in-up overflow-hidden`; card.style.animationDelay = `${index * 30}ms`;
-                    const dateParts = (item[KEY_DATE] || '').split('.'), monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"], mStr = monthNames[parseInt(dateParts[1]) - 1] || '---', tags = (item[KEY_COUNT] || '').split(' ').filter(t => t.trim()).map(tag => `<span class="bg-violet-50 text-violet-600 px-3 py-1.5 rounded-lg text-[11px] font-black flex items-center border border-violet-100/50 shadow-sm"><i class="fas fa-ticket-alt mr-2 opacity-40"></i>${tag}</span>`).join('');
-                    card.innerHTML = `<div class="flex-1 flex flex-col"><div class="flex items-stretch gap-0 h-full"><div class="ticket-stub flex flex-col items-center justify-center p-5 min-w-[90px] md:min-w-[100px] text-center"><span class="text-[10px] font-black tracking-widest text-violet-500 uppercase">${mStr}</span><span class="text-3xl md:text-4xl font-black font-oswald my-1 text-slate-900">${dateParts[2] || '--'}</span><span class="text-[10px] font-bold text-slate-400">${dateParts[0] || '----'}</span></div><div class="p-5 md:p-6 flex-1 flex items-center bg-white"><h3 class="text-sm md:text-lg font-black text-slate-800 leading-snug line-clamp-3">${item[KEY_TITLE]}</h3></div></div></div><div class="ticket-dashed-line mx-8"></div><div class="p-5 bg-slate-50/30 flex flex-wrap gap-2.5">${tags}</div>`;
+                    const dateParts = (item[KEY_DATE] || '').split('.'), monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"], mStr = monthNames[parseInt(dateParts[1]) - 1] || '---', tags = (item[KEY_COUNT] || '').split(' ').filter(t => t.trim()).map(tag => `<span class="bg-white/20 text-white px-3 py-1.5 rounded-lg text-[11px] font-black flex items-center shadow-sm"><i class="fas fa-ticket-alt mr-2 opacity-60"></i>${tag}</span>`).join('');
+                    card.innerHTML = `<div class="flex-1 flex flex-col"><div class="flex items-stretch gap-0 h-full"><div class="ticket-stub flex flex-col items-center justify-center p-5 min-w-[90px] md:min-w-[100px] text-center text-white"><span class="text-[10px] font-black tracking-widest opacity-80 uppercase">${mStr}</span><span class="text-3xl md:text-4xl font-black font-oswald my-1">${dateParts[2] || '--'}</span><span class="text-[10px] font-bold opacity-60">${dateParts[0] || '----'}</span></div><div class="p-5 md:p-6 flex-1 flex items-center"><h3 class="text-sm md:text-lg font-black text-white leading-snug line-clamp-3">${item[KEY_TITLE]}</h3></div></div></div><div class="ticket-dashed-line mx-8"></div><div class="p-5 bg-black/10 flex flex-wrap gap-2.5">${tags}</div>`;
                     grid.appendChild(card);
                 });
             }
