@@ -146,7 +146,7 @@
                         <h1 class="text-5xl md:text-6xl font-black font-oswald tracking-tighter italic bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-rose-500">
                             MUIII
                         </h1>
-                        <span class="absolute -top-2 -right-6 bg-rose-500 text-white text-[10px] font-black px-1.5 py-0.5 transform rotate-12 shadow-sm rounded-sm">VIP</span>
+                        <!-- 已移除 VIP 字樣 -->
                     </div>
                     <div class="h-8 w-px bg-slate-200 hidden md:block"></div>
                     <h2 class="text-xl md:text-2xl font-bold tracking-widest text-slate-800 hidden sm:block uppercase">搶票戰績清單</h2>
@@ -201,7 +201,7 @@
         </div>
 
         <div id="record-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 hidden pb-24"></div>
-        <div id="no-results" class="hidden text-center py-20 text-slate-400 text-xl font-bold">沒有找到相關的戰績紀錄</div>
+        <div id="no-results" class="hidden text-center py-20 text-slate-400 text-xl font-bold">沒有找到相符的戰績紀錄</div>
     </div>
 
     <!-- 頁尾 -->
@@ -294,6 +294,14 @@
                             .filter(y => y && y.length === 4).sort().reverse();
             const select = document.getElementById('year-filter');
             select.innerHTML = '<option value="all">年份</option>' + years.map(y => `<option value="${y}">${y} 年</option>`).join('');
+        }
+
+        function parseTickets(str) {
+            let count = 0;
+            const regex = /(\d+)\*(\d+)/g;
+            let match;
+            while ((match = regex.exec(str)) !== null) count += parseInt(match[2]);
+            return count || (str && str.trim() !== '' ? 1 : 0);
         }
 
         function updateDashboard() {
