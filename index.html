@@ -12,161 +12,161 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* --- 華麗視覺核心設定 --- */
+        /* --- 視覺藝術與核心結構 --- */
         *, *::before, *::after { box-sizing: border-box; }
         
         :root {
-            /* 華麗淺色主題 */
-            --bg-gradient: linear-gradient(135deg, #e0e7ff 0%, #cffafe 50%, #f3e8ff 100%);
-            --card-bg: rgba(255, 255, 255, 0.9);
-            --text-main: #475569;
-            --text-title: #1e293b;
-            --primary: #4f46e5; /* 高級靛藍 */
-            --primary-dark: #3730a3;
-            --primary-light: rgba(79, 70, 229, 0.1);
-            --header-bg: rgba(255, 255, 255, 0.7);
-            --glass-border: rgba(255, 255, 255, 0.6);
+            --bg-color: #f1f4f9;
+            --card-bg: #ffffff;
+            --text-main: #64748b;
+            --text-title: #0f172a;
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --primary-light: #eff6ff; /* 確保淺色背景夠亮 */
+            --header-bg: rgba(255, 255, 255, 0.95);
             --tag-bg: #f8fafc;
             --tag-border: #e2e8f0;
-            
-            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-            --shadow-card: 0 10px 20px -5px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
-            --shadow-hover: 0 20px 40px -10px rgba(79, 70, 229, 0.15);
-            
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.02);
+            --shadow-md: 0 10px 30px -5px rgba(0, 0, 0, 0.04);
+            --shadow-lg: 0 20px 50px -12px rgba(0, 0, 0, 0.08);
             --radius-lg: 24px;
             --radius-md: 16px;
             --radius-sm: 10px;
-            --transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); /* 彈性動畫 */
+            --transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
         }
 
         [data-theme="dark"] {
-            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #111827 100%);
-            --card-bg: rgba(30, 41, 59, 0.8);
-            --text-main: #cbd5e1;
+            --bg-color: #020617;
+            --card-bg: #1e293b;
+            --text-main: #94a3b8;
             --text-title: #f8fafc;
-            --primary: #818cf8;
-            --primary-dark: #6366f1;
-            --primary-light: rgba(99, 102, 241, 0.15);
-            --header-bg: rgba(15, 23, 42, 0.7);
-            --glass-border: rgba(255, 255, 255, 0.08);
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --primary-light: rgba(59, 130, 246, 0.15);
+            --header-bg: rgba(15, 23, 42, 0.95);
             --tag-bg: #0f172a;
             --tag-border: #334155;
-            --shadow-card: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
-            --shadow-hover: 0 20px 40px -10px rgba(0, 0, 0, 0.6);
+            --shadow-lg: 0 25px 60px -15px rgba(0, 0, 0, 0.5);
         }
 
-        /* 動態流光背景 */
-        body {
+        html, body {
             height: 100%; margin: 0; padding: 0; overflow: hidden;
             font-family: 'Inter', 'Noto Sans TC', sans-serif;
-            background: var(--bg-gradient);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
-            color: var(--text-main);
-            transition: color 0.3s;
-        }
-
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+            background-color: var(--bg-color); color: var(--text-main);
+            transition: background-color 0.4s ease;
         }
 
         .app-wrapper { display: flex; flex-direction: column; height: 100vh; }
 
-        /* --- 頂部面板：懸浮毛玻璃 (Glassmorphism) --- */
+        /* --- 顯示控制 --- */
+        .desktop-only { display: flex; }
+        .mobile-only { display: none; }
+
+        @media (max-width: 992px) {
+            .desktop-only { display: none !important; }
+            .mobile-only { display: flex !important; }
+        }
+
+        /* --- 頂部面板 --- */
         .header-panel {
-            flex-shrink: 0;
-            background-color: var(--header-bg);
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--glass-border);
-            z-index: 1000;
-            padding: 15px 0;
+            flex-shrink: 0; background-color: var(--header-bg);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--tag-border); z-index: 1000;
+            padding: 14px 0;
             box-shadow: var(--shadow-sm);
         }
-        .container { max-width: 1000px; margin: 0 auto; padding: 0 20px; width: 100%; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; width: 100%; }
 
-        /* 電腦版 Header 結構 */
-        .desktop-header { display: flex; flex-direction: column; gap: 14px; }
+        /* --- 電腦版佈局 --- */
+        .desktop-header { flex-direction: column; gap: 14px; }
         .top-row { display: flex; justify-content: space-between; align-items: center; }
-        
         .brand { 
-            font-size: 1.8rem; font-weight: 900; 
-            background: linear-gradient(to right, var(--primary), var(--primary-dark));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            letter-spacing: -1px; text-transform: uppercase;
-            text-shadow: 0 2px 10px rgba(79, 70, 229, 0.2);
+            font-size: 1.65rem; font-weight: 900; color: var(--primary); 
+            letter-spacing: -1.5px; text-transform: uppercase;
         }
         
-        /* 系統按鈕：水平排列 */
-        .system-actions { display: flex; gap: 10px; align-items: center; flex-wrap: nowrap; }
+        .system-actions { display: flex !important; flex-direction: row !important; gap: 10px; align-items: center; }
 
-        /* 控制列 */
         .control-row { display: flex; align-items: center; gap: 20px; width: 100%; }
-        
-        /* 統計卡片 (半透明質感) */
         .stats-group { display: flex; gap: 10px; flex-shrink: 0; }
         .stat-card {
-            background: var(--card-bg); border: 1px solid var(--glass-border);
-            padding: 8px 20px; border-radius: 12px; text-align: center;
-            min-width: 100px; box-shadow: var(--shadow-sm);
-            transition: transform 0.3s;
+            background: var(--primary-light); border: 1px solid var(--tag-border);
+            padding: 10px 20px; border-radius: var(--radius-md); text-align: center;
+            min-width: 105px; transition: var(--transition);
         }
-        .stat-card:hover { transform: translateY(-2px); border-color: var(--primary); }
-        .stat-val { font-size: 1.4rem; font-weight: 900; color: var(--primary); line-height: 1; }
-        .stat-lbl { font-size: 0.7rem; font-weight: 700; opacity: 0.7; margin-top: 2px; }
+        .stat-val { font-size: 1.5rem; font-weight: 900; color: var(--primary); line-height: 1; }
+        .stat-lbl { font-size: 0.65rem; font-weight: 800; opacity: 0.5; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
 
-        /* 工具列 */
-        .tools-group { display: flex; gap: 10px; flex-grow: 1; align-items: center; justify-content: flex-end; }
+        .tools-group { display: flex; gap: 12px; flex-grow: 1; align-items: center; justify-content: flex-end; }
         .search-area { flex-grow: 1; position: relative; max-width: 400px; } 
-        .filter-group { display: flex; gap: 8px; flex-shrink: 0; }
+        .filters { display: flex; gap: 8px; flex-shrink: 0; }
 
-        /* --- 手機版 Header 結構 --- */
-        .mobile-header { display: flex; flex-direction: column; gap: 12px; width: 100%; }
-        .mobile-nav { display: flex; justify-content: space-between; align-items: center; min-height: 48px; }
+        /* --- 手機版佈局 (重點修正區) --- */
+        .mobile-header { flex-direction: column; gap: 12px; width: 100%; }
+        
+        /* 1. 強制標題與按鈕同一排，不換行 */
+        .mobile-nav { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            min-height: 48px; 
+            flex-wrap: nowrap; /* 關鍵：禁止換行 */
+            width: 100%;
+        }
+        
+        .mobile-brand {
+            font-size: 1.4rem; font-weight: 900; color: var(--primary); letter-spacing: -1px;
+            white-space: nowrap; /* 標題不換行 */
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        /* 手機版按鈕群組 */
+        .mobile-header .system-actions { 
+            display: flex; 
+            gap: 8px; 
+            align-items: center; 
+            flex-shrink: 0; /* 按鈕區不縮小 */
+        }
+
         .mobile-stats { display: flex; gap: 10px; }
-        .mobile-stats .stat-card { flex: 1; padding: 10px; border-radius: 12px; }
-        .mobile-tools { display: flex; flex-direction: column; gap: 10px; }
+        .mobile-stats .stat-card { flex: 1; padding: 12px; border-radius: var(--radius-md); }
+        .mobile-tools { display: flex; flex-direction: column; gap: 12px; }
         .mobile-filters { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 
-        /* --- UI 元件 (精美版) --- */
-        /* 電腦版按鈕：膠囊型 + 文字 */
+        /* --- UI 元件 --- */
         .icon-btn {
-            height: 40px; padding: 0 18px; border-radius: 50px; 
-            background-color: var(--card-bg); border: 1px solid var(--glass-border);
-            color: var(--text-title); cursor: pointer;
-            display: flex; align-items: center; justify-content: center; gap: 6px;
-            font-size: 0.9rem; font-weight: 700; transition: var(--transition);
-            white-space: nowrap; outline: none; box-shadow: var(--shadow-sm);
+            height: 42px; padding: 0 18px; border-radius: 50px; background-color: var(--tag-bg);
+            border: 1px solid var(--tag-border); color: var(--text-title); cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            font-size: 0.9rem; font-weight: 800; transition: var(--transition);
+            white-space: nowrap; outline: none;
         }
-        .icon-btn:hover { 
-            background-color: var(--primary); color: white; border-color: var(--primary); 
-            transform: translateY(-2px); box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
-        }
+        .icon-btn:hover { background-color: var(--primary); color: white; border-color: var(--primary); transform: translateY(-3px); box-shadow: 0 8px 20px rgba(37, 99, 235, 0.2); }
         .icon-btn:active { transform: scale(0.95); }
         .icon-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
 
-        /* 手機版按鈕：圓形 */
-        .icon-btn.mobile-only-btn { width: 40px; height: 40px; padding: 0; border-radius: 50%; }
-        .icon-btn.mobile-only-btn span { display: none; }
+        @media (max-width: 768px) {
+            .icon-btn { width: 40px; height: 40px; padding: 0; border-radius: 50%; }
+        }
 
         .search-input {
-            width: 100%; height: 40px; padding: 0 15px 0 42px; border-radius: 12px;
-            border: 1px solid var(--glass-border); background-color: var(--card-bg); 
-            color: var(--text-title); outline: none; font-size: 0.95rem;
-            transition: var(--transition); box-shadow: inset 0 1px 2px rgba(0,0,0,0.02);
+            width: 100%; height: 42px; padding: 0 15px 0 46px; border-radius: 14px;
+            border: 1px solid var(--tag-border); background-color: var(--bg-color); color: var(--text-title); outline: none;
+            font-size: 1rem; transition: var(--transition);
         }
-        .search-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
-        .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-main); pointer-events: none; opacity: 0.7; }
+        .search-input:focus { border-color: var(--primary); background-color: var(--card-bg); box-shadow: 0 0 0 4px var(--primary-light); }
+        .search-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-main); pointer-events: none; opacity: 0.7; }
 
         .custom-select, .btn-filter {
-            height: 40px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--glass-border);
-            background-color: var(--card-bg); color: var(--text-title); font-size: 0.85rem; font-weight: 600; 
-            cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; 
-            transition: var(--transition); white-space: nowrap; box-shadow: var(--shadow-sm);
+            height: 42px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--tag-border);
+            background-color: var(--card-bg); color: var(--text-title); font-size: 0.85rem; font-weight: 600; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 6px; transition: var(--transition);
+            white-space: nowrap;
         }
         .btn-filter:hover { border-color: var(--primary); color: var(--primary); background-color: var(--primary-light); }
-        .custom-select:disabled { opacity: 0.6; cursor: not-allowed; background-color: rgba(0,0,0,0.02); filter: grayscale(1); }
+        
+        .custom-select:disabled { opacity: 0.5; cursor: not-allowed; background-color: var(--bg-color); }
 
         /* 安裝按鈕 */
         #install-btn, #install-btn-m { display: none; color: var(--primary); background-color: var(--primary-light); border-color: transparent; }
@@ -174,131 +174,103 @@
 
         /* --- 下方捲動列表 --- */
         .scroll-area {
-            flex-grow: 1; overflow-y: auto; padding: 20px 0 80px 0;
-            -webkit-overflow-scrolling: touch;
+            flex-grow: 1; overflow-y: auto; padding: 30px 0 80px 0;
+            background-color: var(--bg-color); -webkit-overflow-scrolling: touch;
         }
-        /* 美化捲動軸 */
-        .scroll-area::-webkit-scrollbar { width: 6px; }
-        .scroll-area::-webkit-scrollbar-track { background: transparent; }
-        .scroll-area::-webkit-scrollbar-thumb { background-color: rgba(0,0,0,0.1); border-radius: 10px; }
-        .scroll-area::-webkit-scrollbar-thumb:hover { background-color: var(--primary); }
+        .scroll-area::-webkit-scrollbar { width: 4px; }
+        .scroll-area::-webkit-scrollbar-thumb { background: var(--tag-border); border-radius: 10px; }
 
         .ticket-list { 
-            display: grid; grid-template-columns: 1fr; gap: 16px; 
-            max-width: 1000px; margin: 0 auto; padding: 0 20px;
+            display: grid; 
+            grid-template-columns: 1fr;
+            gap: 20px; 
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px;
         }
 
-        /* 電腦版雙欄網格 */
-        @media (min-width: 900px) {
-            .ticket-list { grid-template-columns: repeat(2, 1fr); gap: 24px; }
+        @media (min-width: 992px) {
+            .ticket-list { grid-template-columns: repeat(2, 1fr); }
         }
 
-        /* --- 🎫 擬真票券卡片 (精華) --- */
+        /* --- 🎫 擬真票券卡片 (顏色修正版) --- */
         .ticket-card {
-            background-color: var(--card-bg); 
-            border-radius: var(--radius-lg); 
-            display: flex; 
-            overflow: hidden; 
-            box-shadow: var(--shadow-card); 
-            border: 1px solid var(--glass-border);
-            transition: var(--transition);
-            position: relative;
-            backdrop-filter: blur(5px);
-            min-height: 100px;
+            background-color: var(--card-bg); border-radius: var(--radius-md); display: flex;
+            overflow: hidden; box-shadow: var(--shadow-sm); border: 1px solid var(--tag-border);
+            transition: var(--transition); position: relative;
+            animation: slideInUp 0.6s cubic-bezier(0.23, 1, 0.32, 1) backwards;
         }
-        .ticket-card:hover { 
-            transform: translateY(-5px) scale(1.02); 
-            box-shadow: var(--shadow-hover); 
-            border-color: var(--primary-light);
+        .ticket-card:hover { transform: translateY(-6px) scale(1.01); box-shadow: var(--shadow-lg); }
+
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        /* 左側票根 */
+        /* 票根 (左側日期) - 改為淺色底、深色字 */
         .ticket-stub {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            /* 微紋理增加質感 */
-            background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.15) 1px, transparent 0);
-            background-size: 8px 8px;
-            color: white; padding: 15px; width: 110px;
+            background: var(--primary-light); /* 改為淺色背景 */
+            color: var(--primary); /* 改為深色文字 */
+            padding: 20px;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            text-align: center; position: relative; border-right: 2px dashed rgba(255,255,255,0.3);
+            min-width: 100px; text-align: center; border-right: 2px dashed rgba(0,0,0,0.1); position: relative;
             flex-shrink: 0;
         }
         
-        /* 半圓缺口 */
+        /* 票券半圓缺口 */
         .ticket-stub::before, .ticket-stub::after {
-            content: ''; position: absolute; right: -10px; width: 20px; height: 20px;
-            background: transparent; border-radius: 50%; 
-            box-shadow: inset 2px 0 4px rgba(0,0,0,0.05); /* 內陰影 */
-            /* 用背景漸層模擬鏤空效果 (配合 body 背景) */
-            background-image: var(--bg-gradient);
-            background-attachment: fixed; /* 關鍵：讓缺口背景隨視窗固定 */
+            content: ''; position: absolute; right: -12px; width: 24px; height: 24px;
+            background-color: var(--bg-color); border-radius: 50%; 
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
         }
-        .ticket-stub::before { top: -10px; }
-        .ticket-stub::after { bottom: -10px; }
+        .ticket-stub::before { top: -12px; }
+        .ticket-stub::after { bottom: -12px; }
 
-        .stub-year { font-size: 0.75rem; font-weight: 700; opacity: 0.9; margin-bottom: 2px; letter-spacing: 1px; }
-        .stub-date { font-size: 1.3rem; font-weight: 800; letter-spacing: -0.5px; line-height: 1; text-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        /* 日期顯示：年月日 */
+        .stub-year { font-size: 0.75rem; font-weight: 700; opacity: 0.8; margin-bottom: 2px; letter-spacing: 1px; }
+        .stub-date { font-size: 1.3rem; font-weight: 800; letter-spacing: -0.5px; line-height: 1; }
 
-        /* 右側票身 */
+        /* 票身 (右側資訊) */
         .ticket-body { 
-            flex: 1; padding: 18px 24px; 
-            display: flex; flex-direction: column; justify-content: center; gap: 10px;
+            flex: 1; padding: 22px 28px; display: flex; flex-direction: column; justify-content: center; gap: 10px;
             overflow: hidden; min-width: 0;
         }
         
         .ticket-title { 
             font-size: 1.05rem; font-weight: 700; color: var(--text-title); margin: 0; 
             line-height: 1.45; letter-spacing: -0.2px;
+            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
         }
 
-        .tag-row { 
-            display: flex; flex-wrap: wrap; gap: 6px; align-items: center;
-        }
+        .tag-row { display: flex; flex-wrap: wrap; gap: 6px; }
         .tag { 
-            font-size: 0.75rem; font-weight: 700; background-color: var(--tag-bg); color: var(--primary); 
-            padding: 4px 12px; border-radius: 50px; 
-            border: 1px solid var(--tag-border); white-space: nowrap;
-            transition: 0.2s;
+            font-size: 0.68rem; font-weight: 800; background-color: var(--tag-bg); color: var(--primary); 
+            padding: 3px 12px; border-radius: 8px; border: 1px solid var(--tag-border); 
+            transition: 0.3s; white-space: normal; word-break: break-word;
         }
-        .ticket-card:hover .tag { background-color: var(--primary); color: white; border-color: var(--primary); }
+        .tag:hover { background-color: var(--primary); color: white; border-color: var(--primary); }
 
-        /* 手機版樣式調整 */
-        @media (max-width: 900px) {
-            .ticket-card { border-radius: 20px; flex-direction: column; min-height: auto; }
+        @media (max-width: 768px) {
+            .ticket-card { border-radius: 20px; flex-direction: column; }
             .ticket-stub { 
-                width: 100%; flex-direction: row; gap: 10px; padding: 12px 20px; justify-content: flex-start;
-                border-right: none; border-bottom: 2px dashed rgba(255,255,255,0.3);
-                text-align: left;
+                /* 手機版票根也改為淺色 */
+                flex-direction: row; min-width: 100%; padding: 12px 20px; justify-content: flex-start; gap: 14px;
+                border-right: none; border-bottom: 2px dashed rgba(0,0,0,0.1);
             }
-            .ticket-stub::before, .ticket-stub::after { left: 50%; transform: translateX(-50%); right: auto; }
-            .ticket-stub::before { top: auto; bottom: -12px; }
-            .ticket-stub::after { display: none; }
-            
-            .stub-year { margin-bottom: 0; font-size: 0.8rem; }
-            .stub-date { font-size: 1.1rem; }
-
-            .ticket-body { padding: 16px 20px; gap: 12px; }
-            .ticket-title { font-size: 1rem; } 
+            .ticket-stub::before, .ticket-stub::after { left: 50%; transform: translateX(-50%); right: auto; top: auto; bottom: -12px; }
+            .ticket-title { font-size: 0.95rem; } 
+            .ticket-body { padding: 16px 20px; }
         }
 
         #back-to-top {
-            position: fixed; bottom: 30px; right: 30px; width: 50px; height: 50px;
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark)); 
-            color: white; border: none; border-radius: 50%;
+            position: fixed; bottom: 28px; right: 28px; width: 50px; height: 50px;
+            background-color: var(--primary); color: white; border: none; border-radius: 50%;
             display: none; align-items: center; justify-content: center; cursor: pointer;
-            box-shadow: 0 8px 25px rgba(79, 70, 229, 0.4); z-index: 2000; transition: var(--transition);
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.35); z-index: 2000; transition: var(--transition);
         }
-        #back-to-top:hover { transform: scale(1.15) rotate(-10deg); }
+        #back-to-top:hover { transform: scale(1.15) rotate(-5deg); background-color: var(--primary-dark); }
 
-        footer { text-align: center; padding: 50px 0; opacity: 0.5; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.5px; }
-
-        /* 顯示控制類別 */
-        .desktop-view { display: flex; flex-direction: column; gap: 14px; }
-        .mobile-view { display: none; }
-        @media (max-width: 900px) {
-            .desktop-view { display: none !important; }
-            .mobile-view { display: flex !important; flex-direction: column; gap: 12px; width: 100%; }
-        }
+        footer { text-align: center; padding: 60px 0; opacity: 0.4; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.5px; }
     </style>
 </head>
 <body>
@@ -307,7 +279,7 @@
             <div class="container">
                 
                 <!-- 1. 電腦版控制島 -->
-                <div class="desktop-view">
+                <div class="desktop-header desktop-only">
                     <div class="top-row">
                         <div class="brand">MUIII 搶票戰績</div>
                         <div class="system-actions">
@@ -328,13 +300,13 @@
                     
                     <div class="control-row">
                         <div class="stats-group">
-                            <div class="stat-card"><div class="total-tickets stat-val">0</div><div class="stat-lbl">總張數</div></div>
-                            <div class="stat-card"><div class="total-records stat-val">0</div><div class="stat-lbl">總場次</div></div>
+                            <div class="stat-card"><div class="total-tickets stat-val">0</div><div class="stat-lbl">🎟️ 總張數</div></div>
+                            <div class="stat-card"><div class="total-records stat-val">0</div><div class="stat-lbl">🎤 總場次</div></div>
                         </div>
                         <div class="tools-group">
                             <div class="search-area">
                                 <svg class="search-icon" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                                <input type="text" class="search-input" placeholder="搜尋藝人、節目、日期...">
+                                <input type="text" class="search-input" placeholder="搜尋藝人、節目名稱或日期...">
                             </div>
                             <div class="filter-group">
                                 <select class="year-filter custom-select"><option value="all">年份</option></select>
@@ -346,8 +318,8 @@
                                     <option value="10">10月</option><option value="11">11月</option><option value="12">12月</option>
                                 </select>
                                 <button class="sort-btn btn-filter"><span>⬇</span> <span class="sort-label">新到舊</span></button>
-                                <button class="reset-btn btn-filter" title="重置">
-                                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                                <button class="reset-btn btn-filter" title="重置過濾">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="14"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                                     <span>重置</span>
                                 </button>
                             </div>
@@ -356,9 +328,9 @@
                 </div>
 
                 <!-- 2. 手機版控制島 -->
-                <div class="mobile-view">
-                    <div class="nav-bar">
-                        <div class="brand">Muiii 搶票戰績</div>
+                <div class="mobile-header mobile-only">
+                    <div class="mobile-nav">
+                        <div class="mobile-brand">MUIII 搶票戰績</div>
                         <div class="system-actions">
                             <button id="install-btn-m" class="icon-btn mobile-only-btn"><svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg></button>
                             <button class="reload-btn icon-btn mobile-only-btn"><svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg></button>
@@ -384,7 +356,7 @@
                                 <option value="10">10月</option><option value="11">11月</option><option value="12">12月</option>
                             </select>
                             <button class="sort-btn btn-filter"><span>⬇</span> <span class="sort-label">新到舊</span></button>
-                            <button class="reset-btn btn-filter"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg></button>
+                            <button class="reset-btn btn-filter"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="14"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg></button>
                         </div>
                     </div>
                 </div>
@@ -476,7 +448,7 @@
 
         function loadData() {
             const container = document.getElementById('list-container');
-            container.innerHTML = '<div style="text-align:center;padding:50px;color:#94a3b8;animation:pulse 1.5s infinite">資料載入中...</div>';
+            container.innerHTML = '<div style="text-align:center;padding:50px;color:#94a3b8">資料載入中...</div>';
             const ts = new Date().getTime();
             Papa.parse(`${CSV_URL}&t=${ts}`, {
                 download: true, header: true,
@@ -517,16 +489,16 @@
 
             const container = document.getElementById('list-container');
             if (!data.length) {
-                container.innerHTML = '<div style="text-align:center;padding:120px 0;opacity:0.3"><h3>無相符資料</h3></div>';
+                container.innerHTML = '<div style="text-align:center;padding:50px;color:#94a3b8">無相符資料</div>';
                 return;
             }
 
             container.innerHTML = data.map((t, idx) => {
                 const dateParts = t['售票日期'].split('.');
                 const tags = (t['張數']||'').split(/\s+/).filter(x => x).map(x => `<span class="tag">${x}</span>`).join('');
-                const delay = (idx % 15) * 0.05;
+                const delay = (idx % 12) * 0.05;
                 return `
-                    <div class="ticket-card" style="animation: slideInUp 0.5s ease-out backwards; animation-delay: ${delay}s">
+                    <div class="ticket-card" style="animation: slideInUp 0.4s ease-out backwards; animation-delay: ${delay}s">
                         <div class="ticket-stub">
                             <div class="stub-year">${dateParts[0] || ''}</div>
                             <div class="stub-date">${dateParts[1] ? dateParts[1] + '.' + dateParts[2] : ''}</div>
@@ -542,7 +514,7 @@
 
         // 動畫樣式
         const style = document.createElement('style');
-        style.innerHTML = `@keyframes slideInUp { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:translateY(0); } } @keyframes pulse { 0% { opacity:0.5; } 50% { opacity:1; } 100% { opacity:0.5; } }`;
+        style.innerHTML = `@keyframes slideInUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }`;
         document.head.appendChild(style);
 
         const scrollMain = document.getElementById('scroll-main');
@@ -554,9 +526,9 @@
         let defP;
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault(); defP = e;
-            document.querySelectorAll('#install-btn, #install-btn-m').forEach(b => b.style.display = 'flex');
+            document.querySelectorAll('.install-btn').forEach(b => b.style.display = 'flex');
         });
-        document.querySelectorAll('#install-btn, #install-btn-m').forEach(b => b.onclick = () => { if(defP) defP.prompt(); b.style.display = 'none'; });
+        document.querySelectorAll('.install-btn').forEach(b => b.onclick = () => { if(defP) defP.prompt(); document.querySelectorAll('.install-btn').forEach(b => b.style.display = 'none'); });
 
         init();
     </script>
