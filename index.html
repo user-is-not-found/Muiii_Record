@@ -55,9 +55,9 @@
         ::-webkit-scrollbar-thumb { background: #444; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #f43f5e; }
 
-        /* 已取消凍結窗格設定，改為標準區域 */
+        /* 已取消凍結窗格設定 */
         .standard-header {
-            position: relative; /* 取消 sticky */
+            position: relative;
             background: rgba(5, 5, 5, 0.95);
             backdrop-filter: blur(20px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
@@ -159,7 +159,7 @@
         <div class="absolute -bottom-32 left-1/3 w-96 h-96 bg-blue-600 rounded-full mix-blend-multiply filter blur-[128px] opacity-20 animate-blob animation-delay-4000"></div>
     </div>
 
-    <!-- 頂部標題與儀表板區 (已取消凍結) -->
+    <!-- 頂部標題與儀表板區 -->
     <div class="standard-header pt-6 pb-4 shadow-2xl">
         <div class="container mx-auto px-4 max-w-7xl">
             
@@ -184,13 +184,13 @@
                 </div>
             </div>
 
-            <!-- Stats：數據放大展示區 -->
-            <div class="grid grid-cols-2 gap-4 md:gap-8 mb-6 max-w-4xl mx-auto md:mx-0">
-                <div class="bg-white/5 border border-white/10 rounded-2xl px-6 py-3 flex flex-col md:flex-row items-center gap-2 md:gap-4 transition-all hover:border-white/20">
+            <!-- Stats：修正電腦版數據卡片寬度，改為 md:w-fit -->
+            <div class="grid grid-cols-2 gap-4 md:gap-6 mb-6 md:w-fit">
+                <div class="bg-white/5 border border-white/10 rounded-2xl px-5 py-3 md:px-8 md:py-4 flex flex-col md:flex-row items-center gap-2 md:gap-5 transition-all hover:border-white/20">
                     <div class="text-gray-400 text-[10px] md:text-xs uppercase font-bold tracking-widest">總征戰</div>
                     <div class="text-5xl md:text-6xl font-black font-oswald text-white leading-none" id="stat-events">0</div>
                 </div>
-                <div class="bg-white/5 border border-white/10 rounded-2xl px-6 py-3 flex flex-col md:flex-row items-center gap-2 md:gap-4 transition-all hover:border-rose-500/30">
+                <div class="bg-white/5 border border-white/10 rounded-2xl px-5 py-3 md:px-8 md:py-4 flex flex-col md:flex-row items-center gap-2 md:gap-5 transition-all hover:border-rose-500/30">
                     <div class="text-rose-400/80 text-[10px] md:text-xs uppercase font-bold tracking-widest">總票數</div>
                     <div class="text-5xl md:text-6xl font-black font-oswald text-rose-500 neon-text leading-none" id="stat-tickets">0</div>
                 </div>
@@ -249,7 +249,7 @@
         const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vThZZurHBpfes9J-dLaoi51jpb0MnQ4oABmBux77r-OO5LOvuoex6lesE4GvZb-UQ5zgiqWEfiHxNQy/pub?output=csv';
         let allTickets = [], currentYear = 'all', currentMonth = 'all';
 
-        // 關鍵欄位偵測
+        // 關鍵欄位對應
         let KEY_DATE = '售票日期';
         let KEY_TITLE = '節目名稱';
         let KEY_COUNT = '張數';
