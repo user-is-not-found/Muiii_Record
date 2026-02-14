@@ -92,7 +92,7 @@
         .ticket-dashed-line::before { left: -34px; }
         .ticket-dashed-line::after { right: -34px; }
 
-        /* 修正下拉選單樣式 */
+        /* 下拉選單樣式優化 */
         .cyber-select {
             background-color: #ffffff;
             color: #1e293b;
@@ -110,8 +110,11 @@
             outline: none;
             box-shadow: 0 1px 2px rgba(0,0,0,0.03);
         }
+        .cyber-select:hover { border-color: var(--primary); }
+        .cyber-select:disabled { background-color: #f1f5f9; color: #94a3b8; cursor: not-allowed; opacity: 0.7; }
         .cyber-select option { background-color: #ffffff; color: #1e293b; }
 
+        /* 系統按鈕樣式 */
         .sys-btn {
             height: 38px; padding: 0 16px; border-radius: 9999px;
             background: #ffffff; border: 1px solid #e2e8f0; color: #64748b;
@@ -136,17 +139,16 @@
     </div>
 
     <!-- 頂部區 -->
-    <div class="pt-8 pb-6 border-b border-slate-100 bg-white/60 backdrop-blur-xl">
+    <div class="pt-8 pb-8 border-b border-slate-100 bg-white/60 backdrop-blur-xl">
         <div class="container mx-auto px-4 max-w-7xl">
             
-            <!-- 標題列：標題與系統按鈕水平平行 -->
+            <!-- 1. 標題與系統按鈕 (第一列) -->
             <div class="flex justify-between items-center mb-8 w-full gap-4">
                 <div class="text-left relative flex items-center gap-4">
                     <div class="relative shrink-0">
                         <h1 class="text-5xl md:text-6xl font-black font-oswald tracking-tighter italic bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-rose-500">
                             MUIII
                         </h1>
-                        <!-- 已移除 VIP 字樣 -->
                     </div>
                     <div class="h-8 w-px bg-slate-200 hidden md:block"></div>
                     <h2 class="text-xl md:text-2xl font-bold tracking-widest text-slate-800 hidden sm:block uppercase">搶票戰績清單</h2>
@@ -158,35 +160,39 @@
                 </div>
             </div>
 
-            <!-- 工具列：搜尋與篩選 (優化排版) -->
-            <div class="relative group z-10 max-w-6xl">
-                <div class="relative flex flex-col lg:flex-row items-center bg-white rounded-2xl lg:rounded-full border border-slate-200 p-1.5 transition-all focus-within:ring-4 focus-within:ring-indigo-500/5 shadow-sm">
-                    <!-- 搜尋列 -->
-                    <div class="flex items-center flex-grow w-full px-4 mb-2 lg:mb-0">
+            <!-- 2. 獨立搜尋列 (第二列) -->
+            <div class="mb-5">
+                <div class="relative flex items-center bg-white rounded-2xl border border-slate-200 p-1.5 transition-all focus-within:ring-4 focus-within:ring-indigo-500/5 focus-within:border-indigo-500 shadow-sm max-w-5xl">
+                    <div class="flex items-center flex-grow w-full px-4">
                         <i class="fas fa-search text-slate-400 mr-3 text-lg"></i>
-                        <input type="text" id="searchInput" placeholder="搜尋藝人、場館、日期..." 
-                            class="w-full bg-transparent text-slate-800 py-2.5 focus:outline-none placeholder-slate-300 font-bold">
+                        <input type="text" id="searchInput" placeholder="搜尋藝人名稱、演出場館、日期..." 
+                            class="w-full bg-transparent text-slate-800 py-2.5 focus:outline-none placeholder-slate-300 font-bold text-lg">
                     </div>
-                    <!-- 篩選群組 -->
-                    <div class="grid grid-cols-2 sm:flex sm:flex-nowrap gap-2 w-full lg:w-auto px-1 pb-1 lg:pb-0">
-                        <select id="year-filter" class="cyber-select text-xs font-bold">
-                            <option value="all">年份</option>
-                        </select>
-                        <select id="month-filter" class="cyber-select text-xs font-bold" disabled>
-                            <option value="all">月份</option>
-                            <option value="01">01月</option><option value="02">02月</option><option value="03">03月</option>
-                            <option value="04">04月</option><option value="05">05月</option><option value="06">06月</option>
-                            <option value="07">07月</option><option value="08">08月</option><option value="09">09月</option>
-                            <option value="10">10月</option><option value="11">11月</option><option value="12">12月</option>
-                        </select>
-                        <select id="sortSelect" class="cyber-select text-xs font-bold">
-                            <option value="desc">新 → 舊</option>
-                            <option value="asc">舊 → 新</option>
-                        </select>
-                        <button id="reset-btn" class="bg-slate-900 hover:bg-black text-white px-5 h-9 rounded-full flex items-center justify-center gap-2 transition text-xs font-bold shrink-0 shadow-lg">
-                            <i class="fas fa-undo text-[10px]"></i><span>重置</span>
-                        </button>
-                    </div>
+                </div>
+            </div>
+
+            <!-- 3. 獨立篩選器群組 (第三列) -->
+            <div class="flex flex-wrap items-center gap-3 w-full">
+                <div class="flex gap-2">
+                    <select id="year-filter" class="cyber-select text-xs font-bold min-w-[90px]">
+                        <option value="all">年份</option>
+                    </select>
+                    <select id="month-filter" class="cyber-select text-xs font-bold min-w-[90px]" disabled>
+                        <option value="all">月份</option>
+                        <option value="01">01月</option><option value="02">02月</option><option value="03">03月</option>
+                        <option value="04">04月</option><option value="05">05月</option><option value="06">06月</option>
+                        <option value="07">07月</option><option value="08">08月</option><option value="09">09月</option>
+                        <option value="10">10月</option><option value="11">11月</option><option value="12">12月</option>
+                    </select>
+                </div>
+                <div class="flex gap-2">
+                    <select id="sortSelect" class="cyber-select text-xs font-bold min-w-[100px]">
+                        <option value="desc">新 → 舊</option>
+                        <option value="asc">舊 → 新</option>
+                    </select>
+                    <button id="reset-btn" class="bg-slate-900 hover:bg-black text-white px-5 h-9 rounded-full flex items-center justify-center gap-2 transition text-xs font-bold shadow-md">
+                        <i class="fas fa-undo text-[10px]"></i><span>重置篩選</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -255,7 +261,10 @@
             yearFilter.addEventListener('change', (e) => {
                 currentYear = e.target.value;
                 monthFilter.disabled = currentYear === 'all';
-                if(currentYear === 'all') { currentMonth = 'all'; monthFilter.value = 'all'; }
+                if(currentYear === 'all') { 
+                    currentMonth = 'all'; 
+                    monthFilter.value = 'all'; 
+                }
                 updateDashboard();
             });
             
@@ -270,7 +279,8 @@
                 yearFilter.value = 'all';
                 monthFilter.value = 'all';
                 monthFilter.disabled = true;
-                currentYear = 'all'; currentMonth = 'all';
+                currentYear = 'all'; 
+                currentMonth = 'all';
                 updateDashboard();
             };
 
