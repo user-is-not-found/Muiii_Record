@@ -26,11 +26,18 @@
                     },
                     animation: {
                         'fade-in-up': 'fadeInUp 0.6s ease-out forwards',
+                        'blob': 'blob 15s infinite',
                     },
                     keyframes: {
                         fadeInUp: {
                             '0%': { opacity: '0', transform: 'translateY(15px)' },
                             '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
                         }
                     }
                 }
@@ -40,6 +47,7 @@
     <style>
         :root {
             --primary: #4f46e5;
+            --primary-dark: #4338ca;
             --bg-color: #f8fafc;
         }
 
@@ -52,35 +60,44 @@
         
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
-        /* 票券卡片樣式 */
+        /* 票券卡片：上色與質感優化 */
         .ticket-card {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 1);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
         
         .ticket-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.05);
+            transform: translateY(-8px) scale(1.01);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
             border-color: var(--primary);
         }
 
-        /* 虛線設計 */
+        /* 票根渲染 */
+        .stub-side {
+            background: linear-gradient(135deg, var(--primary), #818cf8);
+            color: white;
+            position: relative;
+        }
+
+        /* 虛線設計：上色版 */
         .ticket-dashed-line {
-            border-bottom: 2px dashed #f1f5f9;
+            border-bottom: 2px dashed #e2e8f0;
             position: relative;
         }
         .ticket-dashed-line::before, .ticket-dashed-line::after {
             content: ''; position: absolute; width: 20px; height: 20px;
             background-color: var(--bg-color); border-radius: 50%; top: -10px;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.02);
         }
         .ticket-dashed-line::before { left: -34px; }
         .ticket-dashed-line::after { right: -34px; }
 
-        /* 介面元件美化 */
+        /* 選單與輸入框 */
         .cyber-select, .search-input {
             background-color: #ffffff;
             border: 1px solid #e2e8f0;
@@ -88,14 +105,15 @@
             padding: 0.6rem 1rem;
             transition: all 0.2s;
             outline: none;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
         }
-        .cyber-select:focus, .search-input:focus { border-color: var(--primary); }
+        .cyber-select:focus, .search-input:focus { border-color: var(--primary); ring: 2px; ring-color: rgba(79, 70, 229, 0.1); }
         
         .cyber-select {
             appearance: none;
-            padding-right: 2rem;
+            padding-right: 2.2rem;
             background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2364748b' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-            background-position: right 0.7rem center;
+            background-position: right 0.8rem center;
             background-repeat: no-repeat;
             background-size: 1.1em;
         }
@@ -106,26 +124,35 @@
             display: flex; align-items: center; justify-content: center; gap: 8px;
             transition: all 0.2s; cursor: pointer; font-size: 0.85rem; font-weight: 700;
         }
-        .sys-btn:hover { background: #f8fafc; color: var(--primary); border-color: var(--primary); }
+        .sys-btn:hover { background: #f1f5f9; color: var(--primary); border-color: var(--primary); transform: translateY(-1px); }
         
         @media (max-width: 768px) {
-            .sys-btn { width: 40px; padding: 0; }
+            .sys-btn { width: 40px; padding: 0; border-radius: 50%; }
             .sys-btn span { display: none; }
         }
     </style>
 </head>
 <body class="flex flex-col">
 
-    <!-- 頂部區：取消凍結、移除儀表板 -->
-    <div class="pt-8 pb-6 border-b border-slate-100 bg-white/50 backdrop-blur-md">
+    <!-- 動態背景流光 -->
+    <div class="fixed inset-0 pointer-events-none z-[-1] overflow-hidden">
+        <div class="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-indigo-100/50 rounded-full mix-blend-multiply filter blur-[100px] animate-blob"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-50/70 rounded-full mix-blend-multiply filter blur-[100px] animate-blob animation-delay-2000"></div>
+    </div>
+
+    <!-- 頂部區：上色版標題 -->
+    <div class="pt-8 pb-6 border-b border-slate-100 bg-white/60 backdrop-blur-xl">
         <div class="container mx-auto px-4 max-w-7xl">
             
-            <!-- 標題與系統按鈕 -->
+            <!-- 標題與系統按鈕 (手機版平行佈局) -->
             <div class="flex justify-between items-center mb-8 gap-4">
                 <div class="flex items-center gap-4">
-                    <h1 class="text-4xl md:text-5xl font-black font-oswald tracking-tighter italic text-slate-900">
-                        MUIII
-                    </h1>
+                    <div class="relative">
+                        <h1 class="text-4xl md:text-5xl font-black font-oswald tracking-tighter italic bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-rose-500">
+                            MUIII
+                        </h1>
+                        <span class="absolute -top-1 -right-6 bg-rose-500 text-white text-[9px] font-black px-1.5 py-0.5 transform rotate-12 shadow-sm rounded-sm">VIP</span>
+                    </div>
                     <div class="h-8 w-px bg-slate-200 hidden md:block"></div>
                     <h2 class="text-lg font-bold tracking-widest text-slate-500 hidden sm:block uppercase">搶票戰績清單</h2>
                 </div>
@@ -138,13 +165,11 @@
 
             <!-- 工具列：搜尋與篩選 -->
             <div class="flex flex-col lg:flex-row items-center gap-3">
-                <!-- 搜尋框 -->
                 <div class="relative flex-grow w-full">
                     <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
                     <input type="text" id="searchInput" placeholder="搜尋藝人、場館、日期..." 
-                        class="search-input w-full pl-11 font-medium text-slate-700">
+                        class="search-input w-full pl-11 font-bold text-slate-700">
                 </div>
-                <!-- 篩選群組 -->
                 <div class="flex flex-wrap md:flex-nowrap gap-2 w-full lg:w-auto">
                     <select id="year-filter" class="cyber-select flex-1 md:w-32 text-sm font-bold">
                         <option value="all">年份</option>
@@ -157,10 +182,10 @@
                         <option value="10">10月</option><option value="11">11月</option><option value="12">12月</option>
                     </select>
                     <select id="sortSelect" class="cyber-select flex-1 md:w-32 text-sm font-bold">
-                        <option value="desc">新到舊</option>
-                        <option value="asc">舊到新</option>
+                        <option value="desc">最新優先</option>
+                        <option value="asc">最早優先</option>
                     </select>
-                    <button id="reset-btn" class="bg-slate-900 hover:bg-black text-white px-5 h-11 rounded-xl flex items-center gap-2 transition text-sm font-black shrink-0">
+                    <button id="reset-btn" class="bg-slate-900 hover:bg-black text-white px-6 h-11 rounded-xl flex items-center gap-2 transition text-sm font-black shrink-0 shadow-lg shadow-slate-200">
                         <i class="fas fa-undo text-xs"></i><span>重置</span>
                     </button>
                 </div>
@@ -168,30 +193,31 @@
         </div>
     </div>
 
-    <!-- 列表主體 -->
+    <!-- 列表內容 -->
     <div class="container mx-auto px-4 py-8 max-w-7xl flex-grow">
         <!-- 讀取中 -->
         <div id="loading" class="flex flex-col items-center justify-center py-20 gap-4">
-            <div class="w-10 h-10 border-4 border-slate-200 border-t-indigo-600 rounded-full animate-spin"></div>
-            <p class="text-slate-400 text-xs font-bold tracking-widest uppercase">載入中...</p>
+            <div class="w-12 h-12 border-4 border-slate-100 border-t-indigo-600 rounded-full animate-spin shadow-inner"></div>
+            <p class="text-indigo-600 text-xs font-black tracking-[0.3em] uppercase">同步資料中...</p>
         </div>
 
         <!-- 戰績網格 -->
-        <div id="record-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden pb-20"></div>
+        <div id="record-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden pb-24"></div>
         
         <!-- 無結果 -->
-        <div id="no-results" class="hidden text-center py-32 text-slate-400 font-bold">
-            沒有找到相符的戰績紀錄
+        <div id="no-results" class="hidden text-center py-32">
+            <i class="fas fa-ticket-alt text-slate-200 text-6xl mb-4"></i>
+            <p class="text-slate-400 font-bold text-lg">找不到相關的戰績紀錄</p>
         </div>
     </div>
 
     <!-- 頁尾 -->
-    <footer class="mt-auto text-center py-10 border-t border-slate-100 bg-white">
-        <p class="text-slate-300 text-[10px] font-black tracking-[0.4em] uppercase">&copy; 2026 MUIII PROJECT • LIVE RECORDS</p>
+    <footer class="mt-auto text-center py-12 border-t border-slate-100 bg-white/80">
+        <p class="text-slate-300 text-[10px] font-black tracking-[0.5em] uppercase">&copy; 2026 MUIII PROJECT • LIVE RECORDS TRACKER</p>
     </footer>
 
     <!-- 回到頂部 -->
-    <button id="back-to-top" class="fixed bottom-6 right-6 bg-indigo-600 text-white w-12 h-12 rounded-full hidden items-center justify-center shadow-lg transition hover:scale-110 z-[1000]"><i class="fas fa-arrow-up"></i></button>
+    <button id="back-to-top" class="fixed bottom-8 right-8 bg-indigo-600 text-white w-12 h-12 rounded-full hidden items-center justify-center shadow-xl transition hover:scale-110 z-[1000]"><i class="fas fa-arrow-up"></i></button>
 
     <script>
         const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vThZZurHBpfes9J-dLaoi51jpb0MnQ4oABmBux77r-OO5LOvuoex6lesE4GvZb-UQ5zgiqWEfiHxNQy/pub?output=csv';
@@ -227,7 +253,7 @@
                     loading.classList.add('hidden');
                 },
                 error: () => {
-                    loading.innerHTML = '<p class="text-red-500 font-bold">資料讀取失敗，請檢查網路連線</p>';
+                    loading.innerHTML = '<p class="text-red-500 font-bold">資料讀取失敗</p>';
                 }
             });
         }
@@ -237,7 +263,6 @@
             const sort = document.getElementById('sortSelect');
             const yearFilter = document.getElementById('year-filter');
             const monthFilter = document.getElementById('month-filter');
-            const resetBtn = document.getElementById('reset-btn');
 
             search.addEventListener('input', updateDashboard);
             sort.addEventListener('change', updateDashboard);
@@ -254,7 +279,7 @@
                 updateDashboard();
             });
 
-            resetBtn.onclick = () => {
+            document.getElementById('reset-btn').onclick = () => {
                 search.value = '';
                 sort.value = 'desc';
                 yearFilter.value = 'all';
@@ -321,35 +346,38 @@
                 grid.classList.remove('hidden');
                 data.forEach((item, index) => {
                     const card = document.createElement('div');
-                    card.className = `ticket-card rounded-3xl flex flex-col h-full animate-fade-in-up`;
+                    card.className = `ticket-card rounded-3xl flex flex-col h-full animate-fade-in-up overflow-hidden`;
+                    card.style.animationDelay = `${index * 30}ms`;
                     
                     const dateParts = (item[KEY_DATE] || '').split('.');
                     const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
                     const mStr = monthNames[parseInt(dateParts[1]) - 1] || '---';
                     
                     const tags = (item[KEY_COUNT] || '').split(' ').filter(t => t.trim()).map(tag => 
-                        `<span class="bg-slate-100 text-slate-500 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center">
+                        `<span class="bg-indigo-50 text-indigo-600 border border-indigo-100 px-3 py-1.5 rounded-lg text-[11px] font-bold flex items-center">
                             <i class="fas fa-ticket-alt mr-2 opacity-30"></i>${tag}
                         </span>`
                     ).join('');
 
                     card.innerHTML = `
-                        <div class="p-7 flex-1">
-                            <div class="flex items-start gap-5">
-                                <div class="flex flex-col items-center bg-slate-50 rounded-2xl p-3 border border-slate-100 min-w-[75px]">
-                                    <span class="text-[10px] text-indigo-600 font-black tracking-widest">${mStr}</span>
-                                    <span class="text-3xl font-black font-oswald text-slate-900">${dateParts[2] || '--'}</span>
-                                    <span class="text-[10px] text-slate-400 font-bold mt-1">${dateParts[0] || '----'}</span>
+                        <div class="flex-1 flex flex-col">
+                            <div class="flex items-stretch gap-0 h-full">
+                                <!-- 上色票根區 -->
+                                <div class="stub-side flex flex-col items-center justify-center p-4 min-w-[85px] text-center">
+                                    <span class="text-[10px] font-black tracking-widest opacity-80">${mStr}</span>
+                                    <span class="text-3xl font-black font-oswald my-1">${dateParts[2] || '--'}</span>
+                                    <span class="text-[10px] font-bold opacity-70">${dateParts[0] || '----'}</span>
                                 </div>
-                                <div class="flex-1">
-                                    <h3 class="text-lg font-black text-slate-800 leading-tight line-clamp-3 min-h-[3.5rem] flex items-center">
+                                <!-- 資訊內容區 -->
+                                <div class="p-6 flex-1 flex items-center">
+                                    <h3 class="text-lg font-black text-slate-800 leading-tight line-clamp-3">
                                         ${item[KEY_TITLE]}
                                     </h3>
                                 </div>
                             </div>
                         </div>
                         <div class="ticket-dashed-line mx-7"></div>
-                        <div class="p-6 bg-slate-50/30">
+                        <div class="p-5 bg-slate-50/50">
                             <div class="flex flex-wrap gap-2">${tags}</div>
                         </div>
                     `;
