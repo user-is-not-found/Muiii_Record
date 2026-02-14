@@ -25,23 +25,42 @@
 <body class="p-4 md:p-10 min-h-screen flex flex-col items-center">
 
     <div class="w-full max-w-7xl">
-        <header class="mb-10 text-center md:text-left flex flex-col md:flex-row justify-between items-center gap-6">
+        <header class="mb-8 text-center md:text-left flex flex-col xl:flex-row justify-between items-center gap-6">
             <div>
                 <h1 class="text-4xl md:text-5xl font-black mb-2 gradient-text tracking-wider">Muiii 搶票戰績</h1>
                 <p class="text-slate-400">Google Sheets 雲端即時同步儀表板</p>
             </div>
             
-            <div id="stats" class="flex gap-4 w-full md:w-auto">
-                <div class="glass-card p-4 rounded-2xl flex-1 md:w-40 text-center">
+            <div id="stats" class="flex flex-wrap justify-center md:justify-end gap-4 w-full xl:w-auto">
+                <div class="glass-card p-4 rounded-2xl flex-1 min-w-[120px] text-center">
                     <p class="text-slate-400 text-sm mb-1">總征戰場次</p>
-                    <p class="text-3xl font-bold text-white" id="stat-events">0</p>
+                    <p class="text-2xl md:text-3xl font-bold text-white" id="stat-events">0</p>
                 </div>
-                <div class="glass-card p-4 rounded-2xl flex-1 md:w-40 text-center">
+                <div class="glass-card p-4 rounded-2xl flex-1 min-w-[120px] text-center">
                     <p class="text-slate-400 text-sm mb-1">累計搶到張數</p>
-                    <p class="text-3xl font-bold text-sky-400" id="stat-tickets">0</p>
+                    <p class="text-2xl md:text-3xl font-bold text-sky-400" id="stat-tickets">0</p>
+                </div>
+                <div class="glass-card p-4 rounded-2xl flex-1 min-w-[140px] text-center">
+                    <p class="text-slate-400 text-sm mb-1">預估總花費 (NT$)</p>
+                    <p class="text-2xl md:text-3xl font-bold text-emerald-400" id="stat-money">0</p>
                 </div>
             </div>
         </header>
+
+        <div class="mb-8 flex flex-col md:flex-row gap-4 justify-between items-center glass-card p-4 rounded-2xl">
+            <div class="relative w-full md:w-1/2">
+                <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
+                <input type="text" id="searchInput" placeholder="搜尋節目名稱..." 
+                    class="w-full bg-slate-800/50 text-white rounded-xl py-2 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-sky-500 border border-slate-600">
+            </div>
+            <div class="flex items-center gap-2 w-full md:w-auto">
+                <label for="sortSelect" class="text-slate-400 text-sm whitespace-nowrap"><i class="fas fa-sort-amount-down mr-1"></i>排序：</label>
+                <select id="sortSelect" class="bg-slate-800/50 text-white rounded-xl py-2 px-4 focus:outline-none focus:ring-2 focus:ring-sky-500 border border-slate-600 w-full md:w-auto">
+                    <option value="desc">日期：最新到最舊</option>
+                    <option value="asc">日期：最舊到最新</option>
+                </select>
+            </div>
+        </div>
 
         <div id="loading" class="text-center py-20">
             <i class="fas fa-circle-notch fa-spin text-4xl text-sky-500 mb-4"></i>
@@ -50,11 +69,16 @@
 
         <div id="record-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden">
             </div>
+        
+        <div id="no-results" class="hidden text-center py-20 text-slate-400">
+            <i class="fas fa-ghost text-4xl mb-4 opacity-50"></i>
+            <p>找不到符合的節目名稱</p>
+        </div>
     </div>
 
     <script>
-        // 你提供的 Google Sheet CSV 連結
         const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vThZZurHBpfes9J-dLaoi51jpb0MnQ4oABmBux77r-OO5LOvuoex6lesE4GvZb-UQ5zgiqWEfiHxNQy/pub?output=csv';
+        let allRecords = [];
 
         async function fetchRecords() {
             Papa.parse(csvUrl, {
@@ -62,64 +86,117 @@
                 header: true,
                 skipEmptyLines: true,
                 complete: function(results) {
-                    renderDashboard(results.data);
+                    allRecords = results.data.filter(item => item.節目名稱); // 過濾掉空白行
+                    updateDashboard();
                 }
             });
         }
 
-        function renderDashboard(data) {
-            const grid = document.getElementById('record-grid');
-            let totalEvents = 0;
-            let totalTickets = 0;
-
-            data.forEach(item => {
-                if (!item.節目名稱) return; 
-                totalEvents++;
-
-                // 計算張數 (解析例如 "1880*2" 或 "3208*1 3208*2" 裡面的 *數字)
-                let ticketCountForEvent = 0;
+        function processData(data) {
+            let processed = data.map(item => {
+                let ticketCount = 0;
+                let moneySpent = 0;
                 const ticketString = item.張數 || '';
-                const matches = ticketString.match(/\*(\d+)/g);
                 
-                if (matches) {
-                    matches.forEach(match => {
-                        ticketCountForEvent += parseInt(match.replace('*', ''));
-                    });
-                } else if (ticketString.trim() !== '') {
-                    // 如果沒有 * 號但有文字，預設算 1 張
-                    ticketCountForEvent = 1; 
+                // 使用 Regex 解析票價與張數 (例如: 3208*2 -> 價格3208, 張數2)
+                const regex = /(\d+)\*(\d+)/g;
+                let match;
+                while ((match = regex.exec(ticketString)) !== null) {
+                    const price = parseInt(match[1]);
+                    const count = parseInt(match[2]);
+                    ticketCount += count;
+                    moneySpent += (price * count);
                 }
-                totalTickets += ticketCountForEvent;
 
-                // 建立卡片
-                const card = document.createElement('div');
-                card.className = 'glass-card rounded-2xl p-6 hover:-translate-y-1 transition-transform duration-300';
-                
-                card.innerHTML = `
-                    <div class="flex justify-between items-start mb-4 border-b border-slate-700 pb-3">
-                        <span class="text-sm font-medium text-sky-400 px-3 py-1 bg-sky-500/10 rounded-full">
-                            <i class="far fa-calendar-alt mr-1"></i> ${item.售票日期 || '未知日期'}
-                        </span>
-                        <span class="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded">
-                            <i class="fas fa-ticket-alt mr-1"></i> ${ticketCountForEvent} 張
-                        </span>
-                    </div>
-                    <h3 class="text-lg font-bold text-white mb-3 leading-snug">${item.節目名稱}</h3>
-                    <div class="text-slate-400 text-sm bg-slate-800/50 p-3 rounded-lg font-mono">
-                        ${item.張數 || '無詳細票價紀錄'}
-                    </div>
-                `;
-                grid.appendChild(card);
+                // 若格式不符但有字，預設為1張
+                if (ticketCount === 0 && ticketString.trim() !== '') {
+                    ticketCount = 1;
+                }
+
+                return { ...item, parsedCount: ticketCount, parsedMoney: moneySpent };
+            });
+            return processed;
+        }
+
+        function updateDashboard() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const sortOrder = document.getElementById('sortSelect').value;
+
+            // 1. 處理數據 (計算張數與金額)
+            let processedData = processData(allRecords);
+
+            // 2. 搜尋過濾
+            if (searchTerm) {
+                processedData = processedData.filter(item => 
+                    item.節目名稱.toLowerCase().includes(searchTerm)
+                );
+            }
+
+            // 3. 排序 (依照售票日期)
+            processedData.sort((a, b) => {
+                const dateA = new Date(a.售票日期.replace(/\./g, '-'));
+                const dateB = new Date(b.售票日期.replace(/\./g, '-'));
+                return sortOrder === 'desc' ? dateB - dateA : dateA - dateB;
             });
 
-            // 更新頂部儀表板數字
-            document.getElementById('stat-events').innerText = totalEvents;
-            document.getElementById('stat-tickets').innerText = totalTickets;
-
-            // 隱藏讀取動畫，顯示網格
-            document.getElementById('loading').classList.add('hidden');
-            grid.classList.remove('hidden');
+            renderUI(processedData);
         }
+
+        function renderUI(data) {
+            const grid = document.getElementById('record-grid');
+            const noResults = document.getElementById('no-results');
+            grid.innerHTML = ''; // 清空現有卡片
+
+            let totalTickets = 0;
+            let totalMoney = 0;
+
+            if (data.length === 0) {
+                grid.classList.add('hidden');
+                noResults.classList.remove('hidden');
+            } else {
+                noResults.classList.add('hidden');
+                grid.classList.remove('hidden');
+
+                data.forEach(item => {
+                    totalTickets += item.parsedCount;
+                    totalMoney += item.parsedMoney;
+
+                    const card = document.createElement('div');
+                    card.className = 'glass-card rounded-2xl p-6 hover:-translate-y-1 transition-transform duration-300';
+                    card.innerHTML = `
+                        <div class="flex justify-between items-start mb-4 border-b border-slate-700 pb-3">
+                            <span class="text-sm font-medium text-sky-400 px-3 py-1 bg-sky-500/10 rounded-full">
+                                <i class="far fa-calendar-alt mr-1"></i> ${item.售票日期 || '未知日期'}
+                            </span>
+                            <span class="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded">
+                                <i class="fas fa-ticket-alt mr-1"></i> ${item.parsedCount} 張
+                            </span>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-3 leading-snug">${item.節目名稱}</h3>
+                        <div class="flex justify-between items-end mt-4">
+                            <div class="text-slate-400 text-sm bg-slate-800/50 p-2 rounded-lg font-mono flex-1 mr-2">
+                                ${item.張數 || '無詳細紀錄'}
+                            </div>
+                            <div class="text-emerald-400 font-bold text-sm bg-emerald-500/10 p-2 rounded-lg">
+                                $${item.parsedMoney.toLocaleString()}
+                            </div>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+            }
+
+            // 更新儀表板數字
+            document.getElementById('stat-events').innerText = data.length;
+            document.getElementById('stat-tickets').innerText = totalTickets;
+            document.getElementById('stat-money').innerText = totalMoney.toLocaleString(); // 加上千位數逗號
+
+            document.getElementById('loading').classList.add('hidden');
+        }
+
+        // 綁定事件監聽器
+        document.getElementById('searchInput').addEventListener('input', updateDashboard);
+        document.getElementById('sortSelect').addEventListener('change', updateDashboard);
 
         // 啟動
         fetchRecords();
