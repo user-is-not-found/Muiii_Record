@@ -47,7 +47,7 @@
     <style>
         :root {
             --primary: #4f46e5;
-            --primary-dark: #4338ca;
+            --primary-dark: #3730a3;
             --bg-color: #f8fafc;
         }
 
@@ -62,42 +62,34 @@
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
-        /* 票券卡片：上色與質感優化 */
+        /* 彩色票券卡片設計 */
         .ticket-card {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 1);
+            background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.3);
+            overflow: hidden;
         }
         
         .ticket-card:hover {
-            transform: translateY(-8px) scale(1.01);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
-            border-color: var(--primary);
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 25px 40px -10px rgba(79, 70, 229, 0.4);
+            border-color: rgba(255, 255, 255, 0.4);
         }
 
-        /* 票根渲染 */
-        .stub-side {
-            background: linear-gradient(135deg, var(--primary), #818cf8);
-            color: white;
-            position: relative;
-        }
-
-        /* 虛線設計：上色版 */
+        /* 票券彩色虛線 */
         .ticket-dashed-line {
-            border-bottom: 2px dashed #e2e8f0;
+            border-bottom: 2px dashed rgba(255, 255, 255, 0.2);
             position: relative;
         }
         .ticket-dashed-line::before, .ticket-dashed-line::after {
-            content: ''; position: absolute; width: 20px; height: 20px;
-            background-color: var(--bg-color); border-radius: 50%; top: -10px;
-            box-shadow: inset 0 0 5px rgba(0,0,0,0.02);
+            content: ''; position: absolute; width: 22px; height: 22px;
+            background-color: var(--bg-color); border-radius: 50%; top: -11px;
         }
-        .ticket-dashed-line::before { left: -34px; }
-        .ticket-dashed-line::after { right: -34px; }
+        .ticket-dashed-line::before { left: -36px; }
+        .ticket-dashed-line::after { right: -36px; }
 
-        /* 選單與輸入框 */
+        /* 介面控制元件 */
         .cyber-select, .search-input {
             background-color: #ffffff;
             border: 1px solid #e2e8f0;
@@ -140,19 +132,16 @@
         <div class="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-50/70 rounded-full mix-blend-multiply filter blur-[100px] animate-blob animation-delay-2000"></div>
     </div>
 
-    <!-- 頂部區：上色版標題 -->
+    <!-- 頂部導覽列 -->
     <div class="pt-8 pb-6 border-b border-slate-100 bg-white/60 backdrop-blur-xl">
         <div class="container mx-auto px-4 max-w-7xl">
             
-            <!-- 標題與系統按鈕 (手機版平行佈局) -->
+            <!-- 標題與系統按鈕 (手機版平行佈局，移除 VIP) -->
             <div class="flex justify-between items-center mb-8 gap-4">
                 <div class="flex items-center gap-4">
-                    <div class="relative">
-                        <h1 class="text-4xl md:text-5xl font-black font-oswald tracking-tighter italic bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-rose-500">
-                            MUIII
-                        </h1>
-                        <span class="absolute -top-1 -right-6 bg-rose-500 text-white text-[9px] font-black px-1.5 py-0.5 transform rotate-12 shadow-sm rounded-sm">VIP</span>
-                    </div>
+                    <h1 class="text-4xl md:text-5xl font-black font-oswald tracking-tighter italic bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-500">
+                        MUIII
+                    </h1>
                     <div class="h-8 w-px bg-slate-200 hidden md:block"></div>
                     <h2 class="text-lg font-bold tracking-widest text-slate-500 hidden sm:block uppercase">搶票戰績清單</h2>
                 </div>
@@ -193,25 +182,25 @@
         </div>
     </div>
 
-    <!-- 列表內容 -->
+    <!-- 內容清單 -->
     <div class="container mx-auto px-4 py-8 max-w-7xl flex-grow">
-        <!-- 讀取中 -->
+        <!-- 讀取狀態 -->
         <div id="loading" class="flex flex-col items-center justify-center py-20 gap-4">
             <div class="w-12 h-12 border-4 border-slate-100 border-t-indigo-600 rounded-full animate-spin shadow-inner"></div>
             <p class="text-indigo-600 text-xs font-black tracking-[0.3em] uppercase">同步資料中...</p>
         </div>
 
-        <!-- 戰績網格 -->
-        <div id="record-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden pb-24"></div>
+        <!-- 票券網格 -->
+        <div id="record-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 hidden pb-24"></div>
         
-        <!-- 無結果 -->
+        <!-- 無結果提示 -->
         <div id="no-results" class="hidden text-center py-32">
             <i class="fas fa-ticket-alt text-slate-200 text-6xl mb-4"></i>
             <p class="text-slate-400 font-bold text-lg">找不到相關的戰績紀錄</p>
         </div>
     </div>
 
-    <!-- 頁尾 -->
+    <!-- 頁尾宣告 -->
     <footer class="mt-auto text-center py-12 border-t border-slate-100 bg-white/80">
         <p class="text-slate-300 text-[10px] font-black tracking-[0.5em] uppercase">&copy; 2026 MUIII PROJECT • LIVE RECORDS TRACKER</p>
     </footer>
@@ -354,31 +343,31 @@
                     const mStr = monthNames[parseInt(dateParts[1]) - 1] || '---';
                     
                     const tags = (item[KEY_COUNT] || '').split(' ').filter(t => t.trim()).map(tag => 
-                        `<span class="bg-indigo-50 text-indigo-600 border border-indigo-100 px-3 py-1.5 rounded-lg text-[11px] font-bold flex items-center">
-                            <i class="fas fa-ticket-alt mr-2 opacity-30"></i>${tag}
+                        `<span class="bg-white/20 text-white border border-white/30 px-3 py-1.5 rounded-lg text-[11px] font-bold flex items-center shadow-sm">
+                            <i class="fas fa-ticket-alt mr-2 opacity-60"></i>${tag}
                         </span>`
                     ).join('');
 
                     card.innerHTML = `
                         <div class="flex-1 flex flex-col">
                             <div class="flex items-stretch gap-0 h-full">
-                                <!-- 上色票根區 -->
-                                <div class="stub-side flex flex-col items-center justify-center p-4 min-w-[85px] text-center">
-                                    <span class="text-[10px] font-black tracking-widest opacity-80">${mStr}</span>
-                                    <span class="text-3xl font-black font-oswald my-1">${dateParts[2] || '--'}</span>
-                                    <span class="text-[10px] font-bold opacity-70">${dateParts[0] || '----'}</span>
+                                <!-- 日期區 -->
+                                <div class="flex flex-col items-center justify-center p-5 min-w-[95px] text-center border-r border-white/10 bg-white/5">
+                                    <span class="text-[10px] font-black tracking-widest text-white/80">${mStr}</span>
+                                    <span class="text-3xl font-black font-oswald my-1 text-white">${dateParts[2] || '--'}</span>
+                                    <span class="text-[10px] font-bold text-white/60">${dateParts[0] || '----'}</span>
                                 </div>
                                 <!-- 資訊內容區 -->
                                 <div class="p-6 flex-1 flex items-center">
-                                    <h3 class="text-lg font-black text-slate-800 leading-tight line-clamp-3">
+                                    <h3 class="text-xl font-black text-white leading-tight line-clamp-3">
                                         ${item[KEY_TITLE]}
                                     </h3>
                                 </div>
                             </div>
                         </div>
-                        <div class="ticket-dashed-line mx-7"></div>
-                        <div class="p-5 bg-slate-50/50">
-                            <div class="flex flex-wrap gap-2">${tags}</div>
+                        <div class="ticket-dashed-line mx-8"></div>
+                        <div class="p-6 bg-white/5">
+                            <div class="flex flex-wrap gap-2.5">${tags}</div>
                         </div>
                     `;
                     grid.appendChild(card);
