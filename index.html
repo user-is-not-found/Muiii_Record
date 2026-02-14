@@ -12,7 +12,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* --- 視覺藝術核心 --- */
+        /* --- 視覺藝術與核心結構 --- */
         *, *::before, *::after { box-sizing: border-box; }
         
         :root {
@@ -23,7 +23,7 @@
             --primary: #2563eb;
             --primary-dark: #1e40af;
             --primary-light: rgba(37, 99, 235, 0.08);
-            --header-bg: rgba(255, 255, 255, 0.95);
+            --header-bg: rgba(255, 255, 255, 0.85); /* 半透明 */
             --tag-bg: #f1f5f9;
             --tag-border: #e2e8f0;
             --shadow-sm: 0 2px 4px rgba(0,0,0,0.02);
@@ -43,12 +43,13 @@
             --primary: #3b82f6;
             --primary-dark: #2563eb;
             --primary-light: rgba(59, 130, 246, 0.1);
-            --header-bg: rgba(15, 23, 42, 0.95);
+            --header-bg: rgba(15, 23, 42, 0.85); /* 半透明 */
             --tag-bg: #0f172a;
             --tag-border: #334155;
             --shadow-lg: 0 25px 60px -15px rgba(0, 0, 0, 0.5);
         }
 
+        /* 鎖定視窗高度，實現獨立捲動 */
         html, body {
             height: 100%; margin: 0; padding: 0; overflow: hidden;
             font-family: 'Inter', 'Noto Sans TC', sans-serif;
@@ -58,100 +59,75 @@
 
         .app-wrapper { display: flex; flex-direction: column; height: 100vh; }
 
-        /* --- 頂部面板 --- */
+        /* --- 顯示控制 --- */
+        .desktop-only { display: flex; }
+        .mobile-only { display: none; }
+
+        @media (max-width: 992px) {
+            .desktop-only { display: none !important; }
+            .mobile-only { display: flex !important; }
+        }
+
+        /* --- 頂部面板：懸浮島嶼設計 (固定不捲動) --- */
         .header-panel {
-            flex-shrink: 0; background-color: var(--header-bg);
+            flex-shrink: 0; /* 禁止縮小 */
+            background-color: var(--header-bg);
             backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
             border-bottom: 1px solid var(--tag-border); z-index: 1000;
-            padding: 16px 0;
-            box-shadow: var(--shadow-sm);
+            box-shadow: var(--shadow-sm); padding: 14px 0;
         }
         .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; width: 100%; }
 
-        /* ============================================================
-           介面顯示控制 (互斥鎖定) - 解決重複顯示問題
-           ============================================================ */
-        
-        /* 預設狀態 (大於 900px)：顯示電腦版，隱藏手機版 */
-        .view-desktop { display: flex; flex-direction: column; gap: 14px; }
-        .view-mobile { display: none !important; }
-
-        /* 手機版狀態 (小於 900px)：顯示手機版，隱藏電腦版 */
-        @media (max-width: 900px) {
-            .view-desktop { display: none !important; }
-            .view-mobile { display: flex !important; flex-direction: column; gap: 12px; width: 100%; }
-        }
-
-        /* ============================================================ */
-
-        /* --- 1. 電腦版樣式 (.view-desktop) --- */
-        .view-desktop .top-row { display: flex; justify-content: space-between; align-items: center; }
-        .view-desktop .brand { 
+        /* 電腦版精確排版 */
+        .desktop-header { flex-direction: column; gap: 14px; }
+        .top-row { display: flex; justify-content: space-between; align-items: center; }
+        .brand { 
             font-size: 1.65rem; font-weight: 900; color: var(--primary); 
             letter-spacing: -1.5px; text-transform: uppercase;
         }
-        .view-desktop .system-actions { display: flex; gap: 10px; align-items: center; }
+        
+        .system-actions { display: flex !important; flex-direction: row !important; gap: 10px; align-items: center; }
 
-        .view-desktop .control-row { display: flex; align-items: center; gap: 20px; width: 100%; }
-        .view-desktop .stats-group { display: flex; gap: 10px; flex-shrink: 0; }
-        .view-desktop .stat-card {
+        .control-row { display: flex; align-items: center; gap: 20px; width: 100%; }
+        .stats-group { display: flex; gap: 10px; flex-shrink: 0; }
+        .stat-card {
             background: var(--primary-light); border: 1px solid var(--tag-border);
-            padding: 10px 20px; border-radius: var(--radius-md); text-align: center;
-            min-width: 105px; transition: var(--transition);
+            padding: 10px 24px; border-radius: var(--radius-md); text-align: center;
+            min-width: 110px; transition: var(--transition);
         }
-        .view-desktop .stat-val { font-size: 1.5rem; font-weight: 900; color: var(--primary); line-height: 1; }
-        .view-desktop .stat-lbl { font-size: 0.65rem; font-weight: 800; opacity: 0.5; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
-
-        .view-desktop .tools-group { display: flex; gap: 12px; flex-grow: 1; align-items: center; justify-content: flex-end; }
-        .view-desktop .search-area { flex-grow: 1; position: relative; max-width: 400px; } 
-        .view-desktop .filter-group { display: flex; gap: 8px; flex-shrink: 0; }
-
-        /* --- 2. 手機版樣式 (.view-mobile) --- */
-        .view-mobile .nav-bar { 
-            display: flex; justify-content: space-between; align-items: center; 
-            min-height: 44px; margin-bottom: 0;
-        }
-        .view-mobile .brand { font-size: 1.4rem; font-weight: 900; color: var(--primary); letter-spacing: -1px; }
-        .view-mobile .system-actions { display: flex; gap: 10px; align-items: center; }
+        .stat-card:hover { transform: translateY(-2px); border-color: var(--primary); }
         
-        .view-mobile .mobile-stats { display: flex; gap: 10px; }
-        .view-mobile .stat-card { 
-            flex: 1; padding: 10px; border-radius: var(--radius-md); 
-            background: var(--primary-light); border: 1px solid var(--tag-border); text-align: center;
-        }
-        .view-mobile .stat-val { font-size: 1.4rem; font-weight: 900; color: var(--primary); }
-        .view-mobile .stat-lbl { font-size: 0.65rem; font-weight: 800; opacity: 0.6; }
+        /* 數據放大 */
+        .stat-val { font-size: 2rem; font-weight: 900; color: var(--primary); line-height: 1; letter-spacing: -1px; }
+        .stat-lbl { font-size: 0.75rem; font-weight: 800; opacity: 0.6; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
 
-        .view-mobile .mobile-tools { display: flex; flex-direction: column; gap: 12px; }
-        .view-mobile .search-area { width: 100%; position: relative; }
-        .view-mobile .mobile-filters { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .tools-group { display: flex; gap: 12px; flex-grow: 1; align-items: center; justify-content: flex-end; }
+        .search-area { flex-grow: 1; position: relative; max-width: 400px; } 
+        .filters { display: flex; gap: 8px; flex-shrink: 0; }
 
-        /* --- 共用 UI 元件 --- */
-        
-        /* 電腦版按鈕 (膠囊) */
-        .view-desktop .icon-btn {
+        /* 手機版佈局 */
+        .mobile-header { flex-direction: column; gap: 12px; width: 100%; }
+        .mobile-nav { display: flex; justify-content: space-between; align-items: center; min-height: 48px; }
+        .mobile-stats { display: flex; gap: 10px; }
+        .mobile-stats .stat-card { flex: 1; padding: 12px; border-radius: var(--radius-md); }
+        .mobile-tools { display: flex; flex-direction: column; gap: 12px; }
+        .mobile-filters { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+        /* UI 元件 */
+        .icon-btn {
             height: 42px; padding: 0 18px; border-radius: 50px; background-color: var(--tag-bg);
             border: 1px solid var(--tag-border); color: var(--text-title); cursor: pointer;
             display: flex; align-items: center; justify-content: center; gap: 8px;
             font-size: 0.9rem; font-weight: 800; transition: var(--transition);
             white-space: nowrap; outline: none;
         }
-
-        /* 手機版按鈕 (圓形) */
-        .view-mobile .icon-btn {
-            width: 40px; height: 40px; border-radius: 50%; padding: 0; 
-            background-color: var(--tag-bg); border: 1px solid var(--tag-border); 
-            color: var(--text-title); cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .view-mobile .icon-btn span { display: none; } /* 隱藏文字 */
-
         .icon-btn:hover { background-color: var(--primary); color: white; border-color: var(--primary); transform: translateY(-3px); box-shadow: 0 8px 20px rgba(37, 99, 235, 0.2); }
+        .icon-btn:active { transform: scale(0.95); }
         .icon-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
-        
-        /* 安裝按鈕 */
-        .install-btn { display: none; color: var(--primary); background-color: var(--primary-light); border-color: transparent; }
-        .install-btn:hover { background-color: var(--primary); color: white; }
+
+        @media (max-width: 768px) {
+            .icon-btn { width: 40px; height: 40px; padding: 0; border-radius: 50%; }
+        }
 
         .search-input {
             width: 100%; height: 42px; padding: 0 15px 0 46px; border-radius: 14px;
@@ -165,12 +141,13 @@
             height: 42px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--tag-border);
             background-color: var(--card-bg); color: var(--text-title); font-size: 0.85rem; font-weight: 600; cursor: pointer;
             display: flex; align-items: center; justify-content: center; gap: 6px; transition: var(--transition);
-            white-space: nowrap; width: 100%;
+            white-space: nowrap;
         }
         .btn-filter:hover { border-color: var(--primary); color: var(--primary); background-color: var(--primary-light); }
+        
         .custom-select:disabled { opacity: 0.5; cursor: not-allowed; background-color: var(--bg-color); }
 
-        /* --- 下方捲動列表 --- */
+        /* --- 下方捲動列表 (獨立捲動) --- */
         .scroll-area {
             flex-grow: 1; overflow-y: auto; padding: 30px 0 80px 0;
             background-color: var(--bg-color); -webkit-overflow-scrolling: touch;
@@ -178,7 +155,6 @@
         .scroll-area::-webkit-scrollbar { width: 4px; }
         .scroll-area::-webkit-scrollbar-thumb { background: var(--tag-border); border-radius: 10px; }
 
-        /* 網格列表 (電腦雙欄 / 手機單欄) */
         .ticket-list { 
             display: grid; 
             grid-template-columns: 1fr;
@@ -188,11 +164,10 @@
             padding: 0 20px;
         }
 
-        @media (min-width: 901px) {
-            .ticket-list { grid-template-columns: repeat(2, 1fr); }
-        }
+        /* 網格模式 */
+        .ticket-list.grid-view { grid-template-columns: repeat(2, 1fr); }
 
-        /* --- 🎫 擬真票券卡片設計 --- */
+        /* --- 🎫 擬真票券卡片 --- */
         .ticket-card {
             background-color: var(--card-bg); border-radius: var(--radius-md); display: flex;
             overflow: hidden; box-shadow: var(--shadow-sm); border: 1px solid var(--tag-border);
@@ -248,7 +223,7 @@
         }
         .tag:hover { background-color: var(--primary); color: white; border-color: var(--primary); }
 
-        @media (max-width: 900px) {
+        @media (max-width: 768px) {
             .ticket-card { border-radius: 20px; flex-direction: column; }
             .ticket-stub { 
                 flex-direction: row; min-width: 100%; padding: 12px 20px; justify-content: flex-start; gap: 14px;
@@ -257,6 +232,9 @@
             .ticket-stub::before, .ticket-stub::after { left: 50%; transform: translateX(-50%); right: auto; top: auto; bottom: -12px; }
             .ticket-title { font-size: 0.95rem; } 
             .ticket-body { padding: 16px 20px; }
+
+            /* 手機版強制忽略網格，使用單欄 */
+            .ticket-list.grid-view { grid-template-columns: 1fr; }
         }
 
         #back-to-top {
@@ -275,14 +253,19 @@
         <header class="header-panel">
             <div class="container">
                 
-                <!-- ==================== 1. 電腦版介面 (Desktop) ==================== -->
-                <div class="view-desktop">
+                <!-- 1. 電腦版控制島 -->
+                <div class="desktop-header desktop-only">
                     <div class="top-row">
                         <div class="brand">MUIII 搶票戰績</div>
                         <div class="system-actions">
-                            <button class="install-btn icon-btn" title="安裝"><svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg><span>安裝</span></button>
-                            <button class="reload-btn icon-btn" title="重整"><svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg><span>重整</span></button>
-                            <button class="theme-toggle icon-btn" title="模式"><svg class="theme-icon" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg><span>模式</span></button>
+                            <button class="install-btn icon-btn" style="display:none"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg><span>下載 APP</span></button>
+                            <!-- 版面切換按鈕 (僅電腦版) -->
+                            <button id="layout-btn" class="icon-btn" title="切換版面">
+                                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
+                                <span>版面</span>
+                            </button>
+                            <button class="reload-btn icon-btn"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg><span>重整資料</span></button>
+                            <button class="theme-toggle icon-btn"><svg class="theme-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg><span>切換模式</span></button>
                         </div>
                     </div>
                     
@@ -294,15 +277,12 @@
                         <div class="tools-group">
                             <div class="search-area">
                                 <svg class="search-icon" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                                <input type="text" class="search-input" placeholder="搜尋藝人、節目、日期...">
+                                <input type="text" class="search-input" placeholder="搜尋藝人、節目名稱或日期...">
                             </div>
                             <div class="filter-group">
                                 <select class="year-filter custom-select"><option value="all">年份</option></select>
                                 <select class="month-filter custom-select" disabled>
-                                    <option value="all">月份</option><option value="01">1月</option><option value="02">2月</option><option value="03">3月</option>
-                                    <option value="04">4月</option><option value="05">5月</option><option value="06">6月</option>
-                                    <option value="07">7月</option><option value="08">8月</option><option value="09">9月</option>
-                                    <option value="10">10月</option><option value="11">11月</option><option value="12">12月</option>
+                                    <option value="all">月份</option><option value="01">1月</option><option value="02">2月</option><option value="03">3月</option><option value="04">4月</option><option value="05">5月</option><option value="06">6月</option><option value="07">7月</option><option value="08">8月</option><option value="09">9月</option><option value="10">10月</option><option value="11">11月</option><option value="12">12月</option>
                                 </select>
                                 <button class="sort-btn btn-filter"><span>⬇</span> <span class="sort-label">新到舊</span></button>
                                 <button class="reset-btn btn-filter" title="重置過濾">
@@ -314,9 +294,9 @@
                     </div>
                 </div>
 
-                <!-- ==================== 2. 手機版介面 (Mobile) ==================== -->
-                <div class="view-mobile">
-                    <div class="nav-bar">
+                <!-- 2. 手機版控制島 -->
+                <div class="mobile-header mobile-only">
+                    <div class="mobile-nav">
                         <div class="brand">Muiii 搶票戰績</div>
                         <div class="system-actions">
                             <button class="install-btn icon-btn" style="display:none"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg></button>
@@ -326,8 +306,8 @@
                     </div>
                     <div class="mobile-tools">
                         <div class="mobile-stats">
-                            <div class="stat-card"><div class="total-tickets stat-val">0</div><div class="stat-lbl">🎟️ 張數</div></div>
-                            <div class="stat-card"><div class="total-records stat-val">0</div><div class="stat-lbl">🎤 場次</div></div>
+                            <div class="stat-card"><div class="total-tickets stat-val">0</div><div class="stat-lbl">總張數</div></div>
+                            <div class="stat-card"><div class="total-records stat-val">0</div><div class="stat-lbl">總場次</div></div>
                         </div>
                         <div class="search-area">
                             <svg class="search-icon" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
@@ -336,10 +316,7 @@
                         <div class="mobile-filters">
                             <select class="year-filter custom-select"><option value="all">年份</option></select>
                             <select class="month-filter custom-select" disabled>
-                                <option value="all">月份</option><option value="01">1月</option><option value="02">2月</option><option value="03">3月</option>
-                                <option value="04">4月</option><option value="05">5月</option><option value="06">6月</option>
-                                <option value="07">7月</option><option value="08">8月</option><option value="09">9月</option>
-                                <option value="10">10月</option><option value="11">11月</option><option value="12">12月</option>
+                                <option value="all">月份</option><option value="01">1月</option><option value="02">2月</option><option value="03">3月</option><option value="04">4月</option><option value="05">5月</option><option value="06">6月</option><option value="07">7月</option><option value="08">8月</option><option value="09">9月</option><option value="10">10月</option><option value="11">11月</option><option value="12">12月</option>
                             </select>
                             <button class="sort-btn btn-filter"><span>⬇</span> <span class="sort-label">新到舊</span></button>
                             <button class="reset-btn btn-filter"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="14"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg></button>
@@ -365,6 +342,7 @@
     <script>
         const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vThZZurHBpfes9J-dLaoi51jpb0MnQ4oABmBux77r-OO5LOvuoex6lesE4GvZb-UQ5zgiqWEfiHxNQy/pub?gid=0&single=true&output=csv';
         let allTickets = [], currentSort = 'desc', currentYear = 'all', currentMonth = 'all';
+        let isGridView = false; // 預設電腦版為列表模式
 
         function init() {
             const savedTheme = localStorage.getItem('muiii_theme');
@@ -372,12 +350,16 @@
                 document.documentElement.setAttribute('data-theme', 'dark');
                 updateThemeIcons(true);
             }
+            if (localStorage.getItem('muiii_layout') === 'grid') {
+                isGridView = true;
+                updateLayoutIcon();
+            }
             if ('serviceWorker' in navigator) navigator.serviceWorker.register('service-worker.js');
             bindEvents();
             loadData();
         }
 
-        // 綁定事件 (因為分開寫，所以要綁定兩套元件)
+        // 綁定事件
         function bindEvents() {
             const inputs = document.querySelectorAll('.search-input');
             inputs.forEach(el => el.oninput = (e) => {
@@ -387,7 +369,6 @@
 
             const yearSelects = document.querySelectorAll('.year-filter');
             const monthSelects = document.querySelectorAll('.month-filter');
-            
             yearSelects.forEach(el => el.onchange = (e) => {
                 currentYear = e.target.value;
                 yearSelects.forEach(s => s.value = currentYear);
@@ -413,7 +394,7 @@
                 inputs.forEach(i => i.value = '');
                 yearSelects.forEach(y => y.value = 'all');
                 monthSelects.forEach(m => { m.value = 'all'; m.disabled = true; });
-                currentYear = currentMonth = 'all';
+                currentYear = 'all'; currentMonth = 'all';
                 render();
             });
 
@@ -425,6 +406,32 @@
                 localStorage.setItem('muiii_theme', newTheme);
                 updateThemeIcons(!isDark);
             });
+
+            // 電腦版版面切換
+            const layoutBtn = document.getElementById('layout-btn');
+            if (layoutBtn) {
+                layoutBtn.onclick = () => {
+                    isGridView = !isGridView;
+                    localStorage.setItem('muiii_layout', isGridView ? 'grid' : 'list');
+                    updateLayoutIcon();
+                    render();
+                };
+            }
+        }
+
+        function updateLayoutIcon() {
+            const btn = document.getElementById('layout-btn');
+            if (!btn) return;
+            const container = document.getElementById('list-container');
+            if (isGridView) {
+                container.classList.add('grid-view');
+                // 顯示列表圖示 (代表點擊後切換回列表)
+                btn.innerHTML = '<svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg><span>列表</span>';
+            } else {
+                container.classList.remove('grid-view');
+                // 顯示網格圖示
+                btn.innerHTML = '<svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg><span>網格</span>';
+            }
         }
 
         function updateThemeIcons(isDark) {
@@ -476,6 +483,14 @@
             document.querySelectorAll('.total-records').forEach(el => el.innerText = data.length);
 
             const container = document.getElementById('list-container');
+            
+            // 電腦版網格切換
+            if (isGridView && window.innerWidth > 992) {
+                container.classList.add('grid-view');
+            } else {
+                container.classList.remove('grid-view');
+            }
+
             if (!data.length) {
                 container.innerHTML = '<div style="text-align:center;padding:50px;color:#94a3b8">無相符資料</div>';
                 return;
