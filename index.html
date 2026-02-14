@@ -67,7 +67,7 @@
         /* 標題區域背景 (淺色磨砂) */
         .standard-header {
             position: relative;
-            background: rgba(255, 255, 255, 0.7);
+            background: rgba(255, 255, 255, 0.6);
             backdrop-filter: blur(20px);
             border-bottom: 1px solid rgba(0, 0, 0, 0.05);
         }
@@ -79,12 +79,12 @@
             border: 1px solid rgba(255, 255, 255, 1);
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             overflow: hidden;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
         
         .ticket-card:hover {
             transform: translateY(-8px) scale(1.01);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.08);
             border-color: var(--primary);
         }
 
@@ -116,7 +116,7 @@
             white-space: nowrap;
         }
 
-        /* 淺色版下拉選單樣式 */
+        /* 修正下拉選單樣式：解決白底白字或選單無法辨識的問題 */
         .cyber-select {
             background-color: #ffffff;
             color: var(--text-dark);
@@ -134,10 +134,15 @@
             outline: none;
             box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
+        /* 強制選項內的文字顏色 */
+        .cyber-select option {
+            color: #333;
+            background-color: #fff;
+        }
         .cyber-select:hover { border-color: var(--primary); }
         .cyber-select:disabled { background-color: #f8fafc; opacity: 0.6; cursor: not-allowed; }
 
-        /* 淺色版系統按鈕樣式 */
+        /* 系統按鈕：電腦版有文字，手機版純圖示 */
         .sys-btn {
             height: 38px;
             padding: 0 16px;
@@ -170,11 +175,11 @@
         <div class="absolute top-[20%] right-[10%] w-[40%] h-[40%] bg-pink-50 rounded-full mix-blend-multiply filter blur-[120px] opacity-40 animate-blob animation-delay-4000"></div>
     </div>
 
-    <!-- 頂部標題與儀表板區 -->
+    <!-- 頂部區：非凍結模式 -->
     <div class="standard-header pt-6 pb-6">
         <div class="container mx-auto px-4 max-w-7xl">
             
-            <!-- Header 上半部：標題與系統按鈕水平平行 -->
+            <!-- Header 上半部：品牌標題與按鈕水平平行 -->
             <div class="flex justify-between items-center mb-8 w-full gap-4">
                 <div class="text-left relative flex items-center gap-4">
                     <div class="relative shrink-0">
@@ -195,15 +200,15 @@
                 </div>
             </div>
 
-            <!-- Stats：放大數據展示 -->
+            <!-- Stats：超大數據展示區 -->
             <div class="grid grid-cols-2 gap-4 md:gap-6 mb-8 md:w-fit">
-                <div class="bg-white border border-white rounded-2xl px-6 py-4 flex flex-col md:flex-row items-center gap-2 md:gap-5 shadow-sm transition-all hover:shadow-md">
+                <div class="bg-white border border-white rounded-2xl px-6 py-4 flex flex-col md:flex-row items-center gap-2 md:gap-6 shadow-sm transition-all hover:shadow-md">
                     <div class="text-slate-400 text-[10px] md:text-xs uppercase font-bold tracking-widest">總征戰</div>
-                    <div class="text-5xl md:text-6xl font-black font-oswald text-slate-900 leading-none" id="stat-events">0</div>
+                    <div class="text-5xl md:text-7xl font-black font-oswald text-slate-900 leading-none" id="stat-events">0</div>
                 </div>
-                <div class="bg-white border border-white rounded-2xl px-6 py-4 flex flex-col md:flex-row items-center gap-2 md:gap-5 shadow-sm transition-all hover:shadow-md">
+                <div class="bg-white border border-white rounded-2xl px-6 py-4 flex flex-col md:flex-row items-center gap-2 md:gap-6 shadow-sm transition-all hover:shadow-md">
                     <div class="text-indigo-400 text-[10px] md:text-xs uppercase font-bold tracking-widest">總票數</div>
-                    <div class="text-5xl md:text-6xl font-black font-oswald text-indigo-600 glow-text leading-none" id="stat-tickets">0</div>
+                    <div class="text-5xl md:text-7xl font-black font-oswald text-indigo-600 glow-text leading-none" id="stat-tickets">0</div>
                 </div>
             </div>
 
@@ -211,9 +216,9 @@
             <div class="relative group z-10 max-w-5xl">
                 <div class="relative flex flex-col md:flex-row items-center bg-white rounded-2xl md:rounded-full border border-slate-200 p-1.5 transition-all focus-within:ring-2 focus-within:ring-indigo-500/10 focus-within:border-indigo-500 shadow-sm">
                     <div class="flex items-center flex-grow w-full md:w-auto px-4">
-                        <i class="fas fa-search text-slate-400 mr-3"></i>
+                        <i class="fas fa-search text-slate-400 mr-3 text-lg"></i>
                         <input type="text" id="searchInput" placeholder="搜尋藝人、場館、日期..." 
-                            class="w-full bg-transparent text-slate-800 py-2.5 focus:outline-none placeholder-slate-400 font-medium">
+                            class="w-full bg-transparent text-slate-800 py-2.5 focus:outline-none placeholder-slate-400 font-medium text-lg">
                     </div>
                     <div class="flex flex-wrap md:flex-nowrap gap-2 justify-end w-full md:w-auto px-1 pb-1 md:pb-0">
                         <select id="year-filter" class="cyber-select text-xs">
@@ -221,9 +226,9 @@
                         </select>
                         <select id="month-filter" class="cyber-select text-xs" disabled>
                             <option value="all">月份</option>
-                            <option value="01">1月</option><option value="02">2月</option><option value="03">3月</option>
-                            <option value="04">4月</option><option value="05">5月</option><option value="06">6月</option>
-                            <option value="07">7月</option><option value="08">8月</option><option value="09">9月</option>
+                            <option value="01">01月</option><option value="02">02月</option><option value="03">03月</option>
+                            <option value="04">04月</option><option value="05">05月</option><option value="06">06月</option>
+                            <option value="07">07月</option><option value="08">08月</option><option value="09">09月</option>
                             <option value="10">10月</option><option value="11">11月</option><option value="12">12月</option>
                         </select>
                         <select id="sortSelect" class="cyber-select text-xs">
@@ -240,30 +245,32 @@
     </div>
 
     <!-- 列表內容區 -->
-    <div class="container mx-auto px-4 py-10 max-w-7xl flex-grow">
-        <!-- 讀取中 -->
+    <div class="container mx-auto px-4 py-6 max-w-7xl flex-grow">
+        <!-- 讀取動畫 -->
         <div id="loading" class="flex flex-col items-center justify-center py-20 gap-4">
             <div class="relative w-12 h-12">
                 <div class="absolute inset-0 border-4 border-indigo-100 rounded-full"></div>
                 <div class="absolute inset-0 border-4 border-indigo-600 rounded-full border-t-transparent animate-spin"></div>
             </div>
-            <p class="text-indigo-600 text-xs font-bold tracking-[0.3em] animate-pulse">載入戰績中</p>
+            <p class="text-indigo-600 text-xs font-bold tracking-[0.3em] animate-pulse">載入戰績資料中</p>
         </div>
 
         <div id="record-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 hidden pb-24"></div>
         <div id="no-results" class="hidden text-center py-20 text-slate-400 text-xl font-medium">沒有找到相符的戰績</div>
         
-        <footer class="mt-auto text-center py-10 border-t border-slate-200">
-            <p class="text-slate-400 text-xs font-bold tracking-widest">&copy; 2026 MUIII PROJECT • LIVE RECORDS TRACKER</p>
+        <footer class="mt-auto text-center py-12 border-t border-slate-200">
+            <p class="text-slate-400 text-xs font-bold tracking-widest uppercase">&copy; 2026 MUIII PROJECT • LIVE RECORDS TRACKER</p>
         </footer>
     </div>
 
+    <!-- 回到頂部 -->
     <button id="back-to-top" class="fixed bottom-8 right-8 bg-white border border-slate-200 text-slate-900 w-12 h-12 rounded-full hidden items-center justify-center shadow-xl transition hover:scale-110 hover:bg-indigo-600 hover:text-white z-[2000]"><i class="fas fa-arrow-up"></i></button>
 
     <script>
         const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vThZZurHBpfes9J-dLaoi51jpb0MnQ4oABmBux77r-OO5LOvuoex6lesE4GvZb-UQ5zgiqWEfiHxNQy/pub?output=csv';
-        let allTickets = [], currentYear = 'all', currentMonth = 'all';
+        let allRecords = [], currentYear = 'all', currentMonth = 'all';
 
+        // 關鍵欄位對應（自動偵測）
         let KEY_DATE = '售票日期';
         let KEY_TITLE = '節目名稱';
         let KEY_COUNT = '張數';
@@ -287,7 +294,7 @@
                         KEY_TITLE = keys.find(k => k.includes('節目')) || KEY_TITLE;
                         KEY_COUNT = keys.find(k => k.includes('張數')) || KEY_COUNT;
                     }
-                    allTickets = results.data.filter(item => item[KEY_TITLE]);
+                    allRecords = results.data.filter(item => item[KEY_TITLE]);
                     populateYears();
                     updateDashboard();
                 }
@@ -343,7 +350,7 @@
         }
 
         function populateYears() {
-            const years = [...new Set(allTickets.map(item => (item[KEY_DATE] || '').split('.')[0]))]
+            const years = [...new Set(allRecords.map(item => (item[KEY_DATE] || '').split('.')[0]))]
                             .filter(y => y && y.length === 4).sort().reverse();
             const select = document.getElementById('year-filter');
             select.innerHTML = '<option value="all">年份</option>' + years.map(y => `<option value="${y}">${y}</option>`).join('');
@@ -357,7 +364,7 @@
             
             let current = start;
             const range = end - start;
-            const steps = 20;
+            const steps = 25;
             const increment = range / steps;
             let count = 0;
 
@@ -402,15 +409,15 @@
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             const sortOrder = document.getElementById('sortSelect').value;
 
-            let processedData = processData(allTickets);
+            let processedData = processData(allRecords);
 
             processedData = processedData.filter(item => {
-                const titleStr = (item[KEY_TITLE] || '').toLowerCase();
-                const dateStr = (item[KEY_DATE] || '');
-                const matchSearch = titleStr.includes(searchTerm) || dateStr.includes(searchTerm);
-                const matchYear = currentYear === 'all' || dateStr.startsWith(currentYear);
-                const matchMonth = currentMonth === 'all' || dateStr.split('.')[1] === currentMonth;
-                return matchSearch && matchYear && matchMonth;
+                const dateVal = item[KEY_DATE] || '';
+                const titleMatch = (item[KEY_TITLE] || '').toLowerCase().includes(searchTerm);
+                const dateMatch = dateVal.includes(searchTerm);
+                const yearMatch = currentYear === 'all' || dateVal.startsWith(currentYear);
+                const monthMatch = currentMonth === 'all' || dateVal.split('.')[1] === currentMonth;
+                return (titleMatch || dateMatch) && yearMatch && monthMatch;
             });
 
             processedData.sort((a, b) => {
@@ -452,7 +459,7 @@
                                     <span class="text-[10px] text-slate-400 font-bold">${item.dateData.year}</span>
                                 </div>
                                 <div class="flex-1">
-                                    <h3 class="text-lg font-bold text-slate-900 leading-tight line-clamp-2 min-h-[3rem] mb-1">
+                                    <h3 class="text-xl font-bold text-slate-900 leading-tight line-clamp-2 min-h-[3.5rem] flex items-center">
                                         ${item[KEY_TITLE]}
                                     </h3>
                                 </div>
