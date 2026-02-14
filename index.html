@@ -120,17 +120,25 @@
             text-shadow: 0 0 10px rgba(244, 63, 94, 0.5), 0 0 20px rgba(244, 63, 94, 0.3);
         }
         
-        /* 標籤樣式 */
+        /* 標籤樣式 - 更加顯眼 */
         .price-tag {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 0.75rem;
+            background: rgba(251, 191, 36, 0.1);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.85rem;
             color: #fbbf24;
             font-family: 'Oswald', sans-serif;
             letter-spacing: 0.05em;
             white-space: nowrap;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+        }
+        .price-tag i {
+            margin-right: 6px;
+            font-size: 0.7rem;
+            opacity: 0.7;
         }
     </style>
 </head>
@@ -160,7 +168,7 @@
                 <div class="h-1 w-24 bg-rose-500 mt-4 mx-auto xl:mx-0 rounded-full shadow-[0_0_15px_rgba(244,63,94,0.8)]"></div>
             </div>
 
-            <!-- Stats Dashboard (移除金額，改為2欄) -->
+            <!-- Stats Dashboard -->
             <div class="grid grid-cols-2 gap-4 md:gap-8 w-full xl:w-auto max-w-2xl">
                 <!-- Stat 1 -->
                 <div class="bg-white/5 border border-white/10 rounded-2xl p-4 md:p-8 backdrop-blur-md text-center transform hover:scale-105 transition duration-300">
@@ -342,8 +350,8 @@
                     const isFuture = item.rawDate > new Date();
                     const newBadge = isFuture ? `<span class="absolute top-4 right-4 bg-rose-500 text-white text-[10px] font-bold px-2 py-1 rounded shadow-lg animate-pulse">UPCOMING</span>` : '';
 
-                    // 產生價位標籤 HTML
-                    const tagsHtml = item.priceTags.map(tag => `<span class="price-tag">${tag}</span>`).join('');
+                    // 產生價位標籤 HTML (加入 icon)
+                    const tagsHtml = item.priceTags.map(tag => `<span class="price-tag"><i class="fas fa-tag"></i>${tag}</span>`).join('');
 
                     card.innerHTML = `
                         ${newBadge}
@@ -366,16 +374,9 @@
                         <!-- 虛線分隔 -->
                         <div class="ticket-dashed-line mx-4"></div>
 
-                        <!-- 下半部：票務細節 (修改為顯示分組標籤) -->
+                        <!-- 下半部：僅顯示票價組合 -->
                         <div class="p-4 bg-black/20">
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="text-[10px] text-gray-400 uppercase tracking-wider">TOTAL TICKETS</span>
-                                <span class="bg-rose-500/20 text-rose-400 text-xs font-bold px-2 py-1 rounded border border-rose-500/30">
-                                    <i class="fas fa-ticket-alt mr-1"></i>${item.parsedCount} 張
-                                </span>
-                            </div>
-                            <!-- 價位分組標籤區 -->
-                            <div class="flex flex-wrap gap-2 mt-2">
+                            <div class="flex flex-wrap gap-2">
                                 ${tagsHtml}
                             </div>
                         </div>
