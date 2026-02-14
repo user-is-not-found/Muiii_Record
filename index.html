@@ -25,19 +25,19 @@
                         oswald: ['Oswald', 'sans-serif'],
                     },
                     animation: {
-                        'fade-in-up': 'fadeInUp 0.6s ease-out forwards',
                         'blob': 'blob 15s infinite',
+                        'fade-in-up': 'fadeInUp 0.6s ease-out forwards',
                     },
                     keyframes: {
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -40px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        },
                         fadeInUp: {
                             '0%': { opacity: '0', transform: 'translateY(15px)' },
                             '100%': { opacity: '1', transform: 'translateY(0)' },
-                        },
-                        blob: {
-                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
-                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
-                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
-                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
                         }
                     }
                 }
@@ -47,8 +47,8 @@
     <style>
         :root {
             --primary: #4f46e5;
-            --primary-dark: #3730a3;
             --bg-color: #f8fafc;
+            --card-bg: rgba(255, 255, 255, 0.9);
         }
 
         body {
@@ -60,153 +60,174 @@
         
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-        /* 彩色票券卡片設計 */
+        /* 擬真票券卡片設計 (淺色磨砂版) */
         .ticket-card {
-            background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 1);
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.3);
             overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
         }
         
         .ticket-card:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 25px 40px -10px rgba(79, 70, 229, 0.4);
-            border-color: rgba(255, 255, 255, 0.4);
+            transform: translateY(-8px) scale(1.01);
+            box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.08);
+            border-color: var(--primary);
         }
 
-        /* 票券彩色虛線 */
+        /* 票券虛線 */
         .ticket-dashed-line {
-            border-bottom: 2px dashed rgba(255, 255, 255, 0.2);
+            border-bottom: 2px dashed #e2e8f0;
             position: relative;
         }
         .ticket-dashed-line::before, .ticket-dashed-line::after {
             content: ''; position: absolute; width: 22px; height: 22px;
             background-color: var(--bg-color); border-radius: 50%; top: -11px;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.02);
         }
-        .ticket-dashed-line::before { left: -36px; }
-        .ticket-dashed-line::after { right: -36px; }
+        .ticket-dashed-line::before { left: -34px; }
+        .ticket-dashed-line::after { right: -34px; }
 
-        /* 介面控制元件 */
-        .cyber-select, .search-input {
+        /* 數據加重 */
+        .stat-heavy { text-shadow: 0 2px 10px rgba(79, 70, 229, 0.15); }
+        
+        /* 修正下拉選單樣式：淺色版 */
+        .cyber-select {
             background-color: #ffffff;
+            color: #1e293b;
             border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 0.6rem 1rem;
+            border-radius: 9999px;
+            padding: 0.5rem 1.8rem 0.5rem 1rem;
+            font-size: 0.85rem;
+            cursor: pointer;
             transition: all 0.2s;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2364748b' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.6rem center;
+            background-repeat: no-repeat;
+            background-size: 1.1em;
             outline: none;
             box-shadow: 0 1px 2px rgba(0,0,0,0.03);
         }
-        .cyber-select:focus, .search-input:focus { border-color: var(--primary); ring: 2px; ring-color: rgba(79, 70, 229, 0.1); }
-        
-        .cyber-select {
-            appearance: none;
-            padding-right: 2.2rem;
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2364748b' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-            background-position: right 0.8rem center;
-            background-repeat: no-repeat;
-            background-size: 1.1em;
-        }
+        .cyber-select option { background-color: #ffffff; color: #1e293b; }
+        .cyber-select:hover { border-color: var(--primary); }
 
+        /* 系統按鈕樣式 */
         .sys-btn {
-            height: 40px; padding: 0 16px; border-radius: 12px;
+            height: 38px; padding: 0 16px; border-radius: 9999px;
             background: #ffffff; border: 1px solid #e2e8f0; color: #64748b;
             display: flex; align-items: center; justify-content: center; gap: 8px;
-            transition: all 0.2s; cursor: pointer; font-size: 0.85rem; font-weight: 700;
+            transition: all 0.3s; cursor: pointer; font-size: 0.85rem; font-weight: 700;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
         }
         .sys-btn:hover { background: #f1f5f9; color: var(--primary); border-color: var(--primary); transform: translateY(-1px); }
         
         @media (max-width: 768px) {
-            .sys-btn { width: 40px; padding: 0; border-radius: 50%; }
+            .sys-btn { width: 38px; padding: 0; border-radius: 50%; }
             .sys-btn span { display: none; }
         }
     </style>
 </head>
-<body class="flex flex-col">
+<body class="flex flex-col selection:bg-indigo-100 selection:text-indigo-900">
 
-    <!-- 動態背景流光 -->
+    <!-- 動態流光背景裝飾 -->
     <div class="fixed inset-0 pointer-events-none z-[-1] overflow-hidden">
         <div class="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-indigo-100/50 rounded-full mix-blend-multiply filter blur-[100px] animate-blob"></div>
         <div class="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-50/70 rounded-full mix-blend-multiply filter blur-[100px] animate-blob animation-delay-2000"></div>
     </div>
 
-    <!-- 頂部導覽列 -->
+    <!-- 頂部區：非凍結模式 -->
     <div class="pt-8 pb-6 border-b border-slate-100 bg-white/60 backdrop-blur-xl">
         <div class="container mx-auto px-4 max-w-7xl">
             
-            <!-- 標題與系統按鈕 (手機版平行佈局，移除 VIP) -->
-            <div class="flex justify-between items-center mb-8 gap-4">
-                <div class="flex items-center gap-4">
-                    <h1 class="text-4xl md:text-5xl font-black font-oswald tracking-tighter italic bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-500">
-                        MUIII
-                    </h1>
+            <!-- 標題列：標題與系統按鈕水平平行 -->
+            <div class="flex justify-between items-center mb-8 w-full gap-4">
+                <div class="text-left relative flex items-center gap-4">
+                    <div class="relative shrink-0">
+                        <h1 class="text-5xl md:text-6xl font-black font-oswald tracking-tighter italic bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-rose-500">
+                            MUIII
+                        </h1>
+                        <span class="absolute -top-2 -right-6 bg-rose-500 text-white text-[10px] font-black px-1.5 py-0.5 transform rotate-12 shadow-sm rounded-sm">VIP</span>
+                    </div>
                     <div class="h-8 w-px bg-slate-200 hidden md:block"></div>
-                    <h2 class="text-lg font-bold tracking-widest text-slate-500 hidden sm:block uppercase">搶票戰績清單</h2>
+                    <h2 class="text-xl md:text-2xl font-bold tracking-widest text-slate-800 hidden sm:block uppercase">戰績紀錄</h2>
                 </div>
 
-                <div class="flex gap-2">
-                    <button id="install-btn" class="sys-btn hidden"><i class="fas fa-download text-xs"></i><span>安裝 App</span></button>
-                    <button id="reload-btn" class="sys-btn"><i class="fas fa-sync-alt text-xs"></i><span>重整資料</span></button>
+                <div class="flex gap-2.5 shrink-0">
+                    <button id="install-btn" class="sys-btn hidden" title="安裝 App"><i class="fas fa-download"></i><span>安裝 App</span></button>
+                    <button id="reload-btn" class="sys-btn"><i class="fas fa-sync-alt"></i><span>重整資料</span></button>
                 </div>
             </div>
 
-            <!-- 工具列：搜尋與篩選 -->
-            <div class="flex flex-col lg:flex-row items-center gap-3">
-                <div class="relative flex-grow w-full">
-                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                    <input type="text" id="searchInput" placeholder="搜尋藝人、場館、日期..." 
-                        class="search-input w-full pl-11 font-bold text-slate-700">
+            <!-- Stats：數據放大展示區 (淺色版) -->
+            <div class="grid grid-cols-2 gap-4 md:gap-8 mb-8 md:w-fit">
+                <div class="bg-white border border-white rounded-2xl px-6 py-4 flex flex-col md:flex-row items-center gap-2 md:gap-6 shadow-sm transition-all hover:shadow-md">
+                    <div class="text-slate-400 text-[10px] md:text-xs uppercase font-black tracking-widest">總征戰</div>
+                    <div class="text-5xl md:text-7xl font-black font-oswald text-slate-900 leading-none" id="stat-events">0</div>
                 </div>
-                <div class="flex flex-wrap md:flex-nowrap gap-2 w-full lg:w-auto">
-                    <select id="year-filter" class="cyber-select flex-1 md:w-32 text-sm font-bold">
-                        <option value="all">年份</option>
-                    </select>
-                    <select id="month-filter" class="cyber-select flex-1 md:w-32 text-sm font-bold" disabled>
-                        <option value="all">月份</option>
-                        <option value="01">01月</option><option value="02">02月</option><option value="03">03月</option>
-                        <option value="04">04月</option><option value="05">05月</option><option value="06">06月</option>
-                        <option value="07">07月</option><option value="08">08月</option><option value="09">09月</option>
-                        <option value="10">10月</option><option value="11">11月</option><option value="12">12月</option>
-                    </select>
-                    <select id="sortSelect" class="cyber-select flex-1 md:w-32 text-sm font-bold">
-                        <option value="desc">最新優先</option>
-                        <option value="asc">最早優先</option>
-                    </select>
-                    <button id="reset-btn" class="bg-slate-900 hover:bg-black text-white px-6 h-11 rounded-xl flex items-center gap-2 transition text-sm font-black shrink-0 shadow-lg shadow-slate-200">
-                        <i class="fas fa-undo text-xs"></i><span>重置</span>
-                    </button>
+                <div class="bg-white border border-white rounded-2xl px-6 py-4 flex flex-col md:flex-row items-center gap-2 md:gap-6 shadow-sm transition-all hover:shadow-md">
+                    <div class="text-indigo-400 text-[10px] md:text-xs uppercase font-black tracking-widest">總票數</div>
+                    <div class="text-5xl md:text-7xl font-black font-oswald text-indigo-600 stat-heavy leading-none" id="stat-tickets">0</div>
+                </div>
+            </div>
+
+            <!-- 工具列：搜尋與篩選 (優化佈局防止按鈕掉落) -->
+            <div class="relative group z-10 max-w-6xl">
+                <div class="relative flex flex-col lg:flex-row items-center bg-white rounded-2xl lg:rounded-full border border-slate-200 p-1.5 transition-all focus-within:ring-4 focus-within:ring-indigo-500/5 shadow-sm">
+                    <!-- 搜尋列 -->
+                    <div class="flex items-center flex-grow w-full px-4 mb-2 lg:mb-0">
+                        <i class="fas fa-search text-slate-400 mr-3 text-lg"></i>
+                        <input type="text" id="searchInput" placeholder="搜尋藝人、場館、日期..." 
+                            class="w-full bg-transparent text-slate-800 py-2.5 focus:outline-none placeholder-slate-300 font-bold">
+                    </div>
+                    <!-- 篩選群組 -->
+                    <div class="grid grid-cols-2 sm:flex sm:flex-nowrap gap-2 w-full lg:w-auto px-1 pb-1 lg:pb-0">
+                        <select id="year-filter" class="cyber-select text-xs font-bold">
+                            <option value="all">年份</option>
+                        </select>
+                        <select id="month-filter" class="cyber-select text-xs font-bold" disabled>
+                            <option value="all">月份</option>
+                            <option value="01">01月</option><option value="02">02月</option><option value="03">03月</option>
+                            <option value="04">04月</option><option value="05">05月</option><option value="06">06月</option>
+                            <option value="07">07月</option><option value="08">08月</option><option value="09">09月</option>
+                            <option value="10">10月</option><option value="11">11月</option><option value="12">12月</option>
+                        </select>
+                        <select id="sortSelect" class="cyber-select text-xs font-bold">
+                            <option value="desc">新 → 舊</option>
+                            <option value="asc">舊 → 新</option>
+                        </select>
+                        <button id="reset-btn" class="bg-slate-900 hover:bg-black text-white px-5 h-9 rounded-full flex items-center justify-center gap-2 transition text-xs font-bold shrink-0 shadow-lg">
+                            <i class="fas fa-undo text-[10px]"></i><span>重置</span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 內容清單 -->
+    <!-- 列表內容區 -->
     <div class="container mx-auto px-4 py-8 max-w-7xl flex-grow">
-        <!-- 讀取狀態 -->
+        <!-- 讀取動畫 -->
         <div id="loading" class="flex flex-col items-center justify-center py-20 gap-4">
             <div class="w-12 h-12 border-4 border-slate-100 border-t-indigo-600 rounded-full animate-spin shadow-inner"></div>
-            <p class="text-indigo-600 text-xs font-black tracking-[0.3em] uppercase">同步資料中...</p>
+            <p class="text-indigo-600 text-xs font-black tracking-[0.3em] animate-pulse uppercase">載入資料中</p>
         </div>
 
-        <!-- 票券網格 -->
         <div id="record-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 hidden pb-24"></div>
-        
-        <!-- 無結果提示 -->
-        <div id="no-results" class="hidden text-center py-32">
-            <i class="fas fa-ticket-alt text-slate-200 text-6xl mb-4"></i>
-            <p class="text-slate-400 font-bold text-lg">找不到相關的戰績紀錄</p>
-        </div>
+        <div id="no-results" class="hidden text-center py-20 text-slate-400 text-xl font-bold">沒有找到相符的戰績紀錄</div>
     </div>
 
-    <!-- 頁尾宣告 -->
+    <!-- 頁尾 -->
     <footer class="mt-auto text-center py-12 border-t border-slate-100 bg-white/80">
         <p class="text-slate-300 text-[10px] font-black tracking-[0.5em] uppercase">&copy; 2026 MUIII PROJECT • LIVE RECORDS TRACKER</p>
     </footer>
 
     <!-- 回到頂部 -->
-    <button id="back-to-top" class="fixed bottom-8 right-8 bg-indigo-600 text-white w-12 h-12 rounded-full hidden items-center justify-center shadow-xl transition hover:scale-110 z-[1000]"><i class="fas fa-arrow-up"></i></button>
+    <button id="back-to-top" class="fixed bottom-8 right-8 bg-white border border-slate-100 text-slate-900 w-12 h-12 rounded-full hidden items-center justify-center shadow-xl transition hover:scale-110 hover:bg-indigo-600 hover:text-white z-[2000]"><i class="fas fa-arrow-up"></i></button>
 
     <script>
         const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vThZZurHBpfes9J-dLaoi51jpb0MnQ4oABmBux77r-OO5LOvuoex6lesE4GvZb-UQ5zgiqWEfiHxNQy/pub?output=csv';
@@ -222,10 +243,8 @@
         }
 
         async function fetchRecords() {
-            const loading = document.getElementById('loading');
-            loading.classList.remove('hidden');
+            document.getElementById('loading').classList.remove('hidden');
             const ts = new Date().getTime();
-            
             Papa.parse(csvUrl + '&t=' + ts, {
                 download: true, header: true, skipEmptyLines: true,
                 transformHeader: h => h.trim().replace(/^\uFEFF/, ''),
@@ -239,22 +258,16 @@
                     allRecords = results.data.filter(item => item[KEY_TITLE] && item[KEY_TITLE].trim() !== '');
                     populateYears();
                     updateDashboard();
-                    loading.classList.add('hidden');
-                },
-                error: () => {
-                    loading.innerHTML = '<p class="text-red-500 font-bold">資料讀取失敗</p>';
                 }
             });
         }
 
         function setupEventListeners() {
-            const search = document.getElementById('searchInput');
-            const sort = document.getElementById('sortSelect');
+            document.getElementById('searchInput').addEventListener('input', updateDashboard);
+            document.getElementById('sortSelect').addEventListener('change', updateDashboard);
+            
             const yearFilter = document.getElementById('year-filter');
             const monthFilter = document.getElementById('month-filter');
-
-            search.addEventListener('input', updateDashboard);
-            sort.addEventListener('change', updateDashboard);
             
             yearFilter.addEventListener('change', (e) => {
                 currentYear = e.target.value;
@@ -269,12 +282,13 @@
             });
 
             document.getElementById('reset-btn').onclick = () => {
-                search.value = '';
-                sort.value = 'desc';
+                document.getElementById('searchInput').value = '';
+                document.getElementById('sortSelect').value = 'desc';
                 yearFilter.value = 'all';
                 monthFilter.value = 'all';
                 monthFilter.disabled = true;
-                currentYear = 'all'; currentMonth = 'all';
+                currentYear = 'all'; 
+                currentMonth = 'all';
                 updateDashboard();
             };
 
@@ -288,7 +302,7 @@
             document.getElementById('install-btn').onclick = () => { if(defP) defP.prompt(); };
 
             window.onscroll = () => {
-                document.getElementById('back-to-top').style.display = window.scrollY > 400 ? 'flex' : 'none';
+                document.getElementById('back-to-top').style.display = window.scrollY > 500 ? 'flex' : 'none';
             };
             document.getElementById('back-to-top').onclick = () => window.scrollTo({top: 0, behavior: 'smooth'});
         }
@@ -298,6 +312,37 @@
                             .filter(y => y && y.length === 4).sort().reverse();
             const select = document.getElementById('year-filter');
             select.innerHTML = '<option value="all">年份</option>' + years.map(y => `<option value="${y}">${y} 年</option>`).join('');
+        }
+
+        function animateValue(id, end) {
+            const obj = document.getElementById(id);
+            const currentStr = obj.innerText.replace(/,/g, '');
+            const start = parseInt(currentStr) || 0;
+            if (start === end) return;
+            
+            let current = start;
+            const range = end - start;
+            const steps = 25;
+            const increment = range / steps;
+            let count = 0;
+            const timer = setInterval(() => {
+                current += increment;
+                count++;
+                if (count >= steps) {
+                    obj.innerText = end.toLocaleString();
+                    clearInterval(timer);
+                } else {
+                    obj.innerText = Math.round(current).toLocaleString();
+                }
+            }, 30);
+        }
+
+        function parseTickets(str) {
+            let count = 0;
+            const regex = /(\d+)\*(\d+)/g;
+            let match;
+            while ((match = regex.exec(str)) !== null) count += parseInt(match[2]);
+            return count || (str && str.trim() !== '' ? 1 : 0);
         }
 
         function updateDashboard() {
@@ -325,6 +370,11 @@
         function renderUI(data) {
             const grid = document.getElementById('record-grid');
             const noResults = document.getElementById('no-results');
+            let totalTickets = 0;
+            data.forEach(d => totalTickets += parseTickets(d[KEY_COUNT] || ''));
+
+            animateValue('stat-events', data.length);
+            animateValue('stat-tickets', totalTickets);
 
             grid.innerHTML = ''; 
             if (data.length === 0) {
@@ -343,8 +393,8 @@
                     const mStr = monthNames[parseInt(dateParts[1]) - 1] || '---';
                     
                     const tags = (item[KEY_COUNT] || '').split(' ').filter(t => t.trim()).map(tag => 
-                        `<span class="bg-white/20 text-white border border-white/30 px-3 py-1.5 rounded-lg text-[11px] font-bold flex items-center shadow-sm">
-                            <i class="fas fa-ticket-alt mr-2 opacity-60"></i>${tag}
+                        `<span class="bg-indigo-50 text-indigo-600 border border-indigo-100 px-3 py-1.5 rounded-lg text-[10px] font-bold flex items-center shadow-sm">
+                            <i class="fas fa-ticket-alt mr-2 opacity-30"></i>${tag}
                         </span>`
                     ).join('');
 
@@ -352,27 +402,28 @@
                         <div class="flex-1 flex flex-col">
                             <div class="flex items-stretch gap-0 h-full">
                                 <!-- 日期區 -->
-                                <div class="flex flex-col items-center justify-center p-5 min-w-[95px] text-center border-r border-white/10 bg-white/5">
-                                    <span class="text-[10px] font-black tracking-widest text-white/80">${mStr}</span>
-                                    <span class="text-3xl font-black font-oswald my-1 text-white">${dateParts[2] || '--'}</span>
-                                    <span class="text-[10px] font-bold text-white/60">${dateParts[0] || '----'}</span>
+                                <div class="flex flex-col items-center justify-center p-5 min-w-[95px] text-center border-r border-slate-100 bg-slate-50">
+                                    <span class="text-[10px] font-black tracking-widest text-indigo-600 uppercase">${mStr}</span>
+                                    <span class="text-3xl font-black font-oswald my-1 text-slate-900">${dateParts[2] || '--'}</span>
+                                    <span class="text-[10px] font-bold text-slate-400">${dateParts[0] || '----'}</span>
                                 </div>
                                 <!-- 資訊內容區 -->
                                 <div class="p-6 flex-1 flex items-center">
-                                    <h3 class="text-xl font-black text-white leading-tight line-clamp-3">
+                                    <h3 class="text-lg font-black text-slate-800 leading-tight line-clamp-3">
                                         ${item[KEY_TITLE]}
                                     </h3>
                                 </div>
                             </div>
                         </div>
                         <div class="ticket-dashed-line mx-8"></div>
-                        <div class="p-6 bg-white/5">
-                            <div class="flex flex-wrap gap-2.5">${tags}</div>
+                        <div class="p-6 bg-slate-50/50 flex flex-wrap gap-2">
+                            ${tags}
                         </div>
                     `;
                     grid.appendChild(card);
                 });
             }
+            document.getElementById('loading').classList.add('hidden');
         }
 
         init();
