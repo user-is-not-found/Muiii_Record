@@ -2,8 +2,14 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Muiii 搶票戰績</title>
+    
+    <!-- PWA 設定 -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#050505">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2972/2972528.png">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -41,7 +47,7 @@
     <style>
         body {
             background-color: #050505;
-            overflow-x: hidden;
+            overflow-x: hidden; /* 防止水平溢出 */
         }
         
         ::-webkit-scrollbar { width: 8px; }
@@ -89,13 +95,12 @@
 
         .neon-text { text-shadow: 0 0 10px rgba(244, 63, 94, 0.5); }
         
-        /* 標籤樣式 */
         .price-tag {
             background: rgba(14, 165, 233, 0.15);
             border: 1px solid rgba(14, 165, 233, 0.3);
-            padding: 6px 10px;
+            padding: 4px 10px;
             border-radius: 6px;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: #38bdf8;
             font-family: 'Oswald', sans-serif;
             letter-spacing: 0.05em;
@@ -103,15 +108,49 @@
             display: inline-flex;
             align-items: center;
             transition: all 0.2s;
+            white-space: nowrap; /* 防止標籤換行 */
         }
         .price-tag:hover {
             background: rgba(14, 165, 233, 0.25);
             border-color: rgba(14, 165, 233, 0.5);
             transform: translateY(-1px);
         }
+
+        /* 自定義選單樣式，融入 Cyberpunk 風格 */
+        .cyber-select {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #e5e7eb;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 9999px;
+            padding: 0.5rem 2rem 0.5rem 1rem;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+        }
+        .cyber-select:hover { background-color: rgba(255, 255, 255, 0.2); border-color: rgba(255,255,255,0.3); }
+        .cyber-select:disabled { opacity: 0.5; cursor: not-allowed; }
+        .cyber-select option { background-color: #1a1a1a; color: white; }
+
+        /* 系統按鈕群組 */
+        .sys-btn {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #94a3b8;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .sys-btn:hover { background: rgba(255,255,255,0.15); color: #fff; transform: rotate(15deg); border-color: rgba(255,255,255,0.3); }
     </style>
 </head>
-<body class="min-h-screen text-white selection:bg-rose-500 selection:text-white">
+<body class="min-h-screen text-white selection:bg-rose-500 selection:text-white flex flex-col">
 
     <!-- 背景特效 -->
     <div class="fixed inset-0 pointer-events-none z-[-1]">
@@ -120,10 +159,16 @@
         <div class="absolute -bottom-32 left-1/3 w-96 h-96 bg-blue-600 rounded-full mix-blend-multiply filter blur-[128px] opacity-20 animate-blob animation-delay-4000"></div>
     </div>
 
-    <div class="container mx-auto px-4 py-8 md:py-12 max-w-7xl">
+    <!-- 右上角系統工具列 (PWA/Reload) -->
+    <div class="absolute top-4 right-4 z-50 flex gap-2">
+        <button id="install-btn" class="sys-btn hidden" title="安裝 App"><i class="fas fa-download"></i></button>
+        <button id="reload-btn" class="sys-btn" title="重新整理"><i class="fas fa-sync-alt"></i></button>
+    </div>
+
+    <div class="container mx-auto px-4 py-8 md:py-12 max-w-7xl flex-grow">
         
-        <!-- 儀表板 Header -->
-        <header class="flex flex-col xl:flex-row justify-between items-center mb-16 gap-8 animate-fade-in-up">
+        <!-- Header -->
+        <header class="flex flex-col xl:flex-row justify-between items-center mb-12 gap-8 animate-fade-in-up">
             <div class="text-center xl:text-left relative">
                 <div class="inline-block relative">
                     <h1 class="text-6xl md:text-8xl font-black font-oswald tracking-tighter italic bg-clip-text text-transparent bg-gradient-to-r from-rose-500 via-purple-500 to-blue-500 pb-2">
@@ -137,45 +182,60 @@
                 <div class="h-1 w-24 bg-rose-500 mt-4 mx-auto xl:mx-0 rounded-full shadow-[0_0_15px_rgba(244,63,94,0.8)]"></div>
             </div>
 
-            <!-- Stats Dashboard (3欄設計) -->
+            <!-- Stats Dashboard -->
             <div class="grid grid-cols-3 gap-3 md:gap-6 w-full xl:w-auto">
-                <!-- Stat 1: 總場次 -->
                 <div class="bg-white/5 border border-white/10 rounded-2xl p-4 md:p-6 backdrop-blur-md text-center transform hover:scale-105 transition duration-300">
                     <div class="text-gray-400 text-xs md:text-sm uppercase tracking-wider mb-2 font-bold">總征戰</div>
-                    <div class="text-3xl md:text-5xl font-black font-oswald text-white counter" data-target="0" id="stat-events">0</div>
+                    <div class="text-3xl md:text-5xl font-black font-oswald text-white counter" id="stat-events">0</div>
                     <div class="text-xs text-rose-400 mt-1">EVENTS</div>
                 </div>
-                
-                <!-- Stat 2: 總票數 -->
-                <div class="bg-white/5 border border-white/10 rounded-2xl p-4 md:p-6 backdrop-blur-md text-center transform hover:scale-105 transition duration-300 group">
+                <div class="bg-white/5 border border-white/10 rounded-2xl p-4 md:p-6 backdrop-blur-md text-center transform hover:scale-105 transition duration-300">
                     <div class="text-gray-400 text-xs md:text-sm uppercase tracking-wider mb-2 font-bold">總票數</div>
-                    <div class="text-3xl md:text-5xl font-black font-oswald text-rose-500 neon-text counter" data-target="0" id="stat-tickets">0</div>
+                    <div class="text-3xl md:text-5xl font-black font-oswald text-rose-500 neon-text counter" id="stat-tickets">0</div>
                     <div class="text-xs text-rose-400 mt-1">TICKETS</div>
                 </div>
-
-                <!-- Stat 3: 即將到來 (取代金額) -->
                 <div class="bg-white/5 border border-white/10 rounded-2xl p-4 md:p-6 backdrop-blur-md text-center transform hover:scale-105 transition duration-300">
                     <div class="text-gray-400 text-xs md:text-sm uppercase tracking-wider mb-2 font-bold">即將開演</div>
-                    <div class="text-3xl md:text-5xl font-black font-oswald text-sky-400 counter animate-pulse-slow" data-target="0" id="stat-upcoming">0</div>
+                    <div class="text-3xl md:text-5xl font-black font-oswald text-sky-400 counter animate-pulse-slow" id="stat-upcoming">0</div>
                     <div class="text-xs text-sky-500 mt-1">UPCOMING</div>
                 </div>
             </div>
         </header>
 
-        <!-- 搜尋與篩選 -->
-        <div class="relative max-w-2xl mx-auto mb-16 group z-10 animate-fade-in-up" style="animation-delay: 0.2s;">
+        <!-- 搜尋與篩選 (融合在搜尋列中) -->
+        <div class="relative max-w-4xl mx-auto mb-16 group z-10 animate-fade-in-up" style="animation-delay: 0.2s;">
             <div class="absolute -inset-1 bg-gradient-to-r from-rose-600 to-purple-600 rounded-full blur opacity-40 group-hover:opacity-100 transition duration-500"></div>
-            <div class="relative flex items-center bg-black rounded-full border border-white/10 shadow-2xl overflow-hidden">
-                <div class="pl-6 text-gray-400">
-                    <i class="fas fa-search text-lg"></i>
+            <div class="relative flex flex-col md:flex-row items-center bg-black rounded-3xl md:rounded-full border border-white/10 shadow-2xl overflow-hidden p-2">
+                
+                <!-- 搜尋框 -->
+                <div class="flex items-center flex-grow w-full md:w-auto px-4">
+                    <i class="fas fa-search text-gray-400 text-lg mr-3"></i>
+                    <input type="text" id="searchInput" placeholder="搜尋歌手、演唱會..." 
+                        class="w-full bg-transparent text-white py-3 focus:outline-none placeholder-gray-600 font-medium text-lg">
                 </div>
-                <input type="text" id="searchInput" placeholder="搜尋歌手、演唱會名稱..." 
-                    class="w-full bg-transparent text-white px-4 py-4 focus:outline-none placeholder-gray-600 font-medium text-lg">
-                <div class="pr-2">
-                     <select id="sortSelect" class="bg-white/10 text-white text-sm rounded-full py-2 px-4 focus:outline-none cursor-pointer border-none hover:bg-white/20 transition">
-                        <option value="desc" class="bg-black text-gray-300">日期：新 → 舊</option>
-                        <option value="asc" class="bg-black text-gray-300">日期：舊 → 新</option>
+
+                <!-- 篩選器群組 -->
+                <div class="flex flex-wrap md:flex-nowrap gap-2 justify-end w-full md:w-auto px-2 pb-2 md:pb-0">
+                    <select id="year-filter" class="cyber-select flex-grow md:flex-grow-0">
+                        <option value="all">年份</option>
                     </select>
+                    
+                    <select id="month-filter" class="cyber-select flex-grow md:flex-grow-0" disabled>
+                        <option value="all">月份</option>
+                        <option value="01">1月</option><option value="02">2月</option><option value="03">3月</option>
+                        <option value="04">4月</option><option value="05">5月</option><option value="06">6月</option>
+                        <option value="07">7月</option><option value="08">8月</option><option value="09">9月</option>
+                        <option value="10">10月</option><option value="11">11月</option><option value="12">12月</option>
+                    </select>
+
+                    <select id="sortSelect" class="cyber-select flex-grow md:flex-grow-0">
+                        <option value="desc">新 → 舊</option>
+                        <option value="asc">舊 → 新</option>
+                    </select>
+
+                    <button id="reset-btn" class="bg-rose-500 hover:bg-rose-600 text-white w-10 h-10 rounded-full flex items-center justify-center transition flex-shrink-0" title="重置">
+                        <i class="fas fa-undo"></i>
+                    </button>
                 </div>
             </div>
         </div>
@@ -196,21 +256,71 @@
 
     <script>
         const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vThZZurHBpfes9J-dLaoi51jpb0MnQ4oABmBux77r-OO5LOvuoex6lesE4GvZb-UQ5zgiqWEfiHxNQy/pub?output=csv';
-        let allRecords = [];
+        let allRecords = [], currentYear = 'all', currentMonth = 'all';
+
+        // 初始化 PWA 與資料
+        function init() {
+            if ('serviceWorker' in navigator) navigator.serviceWorker.register('service-worker.js');
+            fetchRecords();
+            setupEventListeners();
+        }
 
         async function fetchRecords() {
-            Papa.parse(csvUrl, {
-                download: true,
-                header: true,
-                skipEmptyLines: true,
+            const ts = new Date().getTime(); // 防快取
+            Papa.parse(csvUrl + '&t=' + ts, {
+                download: true, header: true, skipEmptyLines: true,
                 complete: function(results) {
                     allRecords = results.data.filter(item => item.節目名稱);
+                    populateYears();
                     updateDashboard();
                 }
             });
         }
 
-        // 動畫數字
+        function setupEventListeners() {
+            document.getElementById('searchInput').addEventListener('input', updateDashboard);
+            document.getElementById('sortSelect').addEventListener('change', updateDashboard);
+            document.getElementById('year-filter').addEventListener('change', (e) => {
+                currentYear = e.target.value;
+                const m = document.getElementById('month-filter');
+                m.disabled = currentYear === 'all';
+                if(currentYear === 'all') { currentMonth = 'all'; m.value = 'all'; }
+                updateDashboard();
+            });
+            document.getElementById('month-filter').addEventListener('change', (e) => {
+                currentMonth = e.target.value;
+                updateDashboard();
+            });
+            document.getElementById('reset-btn').addEventListener('click', () => {
+                document.getElementById('searchInput').value = '';
+                document.getElementById('year-filter').value = 'all';
+                document.getElementById('month-filter').value = 'all';
+                document.getElementById('month-filter').disabled = true;
+                currentYear = 'all'; currentMonth = 'all';
+                updateDashboard();
+            });
+            document.getElementById('reload-btn').onclick = fetchRecords;
+            
+            // PWA 安裝按鈕
+            let defP;
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault(); defP = e;
+                document.getElementById('install-btn').classList.remove('hidden');
+            });
+            document.getElementById('install-btn').onclick = () => { if(defP) defP.prompt(); };
+        }
+
+        function populateYears() {
+            const years = [...new Set(allRecords.map(item => {
+                const date = item.售票日期 || '';
+                return date.split('.')[0];
+            }))].filter(y => y && y.length === 4).sort().reverse();
+            
+            const select = document.getElementById('year-filter');
+            select.innerHTML = '<option value="all">年份</option>';
+            years.forEach(y => select.innerHTML += `<option value="${y}">${y}</option>`);
+        }
+
         function animateValue(obj, start, end, duration) {
             let startTimestamp = null;
             const step = (timestamp) => {
@@ -228,8 +338,6 @@
             return data.map(item => {
                 let ticketCount = 0;
                 const ticketString = item.張數 || '';
-                
-                // 計算總張數(僅用於頂部統計)
                 const regex = /(\d+)\*(\d+)/g;
                 let match;
                 while ((match = regex.exec(ticketString)) !== null) {
@@ -237,11 +345,12 @@
                 }
                 if (ticketCount === 0 && ticketString.trim() !== '') ticketCount = 1;
 
-                // 產生標籤 (空格分割)
                 const priceTags = ticketString.split(' ').filter(s => s.trim() !== '');
-
-                // 日期解析
-                let dateObj = new Date(item.售票日期?.replace(/\./g, '-') || Date.now());
+                
+                // 日期處理
+                const dateStr = item.售票日期 || '';
+                const dateParts = dateStr.split('.');
+                const dateObj = new Date(dateStr.replace(/\./g, '-'));
                 const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
                 
                 return { 
@@ -249,11 +358,11 @@
                     parsedCount: ticketCount, 
                     priceTags: priceTags,
                     dateData: { 
-                        year: dateObj.getFullYear(), 
-                        month: monthNames[dateObj.getMonth()], 
-                        day: String(dateObj.getDate()).padStart(2, '0') 
+                        year: dateParts[0] || '----', 
+                        month: dateObj instanceof Date && !isNaN(dateObj) ? monthNames[dateObj.getMonth()] : '--', 
+                        day: dateParts[2] || '--'
                     },
-                    rawDate: dateObj
+                    rawDate: dateStr
                 };
             });
         }
@@ -264,13 +373,14 @@
 
             let processedData = processData(allRecords);
 
-            if (searchTerm) {
-                processedData = processedData.filter(item => 
-                    item.節目名稱.toLowerCase().includes(searchTerm)
-                );
-            }
+            processedData = processedData.filter(item => {
+                const matchSearch = item.節目名稱.toLowerCase().includes(searchTerm) || item.rawDate.includes(searchTerm);
+                const matchYear = currentYear === 'all' || item.rawDate.startsWith(currentYear);
+                const matchMonth = currentMonth === 'all' || (item.rawDate.split('.')[1] === currentMonth);
+                return matchSearch && matchYear && matchMonth;
+            });
 
-            processedData.sort((a, b) => sortOrder === 'desc' ? b.rawDate - a.rawDate : a.rawDate - b.rawDate);
+            processedData.sort((a, b) => sortOrder === 'desc' ? b.rawDate.localeCompare(a.rawDate) : a.rawDate.localeCompare(b.rawDate));
 
             renderUI(processedData);
         }
@@ -279,20 +389,18 @@
             const grid = document.getElementById('record-grid');
             const noResults = document.getElementById('no-results');
             
-            // 統計
             let totalTickets = 0;
             let upcomingCount = 0;
-            const today = new Date();
+            const todayStr = new Date().toISOString().slice(0,10).replace(/-/g, '.');
 
             data.forEach(d => {
                 totalTickets += d.parsedCount;
-                if (d.rawDate > today) upcomingCount++;
+                if (d.rawDate > todayStr) upcomingCount++;
             });
 
-            // 更新儀表板
-            animateValue(document.getElementById('stat-events'), 0, data.length, 1500);
-            animateValue(document.getElementById('stat-tickets'), 0, totalTickets, 1500);
-            animateValue(document.getElementById('stat-upcoming'), 0, upcomingCount, 1500);
+            animateValue(document.getElementById('stat-events'), parseInt(document.getElementById('stat-events').innerText)||0, data.length, 1000);
+            animateValue(document.getElementById('stat-tickets'), parseInt(document.getElementById('stat-tickets').innerText)||0, totalTickets, 1000);
+            animateValue(document.getElementById('stat-upcoming'), parseInt(document.getElementById('stat-upcoming').innerText)||0, upcomingCount, 1000);
 
             grid.innerHTML = ''; 
 
@@ -308,19 +416,15 @@
                     card.className = `ticket-card rounded-2xl flex flex-col animate-fade-in-up h-full`;
                     card.style.animationDelay = `${index * 50}ms`;
                     
-                    const isFuture = item.rawDate > today;
+                    const isFuture = item.rawDate > todayStr;
                     const badge = isFuture 
-                        ? `<span class="absolute top-4 right-4 bg-sky-500 text-white text-[10px] font-bold px-2 py-1 rounded shadow-lg animate-pulse">UPCOMING</span>` 
-                        : `<span class="absolute top-4 right-4 bg-white/10 text-gray-400 text-[10px] font-bold px-2 py-1 rounded">COMPLETED</span>`;
+                        ? `<span class="absolute top-4 right-4 bg-sky-500 text-white text-[10px] font-bold px-2 py-1 rounded shadow-lg animate-pulse">COMING</span>` 
+                        : `<span class="absolute top-4 right-4 bg-white/10 text-gray-400 text-[10px] font-bold px-2 py-1 rounded">DONE</span>`;
 
-                    // 標籤 HTML
-                    const tagsHtml = item.priceTags.map(tag => 
-                        `<span class="price-tag"><i class="fas fa-ticket-alt mr-2 text-xs opacity-70"></i>${tag}</span>`
-                    ).join('');
+                    const tagsHtml = item.priceTags.map(tag => `<span class="price-tag"><i class="fas fa-ticket-alt mr-2 text-xs opacity-70"></i>${tag}</span>`).join('');
 
                     card.innerHTML = `
                         ${badge}
-                        <!-- 上半部：日期與標題 -->
                         <div class="p-6 flex-1 relative z-10">
                             <div class="flex items-start gap-4">
                                 <div class="flex flex-col items-center bg-white/5 rounded-lg p-2 border border-white/10 min-w-[70px]">
@@ -335,10 +439,7 @@
                                 </div>
                             </div>
                         </div>
-
                         <div class="ticket-dashed-line mx-4"></div>
-
-                        <!-- 下半部：票價組合 -->
                         <div class="p-4 bg-black/20">
                             <div class="flex flex-wrap gap-2">
                                 ${tagsHtml}
@@ -351,9 +452,7 @@
             document.getElementById('loading').classList.add('hidden');
         }
 
-        document.getElementById('searchInput').addEventListener('input', updateDashboard);
-        document.getElementById('sortSelect').addEventListener('change', updateDashboard);
-        fetchRecords();
+        init();
     </script>
 </body>
 </html>
