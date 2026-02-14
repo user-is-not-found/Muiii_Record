@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Live Records 現場戰績館</title>
+    <title>Muiii 搶票戰績</title>
     
     <!-- PWA 設定 -->
     <link rel="manifest" href="manifest.json">
@@ -124,10 +124,10 @@
             <div class="flex justify-between items-center mb-8 gap-4">
                 <div class="flex items-center gap-4">
                     <h1 class="text-4xl md:text-5xl font-black font-oswald tracking-tighter italic text-slate-900">
-                        LIVE RECORDS
+                        MUIII
                     </h1>
                     <div class="h-8 w-px bg-slate-200 hidden md:block"></div>
-                    <h2 class="text-lg font-bold tracking-widest text-slate-500 hidden sm:block uppercase">現場戰績館</h2>
+                    <h2 class="text-lg font-bold tracking-widest text-slate-500 hidden sm:block uppercase">搶票戰績清單</h2>
                 </div>
 
                 <div class="flex gap-2">
@@ -187,7 +187,7 @@
 
     <!-- 頁尾 -->
     <footer class="mt-auto text-center py-10 border-t border-slate-100 bg-white">
-        <p class="text-slate-300 text-[10px] font-black tracking-[0.4em] uppercase">&copy; 2026 LIVE RECORDS PROJECT • FIELD RECORDS</p>
+        <p class="text-slate-300 text-[10px] font-black tracking-[0.4em] uppercase">&copy; 2026 MUIII PROJECT • LIVE RECORDS</p>
     </footer>
 
     <!-- 回到頂部 -->
@@ -283,7 +283,7 @@
             const years = [...new Set(allRecords.map(item => (item[KEY_DATE] || '').split('.')[0]))]
                             .filter(y => y && y.length === 4).sort().reverse();
             const select = document.getElementById('year-filter');
-            select.innerHTML = '<option value="all">所有年份</option>' + years.map(y => `<option value="${y}">${y} 年</option>`).join('');
+            select.innerHTML = '<option value="all">年份</option>' + years.map(y => `<option value="${y}">${y} 年</option>`).join('');
         }
 
         function updateDashboard() {
