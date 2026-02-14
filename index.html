@@ -60,7 +60,7 @@
             position: sticky;
             top: 0;
             z-index: 100;
-            background: rgba(5, 5, 5, 0.8);
+            background: rgba(5, 5, 5, 0.85);
             backdrop-filter: blur(20px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
@@ -137,7 +137,7 @@
             background-size: 1.2em 1.2em;
         }
 
-        /* 系統按鈕樣式 */
+        /* 系統按鈕樣式 - 新增文字顯示 */
         .sys-btn {
             height: 38px;
             padding: 0 16px;
@@ -152,7 +152,7 @@
             font-weight: 600;
             white-space: nowrap;
         }
-        .sys-btn:hover { background: rgba(255,255,255,0.15); color: #fff; border-color: rgba(255,255,255,0.3); }
+        .sys-btn:hover { background: rgba(255,255,255,0.15); color: #fff; border-color: rgba(255,255,255,0.3); transform: translateY(-1px); }
         
         @media (max-width: 768px) {
             .sys-btn { width: 38px; padding: 0; border-radius: 50%; }
@@ -187,8 +187,8 @@
                     </h2>
                 </div>
 
-                <div class="flex gap-2">
-                    <button id="install-btn" class="sys-btn hidden"><i class="fas fa-download"></i><span>安裝 App</span></button>
+                <div class="flex gap-3">
+                    <button id="install-btn" class="sys-btn hidden" title="安裝 App"><i class="fas fa-download"></i><span>安裝 App</span></button>
                     <button id="reload-btn" class="sys-btn"><i class="fas fa-sync-alt"></i><span>重整資料</span></button>
                 </div>
 
@@ -220,7 +220,7 @@
                             <option value="desc">新 → 舊</option>
                             <option value="asc">舊 → 新</option>
                         </select>
-                        <button id="reset-btn" class="bg-rose-500 hover:bg-rose-600 text-white px-4 h-9 rounded-full flex items-center gap-2 transition text-xs font-bold">
+                        <button id="reset-btn" class="bg-rose-500 hover:bg-rose-600 text-white px-5 h-9 rounded-full flex items-center gap-2 transition text-xs font-bold">
                             <i class="fas fa-undo text-[10px]"></i><span>重置</span>
                         </button>
                     </div>
@@ -250,6 +250,11 @@
         const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vThZZurHBpfes9J-dLaoi51jpb0MnQ4oABmBux77r-OO5LOvuoex6lesE4GvZb-UQ5zgiqWEfiHxNQy/pub?output=csv';
         let allRecords = [], currentYear = 'all', currentMonth = 'all';
 
+        // 欄位對應（自動偵測）
+        let KEY_DATE = '售票日期';
+        let KEY_TITLE = '節目名稱';
+        let KEY_COUNT = '張數';
+
         function init() {
             if ('serviceWorker' in navigator) navigator.serviceWorker.register('service-worker.js');
             fetchRecords();
@@ -261,8 +266,15 @@
             const ts = new Date().getTime();
             Papa.parse(csvUrl + '&t=' + ts, {
                 download: true, header: true, skipEmptyLines: true,
+                transformHeader: h => h.trim(), // 關鍵：去除 BOM
                 complete: function(results) {
-                    allRecords = results.data.filter(item => item.節目名稱);
+                    if (results.data.length > 0) {
+                        const keys = Object.keys(results.data[0]);
+                        KEY_DATE = keys.find(k => k.includes('日期')) || KEY_DATE;
+                        KEY_TITLE = keys.find(k => k.includes('節目')) || KEY_TITLE;
+                        KEY_COUNT = keys.find(k => k.includes('張數')) || KEY_COUNT;
+                    }
+                    allRecords = results.data.filter(item => item[KEY_TITLE]);
                     populateYears();
                     updateDashboard();
                 }
@@ -313,7 +325,7 @@
         }
 
         function populateYears() {
-            const years = [...new Set(allRecords.map(item => (item.售票日期 || '').split('.')[0]))]
+            const years = [...new Set(allRecords.map(item => (item[KEY_DATE] || '').split('.')[0]))]
                             .filter(y => y && y.length === 4).sort().reverse();
             const select = document.getElementById('year-filter');
             select.innerHTML = '<option value="all">年份</option>' + years.map(y => `<option value="${y}">${y}</option>`).join('');
@@ -321,30 +333,32 @@
 
         function animateValue(id, end) {
             const obj = document.getElementById(id);
-            const start = parseInt(obj.innerText) || 0;
+            const start = parseInt(obj.innerText.replace(/,/g, '')) || 0;
             if (start === end) return;
             let current = start;
             const range = end - start;
-            const increment = end > start ? 1 : -1;
-            const stepTime = Math.abs(Math.floor(1000 / range));
+            const increment = end > start ? Math.ceil(range / 20) : Math.floor(range / 20);
             const timer = setInterval(() => {
                 current += increment;
-                obj.innerText = current;
-                if (current == end) clearInterval(timer);
-            }, Math.max(stepTime, 20));
+                if ((increment > 0 && current >= end) || (increment < 0 && current <= end)) {
+                    current = end;
+                    clearInterval(timer);
+                }
+                obj.innerText = current.toLocaleString();
+            }, 30);
         }
 
         function processData(data) {
             return data.map(item => {
                 let ticketCount = 0;
-                const ticketString = item.張數 || '';
+                const ticketString = item[KEY_COUNT] || '';
                 const regex = /(\d+)\*(\d+)/g;
                 let match;
                 while ((match = regex.exec(ticketString)) !== null) ticketCount += parseInt(match[2]);
                 if (ticketCount === 0 && ticketString.trim() !== '') ticketCount = 1;
 
                 const priceTags = ticketString.split(' ').filter(s => s.trim() !== '');
-                const dateStr = item.售票日期 || '';
+                const dateStr = item[KEY_DATE] || '';
                 const dateParts = dateStr.split('.');
                 const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
                 const monthIdx = parseInt(dateParts[1]) - 1;
@@ -366,7 +380,7 @@
             let processedData = processData(allRecords);
 
             processedData = processedData.filter(item => {
-                const matchSearch = item.節目名稱.toLowerCase().includes(searchTerm) || item.rawDate.includes(searchTerm);
+                const matchSearch = item[KEY_TITLE].toLowerCase().includes(searchTerm) || item.rawDate.includes(searchTerm);
                 const matchYear = currentYear === 'all' || item.rawDate.startsWith(currentYear);
                 const matchMonth = currentMonth === 'all' || (item.rawDate.split('.')[1] === currentMonth);
                 return matchSearch && matchYear && matchMonth;
@@ -407,7 +421,7 @@
                                 </div>
                                 <div class="flex-1">
                                     <h3 class="text-lg font-bold text-white leading-tight line-clamp-2 min-h-[3rem] mb-1">
-                                        ${item.節目名稱}
+                                        ${item[KEY_TITLE]}
                                     </h3>
                                 </div>
                             </div>
