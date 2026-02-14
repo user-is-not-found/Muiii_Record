@@ -5,12 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Muiii 搶票戰績</title>
     
-    <!-- PWA 設定 -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#ffffff">
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2972/2972528.png">
     
-    <!-- 引入外部資源 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -45,8 +43,8 @@
     </script>
     <style>
         :root {
-            --brand-primary: #6d28d9; /* Violet 700 */
-            --brand-accent: #8b5cf6; /* Violet 500 */
+            --brand-primary: #6d28d9;
+            --brand-accent: #8b5cf6;
             --bg-soft: #fcfcff;
         }
 
@@ -62,7 +60,6 @@
         ::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--brand-accent); }
 
-        /* 精品票券卡片 */
         .ticket-card {
             background: #ffffff;
             border: 1px solid rgba(226, 232, 240, 0.8);
@@ -76,13 +73,11 @@
             border-color: var(--brand-accent);
         }
 
-        /* 質感票根 (Date Section) */
         .ticket-stub {
             background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
             border-right: 1px dashed #e2e8f0;
         }
 
-        /* 票券切口設計 */
         .ticket-dashed-line {
             border-bottom: 2px dashed #f1f5f9;
             position: relative;
@@ -95,7 +90,6 @@
         .ticket-dashed-line::before { left: -29px; }
         .ticket-dashed-line::after { right: -29px; }
 
-        /* 精緻輸入框與選單 */
         .cyber-select, .search-input {
             background-color: #ffffff;
             color: #334155;
@@ -140,17 +134,14 @@
 </head>
 <body class="flex flex-col selection:bg-violet-100 selection:text-violet-900">
 
-    <!-- 背景質感裝飾 -->
     <div class="fixed inset-0 pointer-events-none z-[-1] overflow-hidden">
         <div class="absolute top-[-10%] left-[-5%] w-[60%] h-[60%] bg-violet-100/40 rounded-full blur-[120px] animate-soft-blob"></div>
         <div class="absolute bottom-[-5%] right-[-5%] w-[50%] h-[50%] bg-blue-50/50 rounded-full blur-[120px] animate-soft-blob animation-delay-2000"></div>
     </div>
 
-    <!-- 頂部區 -->
     <div class="pt-8 pb-8 border-b border-slate-100 bg-white/50 backdrop-blur-md">
         <div class="container mx-auto px-4 max-w-7xl">
             
-            <!-- 標題與系統按鈕 (水平平行佈局) -->
             <div class="flex justify-between items-center mb-8 w-full gap-4">
                 <div class="flex items-center gap-4">
                     <div class="relative shrink-0">
@@ -175,16 +166,13 @@
                 </div>
             </div>
 
-            <!-- 工具列：電腦版橫向並排 / 手機版垂直堆疊 -->
             <div class="flex flex-col lg:flex-row items-center bg-white rounded-2xl border border-slate-200 p-2 transition-all focus-within:shadow-xl focus-within:shadow-violet-500/5 max-w-7xl gap-2.5">
-                <!-- 搜尋框 -->
                 <div class="flex items-center flex-grow w-full px-3">
                     <i class="fas fa-search text-slate-300 mr-3 text-sm"></i>
                     <input type="text" id="searchInput" placeholder="搜尋歌手、場館名稱..." 
                         class="w-full bg-transparent text-slate-800 py-2 focus:outline-none placeholder-slate-300 font-bold text-base">
                 </div>
                 
-                <!-- 篩選群組 (接在搜尋框後) -->
                 <div class="flex flex-wrap lg:flex-nowrap items-center gap-2 w-full lg:w-auto shrink-0 border-t lg:border-t-0 pt-2 lg:pt-0 lg:pl-3 border-slate-50">
                     <select id="year-filter" class="cyber-select flex-1 lg:flex-none lg:w-28 font-bold text-slate-600">
                         <option value="all">年份</option>
@@ -208,18 +196,14 @@
         </div>
     </div>
 
-    <!-- 列表主體：手機單欄顯示 -->
     <div class="container mx-auto px-4 py-10 max-w-7xl flex-grow">
-        <!-- 讀取狀態 -->
         <div id="loading" class="flex flex-col items-center justify-center py-20 gap-4">
             <div class="w-10 h-10 border-[3px] border-slate-100 border-t-violet-600 rounded-full animate-spin"></div>
             <p class="text-violet-600 text-[11px] font-black tracking-widest uppercase">Syncing Records</p>
         </div>
 
-        <!-- 網格佈局：手機 1 欄 / 電腦 3 欄 -->
         <div id="record-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden pb-24"></div>
         
-        <!-- 無結果提示 -->
         <div id="no-results" class="hidden text-center py-32">
             <div class="bg-slate-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
                 <i class="fas fa-search text-slate-200 text-3xl"></i>
@@ -229,19 +213,16 @@
         </div>
     </div>
 
-    <!-- 頁尾 -->
     <footer class="mt-auto text-center py-12 border-t border-slate-100 bg-white/80">
         <p class="text-slate-300 text-[10px] font-bold tracking-[0.5em] uppercase">&copy; 2026 MUIII PROJECT • TRACKING SINCE 2020</p>
     </footer>
 
-    <!-- 回到頂部 -->
     <button id="back-to-top" class="fixed bottom-8 right-8 bg-slate-900 text-white w-12 h-12 rounded-full hidden items-center justify-center shadow-2xl transition hover:scale-110 hover:bg-violet-600 z-[1000]"><i class="fas fa-arrow-up"></i></button>
 
     <script>
         const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vThZZurHBpfes9J-dLaoi51jpb0MnQ4oABmBux77r-OO5LOvuoex6lesE4GvZb-UQ5zgiqWEfiHxNQy/pub?output=csv';
         let allRecords = [], currentYear = 'all', currentMonth = 'all';
 
-        // 智慧欄位偵測
         let KEY_DATE = '售票日期', KEY_TITLE = '節目名稱', KEY_COUNT = '張數';
 
         function init() {
@@ -376,13 +357,11 @@
                     card.innerHTML = `
                         <div class="flex-1 flex flex-col">
                             <div class="flex items-stretch gap-0 h-full">
-                                <!-- 日期區 (精品票根感) -->
                                 <div class="ticket-stub flex flex-col items-center justify-center p-5 min-w-[90px] md:min-w-[100px] text-center">
                                     <span class="text-[10px] font-black tracking-widest text-violet-500 uppercase">${mStr}</span>
                                     <span class="text-3xl md:text-4xl font-black font-oswald my-1 text-slate-900">${dateParts[2] || '--'}</span>
                                     <span class="text-[10px] font-bold text-slate-400">${dateParts[0] || '----'}</span>
                                 </div>
-                                <!-- 資訊內容區 -->
                                 <div class="p-5 md:p-6 flex-1 flex items-center bg-white">
                                     <h3 class="text-sm md:text-lg font-black text-slate-800 leading-snug line-clamp-3">
                                         ${item[KEY_TITLE]}
