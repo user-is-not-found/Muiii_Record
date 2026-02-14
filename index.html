@@ -22,7 +22,7 @@
             --text-title: #0f172a;
             --primary: #2563eb;
             --primary-dark: #1e40af;
-            --primary-light: #eff6ff; /* 確保淺色背景夠亮 */
+            --primary-light: #eff6ff; /* 淺藍色背景 */
             --header-bg: rgba(255, 255, 255, 0.95);
             --tag-bg: #f8fafc;
             --tag-border: #e2e8f0;
@@ -101,34 +101,31 @@
         .search-area { flex-grow: 1; position: relative; max-width: 400px; } 
         .filters { display: flex; gap: 8px; flex-shrink: 0; }
 
-        /* --- 手機版佈局 (重點修正區) --- */
+        /* --- 手機版佈局 (重點修復：強制同行) --- */
         .mobile-header { flex-direction: column; gap: 12px; width: 100%; }
         
-        /* 1. 強制標題與按鈕同一排，不換行 */
         .mobile-nav { 
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
             min-height: 48px; 
             flex-wrap: nowrap; /* 關鍵：禁止換行 */
-            width: 100%;
+            gap: 10px;
         }
         
         .mobile-brand {
             font-size: 1.4rem; font-weight: 900; color: var(--primary); letter-spacing: -1px;
-            white-space: nowrap; /* 標題不換行 */
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        
-        /* 手機版按鈕群組 */
-        .mobile-header .system-actions { 
-            display: flex; 
-            gap: 8px; 
-            align-items: center; 
-            flex-shrink: 0; /* 按鈕區不縮小 */
+            white-space: nowrap; 
+            overflow: hidden; 
+            text-overflow: ellipsis; /* 標題太長自動 ... */
+            flex-shrink: 1; /* 允許標題縮小 */
         }
 
+        .mobile-header .system-actions { 
+            display: flex; gap: 8px; align-items: center; 
+            flex-shrink: 0; /* 按鈕群組不縮小 */
+        }
+        
         .mobile-stats { display: flex; gap: 10px; }
         .mobile-stats .stat-card { flex: 1; padding: 12px; border-radius: var(--radius-md); }
         .mobile-tools { display: flex; flex-direction: column; gap: 12px; }
@@ -148,6 +145,7 @@
 
         @media (max-width: 768px) {
             .icon-btn { width: 40px; height: 40px; padding: 0; border-radius: 50%; }
+            .icon-btn span { display: none; } /* 手機隱藏文字 */
         }
 
         .search-input {
@@ -207,10 +205,10 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* 票根 (左側日期) - 改為淺色底、深色字 */
+        /* 票根 (左側日期) - 改為淺色底，深色字 */
         .ticket-stub {
-            background: var(--primary-light); /* 改為淺色背景 */
-            color: var(--primary); /* 改為深色文字 */
+            background: var(--primary-light); /* 淺藍色背景 */
+            color: var(--primary); /* 深藍色文字 */
             padding: 20px;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             min-width: 100px; text-align: center; border-right: 2px dashed rgba(0,0,0,0.1); position: relative;
@@ -227,8 +225,8 @@
         .ticket-stub::after { bottom: -12px; }
 
         /* 日期顯示：年月日 */
-        .stub-year { font-size: 0.75rem; font-weight: 700; opacity: 0.8; margin-bottom: 2px; letter-spacing: 1px; }
-        .stub-date { font-size: 1.3rem; font-weight: 800; letter-spacing: -0.5px; line-height: 1; }
+        .stub-year { font-size: 0.8rem; font-weight: 800; opacity: 0.8; margin-bottom: 2px; letter-spacing: 1px; color: var(--text-main); }
+        .stub-date { font-size: 1.4rem; font-weight: 900; letter-spacing: -0.5px; line-height: 1; }
 
         /* 票身 (右側資訊) */
         .ticket-body { 
@@ -253,11 +251,15 @@
         @media (max-width: 768px) {
             .ticket-card { border-radius: 20px; flex-direction: column; }
             .ticket-stub { 
-                /* 手機版票根也改為淺色 */
+                /* 手機版票根：橫向 */
                 flex-direction: row; min-width: 100%; padding: 12px 20px; justify-content: flex-start; gap: 14px;
                 border-right: none; border-bottom: 2px dashed rgba(0,0,0,0.1);
             }
             .ticket-stub::before, .ticket-stub::after { left: 50%; transform: translateX(-50%); right: auto; top: auto; bottom: -12px; }
+            
+            .stub-year { margin-bottom: 0; font-size: 0.8rem; }
+            .stub-date { font-size: 1.1rem; }
+            
             .ticket-title { font-size: 0.95rem; } 
             .ticket-body { padding: 16px 20px; }
         }
@@ -283,18 +285,9 @@
                     <div class="top-row">
                         <div class="brand">MUIII 搶票戰績</div>
                         <div class="system-actions">
-                            <button id="install-btn" class="icon-btn" title="安裝">
-                                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                                <span>安裝</span>
-                            </button>
-                            <button class="reload-btn icon-btn" title="重整">
-                                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                                <span>重整</span>
-                            </button>
-                            <button class="theme-toggle icon-btn" title="模式">
-                                <svg class="theme-icon" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
-                                <span>模式</span>
-                            </button>
+                            <button class="install-btn icon-btn" title="安裝"><svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg><span>安裝</span></button>
+                            <button class="reload-btn icon-btn" title="重整"><svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg><span>重整</span></button>
+                            <button class="theme-toggle icon-btn" title="模式"><svg class="theme-icon" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg><span>模式</span></button>
                         </div>
                     </div>
                     
@@ -311,11 +304,7 @@
                             <div class="filter-group">
                                 <select class="year-filter custom-select"><option value="all">年份</option></select>
                                 <select class="month-filter custom-select" disabled>
-                                    <option value="all">月份</option>
-                                    <option value="01">1月</option><option value="02">2月</option><option value="03">3月</option>
-                                    <option value="04">4月</option><option value="05">5月</option><option value="06">6月</option>
-                                    <option value="07">7月</option><option value="08">8月</option><option value="09">9月</option>
-                                    <option value="10">10月</option><option value="11">11月</option><option value="12">12月</option>
+                                    <option value="all">月份</option><option value="01">1月</option><option value="02">2月</option><option value="03">3月</option><option value="04">4月</option><option value="05">5月</option><option value="06">6月</option><option value="07">7月</option><option value="08">8月</option><option value="09">9月</option><option value="10">10月</option><option value="11">11月</option><option value="12">12月</option>
                                 </select>
                                 <button class="sort-btn btn-filter"><span>⬇</span> <span class="sort-label">新到舊</span></button>
                                 <button class="reset-btn btn-filter" title="重置過濾">
@@ -332,7 +321,7 @@
                     <div class="mobile-nav">
                         <div class="mobile-brand">MUIII 搶票戰績</div>
                         <div class="system-actions">
-                            <button id="install-btn-m" class="icon-btn mobile-only-btn"><svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg></button>
+                            <button class="install-btn icon-btn mobile-only-btn"><svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg></button>
                             <button class="reload-btn icon-btn mobile-only-btn"><svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg></button>
                             <button class="theme-toggle icon-btn mobile-only-btn"><svg class="theme-icon" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg></button>
                         </div>
@@ -349,11 +338,7 @@
                         <div class="mobile-filters">
                             <select class="year-filter custom-select"><option value="all">年份</option></select>
                             <select class="month-filter custom-select" disabled>
-                                <option value="all">月份</option>
-                                <option value="01">1月</option><option value="02">2月</option><option value="03">3月</option>
-                                <option value="04">4月</option><option value="05">5月</option><option value="06">6月</option>
-                                <option value="07">7月</option><option value="08">8月</option><option value="09">9月</option>
-                                <option value="10">10月</option><option value="11">11月</option><option value="12">12月</option>
+                                <option value="all">月份</option><option value="01">1月</option><option value="02">2月</option><option value="03">3月</option><option value="04">4月</option><option value="05">5月</option><option value="06">6月</option><option value="07">7月</option><option value="08">8月</option><option value="09">9月</option><option value="10">10月</option><option value="11">11月</option><option value="12">12月</option>
                             </select>
                             <button class="sort-btn btn-filter"><span>⬇</span> <span class="sort-label">新到舊</span></button>
                             <button class="reset-btn btn-filter"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="14"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg></button>
@@ -425,7 +410,7 @@
                 inputs.forEach(i => i.value = '');
                 yearSelects.forEach(y => y.value = 'all');
                 monthSelects.forEach(m => { m.value = 'all'; m.disabled = true; });
-                currentYear = 'all'; currentMonth = 'all';
+                currentYear = currentMonth = 'all';
                 render();
             });
 
