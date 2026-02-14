@@ -108,7 +108,7 @@
             white-space: nowrap;
         }
 
-        /* 修正選單樣式 */
+        /* 修正選單樣式：解決白字看不到選項的問題 */
         .cyber-select {
             background-color: #1a1a1a;
             color: #ffffff;
@@ -166,9 +166,8 @@
     <div class="sticky-header pt-6 pb-4 shadow-2xl">
         <div class="container mx-auto px-4 max-w-7xl">
             
-            <!-- Header 上半部：標題與系統按鈕水平平行 -->
+            <!-- Header 上半部：品牌標題區與系統按鈕水平平行 -->
             <div class="flex justify-between items-center mb-6 w-full gap-4">
-                <!-- 品牌標題區 -->
                 <div class="text-left relative flex items-center gap-4">
                     <div class="relative shrink-0">
                         <h1 class="text-5xl md:text-6xl font-black font-oswald tracking-tighter italic bg-clip-text text-transparent bg-gradient-to-r from-rose-500 via-purple-500 to-blue-500">
@@ -182,7 +181,6 @@
                     </h2>
                 </div>
 
-                <!-- 系統按鈕區：手機版會與標題並排 -->
                 <div class="flex gap-2 shrink-0">
                     <button id="install-btn" class="sys-btn hidden" title="安裝 App"><i class="fas fa-download"></i><span>安裝 App</span></button>
                     <button id="reload-btn" class="sys-btn"><i class="fas fa-sync-alt"></i><span>重整資料</span></button>
@@ -190,7 +188,7 @@
             </div>
 
             <!-- Stats：數據放大展示區 -->
-            <div class="grid grid-cols-2 gap-4 md:gap-8 mb-6">
+            <div class="grid grid-cols-2 gap-4 md:gap-8 mb-6 max-w-4xl mx-auto md:mx-0">
                 <div class="bg-white/5 border border-white/10 rounded-2xl px-6 py-3 flex flex-col md:flex-row items-center gap-2 md:gap-4 transition-all hover:border-white/20">
                     <div class="text-gray-400 text-[10px] md:text-xs uppercase font-bold tracking-widest">總征戰</div>
                     <div class="text-5xl md:text-6xl font-black font-oswald text-white leading-none" id="stat-events">0</div>
@@ -254,7 +252,7 @@
         const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vThZZurHBpfes9J-dLaoi51jpb0MnQ4oABmBux77r-OO5LOvuoex6lesE4GvZb-UQ5zgiqWEfiHxNQy/pub?output=csv';
         let allTickets = [], currentYear = 'all', currentMonth = 'all';
 
-        // 關鍵欄位對應
+        // 關鍵欄位偵測
         let KEY_DATE = '售票日期';
         let KEY_TITLE = '節目名稱';
         let KEY_COUNT = '張數';
@@ -395,15 +393,17 @@
 
             let processedData = processData(allTickets);
 
+            // 執行篩選
             processedData = processedData.filter(item => {
                 const titleStr = (item[KEY_TITLE] || '').toLowerCase();
                 const dateStr = (item[KEY_DATE] || '');
                 const matchSearch = titleStr.includes(searchTerm) || dateStr.includes(searchTerm);
                 const matchYear = currentYear === 'all' || dateStr.startsWith(currentYear);
                 const matchMonth = currentMonth === 'all' || dateStr.split('.')[1] === currentMonth;
-                return matchSearch && yearMatch && monthMatch;
+                return matchSearch && matchYear && matchMonth; // 修復變數名稱錯誤
             });
 
+            // 執行排序
             processedData.sort((a, b) => {
                 const d1 = a.rawDate || '';
                 const d2 = b.rawDate || '';
