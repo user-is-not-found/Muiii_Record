@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-TW" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -13,6 +13,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;500;700;900&family=Oswald:wght@500;700&family=Plus+Jakarta+Sans:wght@400;700;800&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     fontFamily: {
@@ -52,18 +53,28 @@
             overflow-x: hidden;
             min-height: 100vh;
             -webkit-font-smoothing: antialiased;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .dark body {
+            background-color: #0f172a;
+            color: #f8fafc;
         }
         ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-track { background: var(--bg-light); }
+        ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .dark ::-webkit-scrollbar-thumb { background: #334155; }
         ::-webkit-scrollbar-thumb:hover { background: var(--brand-primary); }
 
         .ticket-card {
             background: #ffffff;
             border: 1px solid #e2e8f0;
             transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
             position: relative;
+        }
+        .dark .ticket-card {
+            background: #1e293b;
+            border-color: #334155;
         }
         .ticket-card::after {
             content: '';
@@ -83,14 +94,25 @@
             background: #f1f5f9;
             border-right: 1px dashed #e2e8f0;
         }
+        .dark .ticket-stub {
+            background: #0f172a;
+            border-right-color: #334155;
+        }
         .ticket-dashed-line {
             border-bottom: 2px dashed #e2e8f0;
             position: relative;
+        }
+        .dark .ticket-dashed-line {
+            border-bottom-color: #334155;
         }
         .ticket-dashed-line::before, .ticket-dashed-line::after {
             content: ''; position: absolute; width: 18px; height: 18px;
             background-color: var(--bg-light); border-radius: 50%; top: -9px;
             box-shadow: inset 0 0 4px rgba(0,0,0,0.03);
+            transition: background-color 0.3s ease;
+        }
+        .dark .ticket-dashed-line::before, .dark .ticket-dashed-line::after {
+            background-color: #0f172a;
         }
         .ticket-dashed-line::before { left: -29px; }
         .ticket-dashed-line::after { right: -29px; }
@@ -105,6 +127,11 @@
             outline: none;
             height: 44px;
             white-space: nowrap;
+        }
+        .dark .cyber-select, .dark .search-input {
+            background-color: #1e293b;
+            color: #f8fafc;
+            border-color: #334155;
         }
         .cyber-select:focus, .search-input:focus { 
             border-color: var(--brand-primary);
@@ -124,11 +151,19 @@
             display: flex; align-items: center; justify-content: center; gap: 8px;
             transition: all 0.3s; cursor: pointer; font-size: 0.85rem; font-weight: 700;
         }
+        .dark .sys-btn {
+            background: #1e293b;
+            border-color: #334155;
+            color: #94a3b8;
+        }
         .sys-btn:hover { 
             color: var(--brand-primary); 
             border-color: var(--brand-primary);
             background: #f0fdf4;
             transform: translateY(-1px);
+        }
+        .dark .sys-btn:hover {
+            background: #0f172a;
         }
         @media (max-width: 768px) {
             .sys-btn { width: 40px; padding: 0; border-radius: 50%; }
@@ -139,43 +174,54 @@
 <body class="flex flex-col selection:bg-emerald-100 selection:text-emerald-900">
     <!-- 背景動態光暈 (森林系) -->
     <div class="fixed inset-0 pointer-events-none z-[-1] overflow-hidden">
-        <div class="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-emerald-100/40 rounded-full blur-[120px] animate-soft-blob"></div>
-        <div class="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-teal-50/40 rounded-full blur-[120px] animate-soft-blob animation-delay-2000"></div>
+        <div class="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-emerald-100/40 dark:bg-emerald-900/10 rounded-full blur-[120px] animate-soft-blob"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-teal-50/40 dark:bg-teal-900/10 rounded-full blur-[120px] animate-soft-blob animation-delay-2000"></div>
     </div>
 
     <!-- 頁首區域 -->
-    <div class="pt-6 pb-6 border-b border-gray-100 bg-white/70 backdrop-blur-xl">
+    <div class="pt-6 pb-6 border-b border-gray-100 dark:border-slate-800 bg-white/70 dark:bg-slate-900/80 backdrop-blur-xl">
         <div class="container mx-auto px-4 max-w-7xl">
             <div class="flex justify-between items-center mb-6 w-full gap-4">
                 <div class="flex items-center gap-4">
                     <div class="relative shrink-0">
-                        <h1 class="text-4xl md:text-6xl font-[800] font-sans tracking-tighter italic text-slate-900 leading-none">MUIII<span class="text-emerald-600">.</span></h1>
+                        <h1 class="text-4xl md:text-6xl font-[800] font-sans tracking-tighter italic text-slate-900 dark:text-white leading-none">MUIII<span class="text-emerald-600">.</span></h1>
                     </div>
-                    <div class="h-10 w-px bg-gray-200 hidden md:block"></div>
+                    <div class="h-10 w-px bg-gray-200 dark:bg-slate-700 hidden md:block"></div>
                     <div class="flex flex-col justify-center">
-                        <span class="text-lg md:text-2xl font-bold tracking-tight text-slate-800 uppercase leading-none">搶票戰績</span>
-                        <span class="text-[9px] font-bold text-slate-400 tracking-[0.4em] uppercase mt-1.5 hidden md:block">Premium Tracker System</span>
+                        <span class="text-lg md:text-2xl font-bold tracking-tight text-slate-800 dark:text-slate-100 uppercase leading-none">搶票戰績</span>
+                        <span class="text-[9px] font-bold text-slate-400 dark:text-slate-500 tracking-[0.4em] uppercase mt-1.5 hidden md:block">Premium Tracker System</span>
                     </div>
                 </div>
                 <div class="flex gap-2 shrink-0">
-                    <button id="install-btn" class="sys-btn hidden" title="安裝 App"><i class="fas fa-download"></i><span>安裝 App</span></button>
-                    <button id="reload-btn" class="sys-btn"><i class="fas fa-sync-alt"></i><span>重整資料</span></button>
+                    <button id="theme-toggle" class="sys-btn" title="切換深淺模式">
+                        <i class="fas fa-moon"></i><span>深淺模式</span>
+                    </button>
+                    <button id="layout-toggle" class="sys-btn" title="切換版面佈局">
+                        <i class="fas fa-th-large"></i><span>版面佈局</span>
+                    </button>
+                    <button id="install-btn" class="sys-btn hidden" title="安裝 App">
+                        <i class="fas fa-download"></i><span>安裝 App</span>
+                    </button>
+                    <button id="reload-btn" class="sys-btn">
+                        <i class="fas fa-sync-alt"></i><span>重整資料</span>
+                    </button>
                 </div>
             </div>
             
             <!-- 控制列 -->
-            <div class="flex flex-col lg:flex-row items-center bg-white rounded-2xl border border-gray-100 p-2 gap-2 shadow-sm transition-all focus-within:shadow-emerald-100">
+            <div class="flex flex-col lg:flex-row items-center bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 p-2 gap-2 shadow-sm transition-all focus-within:shadow-emerald-100 dark:focus-within:shadow-emerald-900/20">
                 <div class="flex items-center flex-grow w-full px-3 h-[44px]">
                     <i class="fas fa-search text-slate-400 mr-3 text-sm"></i>
-                    <input type="text" id="searchInput" placeholder="搜尋歌手、場館名稱..." class="w-full bg-transparent text-slate-800 py-2 focus:outline-none placeholder-slate-300 font-bold text-base">
+                    <input type="text" id="searchInput" placeholder="搜尋歌手、場館名稱..." class="w-full bg-transparent text-slate-800 dark:text-white py-2 focus:outline-none placeholder-slate-300 dark:placeholder-slate-600 font-bold text-base">
                 </div>
-                <div class="grid grid-cols-2 lg:flex lg:flex-nowrap items-center gap-2 w-full lg:w-auto shrink-0 border-t border-gray-50 lg:border-t-0 pt-2 lg:pt-0 lg:pl-2">
+                <div class="grid grid-cols-2 lg:flex lg:flex-nowrap items-center gap-2 w-full lg:w-auto shrink-0 border-t border-gray-50 dark:border-slate-700 lg:border-t-0 pt-2 lg:pt-0 lg:pl-2">
+                    <select id="platform-filter" class="cyber-select font-bold text-slate-500 lg:w-auto lg:min-w-[120px]"><option value="all">所有平台</option></select>
                     <select id="year-filter" class="cyber-select font-bold text-slate-500 lg:w-auto lg:min-w-[100px]"><option value="all">年份</option></select>
                     <select id="month-filter" class="cyber-select font-bold text-slate-500 lg:w-auto lg:min-w-[100px]" disabled>
                         <option value="all">月份</option><option value="01">01月</option><option value="02">02月</option><option value="03">03月</option><option value="04">04月</option><option value="05">05月</option><option value="06">06月</option><option value="07">07月</option><option value="08">08月</option><option value="09">09月</option><option value="10">10月</option><option value="11">11月</option><option value="12">12月</option>
                     </select>
                     <select id="sortSelect" class="cyber-select font-bold text-emerald-600 lg:w-auto lg:min-w-[110px]"><option value="desc">新到舊</option><option value="asc">舊到新</option></select>
-                    <button id="reset-btn" class="h-[44px] bg-slate-900 hover:bg-black text-white px-5 rounded-xl flex items-center justify-center gap-2 transition text-xs font-black shrink-0 shadow-sm w-full lg:w-auto whitespace-nowrap"><i class="fas fa-undo text-[10px]"></i><span>重置</span></button>
+                    <button id="reset-btn" class="h-[44px] bg-slate-900 dark:bg-slate-700 hover:bg-black dark:hover:bg-slate-600 text-white px-5 rounded-xl flex items-center justify-center gap-2 transition text-xs font-black shrink-0 shadow-sm w-full lg:w-auto whitespace-nowrap"><i class="fas fa-undo text-[10px]"></i><span>重置</span></button>
                 </div>
             </div>
         </div>
@@ -184,27 +230,33 @@
     <!-- 主要內容區 -->
     <div class="container mx-auto px-4 py-10 max-w-7xl flex-grow">
         <div id="loading" class="flex flex-col items-center justify-center py-20 gap-4">
-            <div class="w-10 h-10 border-[3px] border-emerald-100 border-t-emerald-500 rounded-full animate-spin"></div>
+            <div class="w-10 h-10 border-[3px] border-emerald-100 dark:border-emerald-900 border-t-emerald-500 rounded-full animate-spin"></div>
             <p class="text-emerald-600 text-[11px] font-black tracking-widest uppercase">Fetching Data</p>
         </div>
         <div id="record-grid" class="grid grid-cols-1 lg:grid-cols-2 gap-6 hidden pb-24"></div>
         <div id="no-results" class="hidden text-center py-32">
-            <div class="bg-gray-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6"><i class="fas fa-search text-gray-200 text-3xl"></i></div>
-            <p class="text-gray-400 font-bold text-lg">找不到符合的紀錄</p>
+            <div class="bg-gray-100 dark:bg-slate-800 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6"><i class="fas fa-search text-gray-200 dark:text-slate-600 text-3xl"></i></div>
+            <p class="text-gray-400 dark:text-slate-500 font-bold text-lg">找不到符合的紀錄</p>
         </div>
     </div>
 
-    <footer class="mt-auto text-center py-12 border-t border-gray-100 bg-white/80"><p class="text-gray-400 text-[10px] font-bold tracking-[0.5em] uppercase">&copy; 2026 MUIII PROJECT • TRACKING SYSTEM</p></footer>
+    <footer class="mt-auto text-center py-12 border-t border-gray-100 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80"><p class="text-gray-400 dark:text-slate-500 text-[10px] font-bold tracking-[0.5em] uppercase">&copy; 2026 MUIII PROJECT • TRACKING SYSTEM</p></footer>
     
     <button id="back-to-top" class="fixed bottom-8 right-8 bg-slate-900 text-white w-12 h-12 rounded-full hidden items-center justify-center shadow-2xl transition hover:scale-110 hover:bg-emerald-600 z-[1000]"><i class="fas fa-arrow-up"></i></button>
 
     <script>
         const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vThZZurHBpfes9J-dLaoi51jpb0MnQ4oABmBux77r-OO5LOvuoex6lesE4GvZb-UQ5zgiqWEfiHxNQy/pub?output=csv';
-        let allRecords = [], currentYear = 'all', currentMonth = 'all', KEY_DATE = '售票日期', KEY_TITLE = '節目名稱', KEY_COUNT = '張數';
-        
+        let allRecords = [], currentYear = 'all', currentMonth = 'all', currentPlatform = 'all';
+        let KEY_DATE = '售票日期', KEY_TITLE = '節目名稱', KEY_COUNT = '張數', KEY_PLATFORM = '售票平台';
+        let isGridView = true;
+
         function init() { 
             fetchRecords(); 
-            setupEventListeners(); 
+            setupEventListeners();
+            // Initialize theme
+            if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                toggleTheme(true);
+            }
         }
 
         async function fetchRecords() {
@@ -213,43 +265,163 @@
             Papa.parse(csvUrl + '&t=' + ts, {
                 download: true, header: true, skipEmptyLines: true, transformHeader: h => h.trim().replace(/^\uFEFF/, ''),
                 complete: function(results) {
-                    if (results.data.length > 0) { const keys = Object.keys(results.data[0]); KEY_DATE = keys.find(k => k.includes('日期')) || KEY_DATE; KEY_TITLE = keys.find(k => k.includes('節目')) || KEY_TITLE; KEY_COUNT = keys.find(k => k.includes('張數')) || KEY_COUNT; }
+                    if (results.data.length > 0) { 
+                        const keys = Object.keys(results.data[0]); 
+                        KEY_DATE = keys.find(k => k.includes('日期')) || KEY_DATE; 
+                        KEY_TITLE = keys.find(k => k.includes('節目')) || KEY_TITLE; 
+                        KEY_COUNT = keys.find(k => k.includes('張數')) || KEY_COUNT;
+                        KEY_PLATFORM = keys.find(k => k.includes('平台')) || KEY_PLATFORM;
+                    }
                     allRecords = results.data.filter(item => item[KEY_TITLE] && item[KEY_TITLE].trim() !== '');
-                    populateYears(); updateDashboard();
+                    populateYears(); 
+                    populatePlatforms();
+                    updateDashboard();
                 }
             });
         }
+
+        function toggleTheme(forceDark) {
+            const html = document.documentElement;
+            const btn = document.getElementById('theme-toggle');
+            const span = btn.querySelector('span');
+            const icon = btn.querySelector('i');
+            
+            if (forceDark || !html.classList.contains('dark')) {
+                html.classList.add('dark');
+                icon.className = 'fas fa-sun';
+                span.textContent = '淺色模式';
+            } else {
+                html.classList.remove('dark');
+                icon.className = 'fas fa-moon';
+                span.textContent = '深色模式';
+            }
+        }
+
+        function toggleLayout() {
+            isGridView = !isGridView;
+            const btn = document.getElementById('layout-toggle');
+            const span = btn.querySelector('span');
+            const icon = btn.querySelector('i');
+            
+            if (isGridView) {
+                icon.className = 'fas fa-th-large';
+                span.textContent = '網格佈局';
+            } else {
+                icon.className = 'fas fa-list';
+                span.textContent = '列表佈局';
+            }
+            updateDashboard();
+        }
+
         function setupEventListeners() {
+            document.getElementById('theme-toggle').onclick = () => toggleTheme();
+            document.getElementById('layout-toggle').onclick = toggleLayout;
             document.getElementById('searchInput').addEventListener('input', updateDashboard);
             document.getElementById('sortSelect').addEventListener('change', updateDashboard);
-            const yearFilter = document.getElementById('year-filter'), monthFilter = document.getElementById('month-filter');
-            yearFilter.addEventListener('change', (e) => { currentYear = e.target.value; monthFilter.disabled = currentYear === 'all'; if(currentYear === 'all') { currentMonth = 'all'; monthFilter.value = 'all'; } updateDashboard(); });
+            
+            const yearFilter = document.getElementById('year-filter'), 
+                  monthFilter = document.getElementById('month-filter'),
+                  platformFilter = document.getElementById('platform-filter');
+
+            yearFilter.addEventListener('change', (e) => { 
+                currentYear = e.target.value; 
+                monthFilter.disabled = currentYear === 'all'; 
+                if(currentYear === 'all') { currentMonth = 'all'; monthFilter.value = 'all'; } 
+                updateDashboard(); 
+            });
+
             monthFilter.addEventListener('change', (e) => { currentMonth = e.target.value; updateDashboard(); });
-            document.getElementById('reset-btn').onclick = () => { document.getElementById('searchInput').value = ''; document.getElementById('sortSelect').value = 'desc'; yearFilter.value = 'all'; monthFilter.value = 'all'; monthFilter.disabled = true; currentYear = 'all'; currentMonth = 'all'; updateDashboard(); };
+            platformFilter.addEventListener('change', (e) => { currentPlatform = e.target.value; updateDashboard(); });
+
+            document.getElementById('reset-btn').onclick = () => { 
+                document.getElementById('searchInput').value = ''; 
+                document.getElementById('sortSelect').value = 'desc'; 
+                yearFilter.value = 'all'; 
+                monthFilter.value = 'all'; 
+                platformFilter.value = 'all';
+                monthFilter.disabled = true; 
+                currentYear = 'all'; 
+                currentMonth = 'all'; 
+                currentPlatform = 'all';
+                updateDashboard(); 
+            };
+
             document.getElementById('reload-btn').onclick = fetchRecords;
             let defP; window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); defP = e; document.getElementById('install-btn').classList.remove('hidden'); });
             document.getElementById('install-btn').onclick = () => { if(defP) defP.prompt(); };
             window.onscroll = () => { document.getElementById('back-to-top').style.display = window.scrollY > 400 ? 'flex' : 'none'; };
             document.getElementById('back-to-top').onclick = () => window.scrollTo({top: 0, behavior: 'smooth'});
         }
+
         function populateYears() {
             const years = [...new Set(allRecords.map(item => (item[KEY_DATE] || '').split('.')[0]))].filter(y => y && y.length === 4).sort().reverse();
             document.getElementById('year-filter').innerHTML = '<option value="all">年份</option>' + years.map(y => `<option value="${y}">${y} 年</option>`).join('');
         }
+
+        function populatePlatforms() {
+            const platforms = [...new Set(allRecords.map(item => (item[KEY_PLATFORM] || '').trim()))].filter(p => p !== '');
+            document.getElementById('platform-filter').innerHTML = '<option value="all">所有平台</option>' + platforms.map(p => `<option value="${p}">${p}</option>`).join('');
+        }
+
         function updateDashboard() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase(), sortOrder = document.getElementById('sortSelect').value;
-            let filtered = allRecords.filter(item => { const dateVal = item[KEY_DATE] || '', titleMatch = (item[KEY_TITLE] || '').toLowerCase().includes(searchTerm), dateMatch = dateVal.includes(searchTerm), yearMatch = currentYear === 'all' || dateVal.startsWith(currentYear), monthMatch = currentMonth === 'all' || dateVal.split('.')[1] === currentMonth; return (titleMatch || dateMatch) && yearMatch && monthMatch; });
+            let filtered = allRecords.filter(item => { 
+                const dateVal = item[KEY_DATE] || ''; 
+                const platformVal = item[KEY_PLATFORM] || '';
+                const titleMatch = (item[KEY_TITLE] || '').toLowerCase().includes(searchTerm); 
+                const dateMatch = dateVal.includes(searchTerm); 
+                const yearMatch = currentYear === 'all' || dateVal.startsWith(currentYear); 
+                const monthMatch = currentMonth === 'all' || dateVal.split('.')[1] === currentMonth; 
+                const platformMatch = currentPlatform === 'all' || platformVal === currentPlatform;
+                return (titleMatch || dateMatch) && yearMatch && monthMatch && platformMatch; 
+            });
             filtered.sort((a, b) => { const d1 = a[KEY_DATE] || '', d2 = b[KEY_DATE] || ''; return sortOrder === 'desc' ? d2.localeCompare(d1) : d1.localeCompare(d2); });
             renderUI(filtered);
         }
+
         function renderUI(data) {
             const grid = document.getElementById('record-grid'), noResults = document.getElementById('no-results'); grid.innerHTML = ''; 
-            if (data.length === 0) { grid.classList.add('hidden'); noResults.classList.remove('hidden'); } else {
+            
+            // Adjust grid columns based on layout view
+            if (isGridView) {
+                grid.classList.remove('lg:grid-cols-1');
+                grid.classList.add('lg:grid-cols-2');
+            } else {
+                grid.classList.remove('lg:grid-cols-2');
+                grid.classList.add('lg:grid-cols-1');
+            }
+
+            if (data.length === 0) { 
+                grid.classList.add('hidden'); 
+                noResults.classList.remove('hidden'); 
+            } else {
                 noResults.classList.add('hidden'); grid.classList.remove('hidden');
                 data.forEach((item, index) => {
                     const card = document.createElement('div'); card.className = `ticket-card rounded-2xl flex flex-col h-full animate-fade-in-up overflow-hidden`; card.style.animationDelay = `${index * 30}ms`;
-                    const dateParts = (item[KEY_DATE] || '').split('.'), monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"], mStr = monthNames[parseInt(dateParts[1]) - 1] || '---', tags = (item[KEY_COUNT] || '').split(' ').filter(t => t.trim()).map(tag => `<span class="bg-emerald-50 text-emerald-600 px-3 py-1.5 rounded-lg text-[11px] font-black flex items-center border border-emerald-100 shadow-sm"><i class="fas fa-ticket-alt mr-2 opacity-60"></i>${tag}</span>`).join('');
-                    card.innerHTML = `<div class="flex-1 flex flex-col"><div class="flex items-stretch gap-0 h-full"><div class="ticket-stub flex flex-col items-center justify-center p-5 min-w-[90px] md:min-w-[100px] text-center"><span class="text-[10px] font-black tracking-widest text-emerald-500 uppercase">${mStr}</span><span class="text-3xl md:text-4xl font-black font-oswald text-slate-900 my-1">${dateParts[2] || '--'}</span><span class="text-[10px] font-bold text-slate-400 opacity-80">${dateParts[0] || '----'}</span></div><div class="p-5 md:p-6 flex-1 flex items-center"><h3 class="text-sm md:text-lg font-black text-slate-800 leading-snug line-clamp-3">${item[KEY_TITLE]}</h3></div></div></div><div class="ticket-dashed-line mx-8"></div><div class="p-5 bg-gray-50/50 flex flex-wrap gap-2.5">${tags}</div>`;
+                    const dateParts = (item[KEY_DATE] || '').split('.'), 
+                          monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"], 
+                          mStr = monthNames[parseInt(dateParts[1]) - 1] || '---', 
+                          tags = (item[KEY_COUNT] || '').split(' ').filter(t => t.trim()).map(tag => `<span class="bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 px-3 py-1.5 rounded-lg text-[11px] font-black flex items-center border border-emerald-100 dark:border-emerald-800 shadow-sm"><i class="fas fa-ticket-alt mr-2 opacity-60"></i>${tag}</span>`).join('');
+                    
+                    const platformTag = item[KEY_PLATFORM] ? `<span class="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-2 block">${item[KEY_PLATFORM]}</span>` : '';
+
+                    card.innerHTML = `
+                        <div class="flex-1 flex flex-col">
+                            <div class="flex items-stretch gap-0 h-full">
+                                <div class="ticket-stub flex flex-col items-center justify-center p-5 min-w-[90px] md:min-w-[100px] text-center">
+                                    <span class="text-[10px] font-black tracking-widest text-emerald-500 uppercase">${mStr}</span>
+                                    <span class="text-3xl md:text-4xl font-black font-oswald text-slate-900 dark:text-white my-1">${dateParts[2] || '--'}</span>
+                                    <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 opacity-80">${dateParts[0] || '----'}</span>
+                                </div>
+                                <div class="p-5 md:p-6 flex-1 flex flex-col justify-center">
+                                    <h3 class="text-sm md:text-lg font-black text-slate-800 dark:text-white leading-snug line-clamp-3">${item[KEY_TITLE]}</h3>
+                                    ${platformTag}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ticket-dashed-line mx-8"></div>
+                        <div class="p-5 bg-gray-50/50 dark:bg-slate-900/30 flex flex-wrap gap-2.5">${tags}</div>
+                    `;
                     grid.appendChild(card);
                 });
             }
